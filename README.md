@@ -14,3 +14,24 @@ write an introduction like I did for the ICFP experience paper. Your best bet
 is to work toward POPL in July. But get started soon. Time will fly once you
 work with Shriram. 
 
+
+
+### 2021-02-10 outline + intro
+
+- from 2 to 3 and why
+- background and constraints
+- why TR
+- why Natural, why Transient ... which semantics cannot fit? migratory
+- model and proofs
+- implementation, compiler reuse (brief), boundary challenges
+  + unclear what's of general interest here
+- benefits catalog
+- taking stock
+  + can be done
+  + surprising benefits, esp. expressiveness, call for user studies
+  + surprising lack of N T synergy
+    . look for new compromise semantics (seems unlikely)
+    . find better combo
+  + ... any more?
+
+
