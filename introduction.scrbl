@@ -18,6 +18,42 @@
 @section[#:tag "sec:introduction"]{A Way Out}
 
 Gradual typing is stuck in an awkward position.
+On one hand, the basic research idea is a success.
+Several companies have adapted gradual type system designs to specific
+ untyped languages@~cite[ts],
+ and thousands of programmers use these mixed-typed languages to
+ incrementally improve large software projects.
+On the other hand, the key technical contribution is a failure.
+Research languages show that retrofitted types can make guarantees
+ about the behavior of untyped code,
+ but these designs for sound interaction have not made an impact.
+
+To illustrate the benefits of sound interaction, imagine an untyped codebase
+ that represents a social network using objects to represent people and
+ a graph structure to record personal relationships.
+In a mixed-typed language, programmers can wrap the untyped code in a layer of
+ type definitions to help future maintainers.
+alas
+
+
+ codebase that represents a social network.
+In particular, the untyped code defines objects that represent people and
+ maintains a graph of personal relationships.
+With gradual types, a programmer can keep the untyped code as-is and add
+ type definitions 
+
+wrap the untyped code in a typed
+ interface to 
+
+With a mixed-typed extension, programmers can add type definitions to
+ describe 
+
+In a mixed-typed language, programmers can use types to document the untyped
+ code without 
+
+In a mixed-typed language, programmers can introduce types that describe
+
+
 On one hand, journalists hail the research area as a great success
  because thousands of programmers currently use mixed-typed languages
  to add discipline to untyped code@~cite[].
