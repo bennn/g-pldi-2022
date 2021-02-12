@@ -31,60 +31,46 @@ Several companies have adapted gradual type system designs to specific
  @; TODO cite more
  and thousands of programmers use these mixed-typed languages to
  incrementally improve large software projects.
-On the other hand, the key technical contribution is a failure.
-Research languages show that retrofitted types can make guarantees
- about the behavior of untyped code,
- but these designs for sound interaction have not made an impact.
+On the other hand, the key technical contribution is not a mainstream success.
+Research languages show that mixed types can be sound in the face of untyped
+ code, but none of the widely-used implementations offer a soundness guarantee.
+At best, such languages are sound only for closed-world typed code.
 
-To illustrate the benefits of sound interaction, imagine an untyped codebase
+To illustrate the benefits of sound interaction, picture an untyped codebase
  that represents a social network using objects to represent people and
- a graph structure to record personal relationships.
-In a mixed-typed language, programmers can wrap the untyped code in a layer of
- type definitions to help future maintainers.
-alas
+ a graph structure to record links among users.
+In any mixed-typed language, programmers can reuse the untyped code and
+ introduce types that describe the existing APIs and objects.
+Future maintainers can use these types to write new code, such as a function
+ @tt{add_sponsor} that expects two @tt{Person} objects and creates a business
+ relationship.
+But there may be trouble if untyped code can access the @tt{add_sponsor} function.
+An unsound language does not promise that function inputs match the @tt{Person}
+ type, and so a malformed call may result in either an error or a nonsensical
+ result that corrupts the underlying graph.
+In a sound mixed-typed language, programmers have some guarantee that inputs
+ match the types.
 
+Guarantees, though, are not free.
+In fact, mixed-typed languages must navigate a tradeoff along three dimensions:
+ the soundness guarantees that types provide;
+ the expressiveness of the type system, in particular at typed/untyped boundaries;
+ and the performance cost of enforcing a guarantee.
+Typed Racket has strong guarantees, strong expressiveness, and potentially
+ awful performance.
+Reticulated Python has weak guarantees, strong expressiveness, and
+ better worst-case costs.
+By sacrifing guarantees, optional languages run no worse than untyped code.
+@; bg: may remove this paragraph, but try your best for now
 
- codebase that represents a social network.
-In particular, the untyped code defines objects that represent people and
- maintains a graph of personal relationships.
-With gradual types, a programmer can keep the untyped code as-is and add
- type definitions 
+Tradeoff has been quite an issue.
+Research looks stuck.
+Alas.
 
-wrap the untyped code in a typed
- interface to 
+In this paper we explore.
 
-With a mixed-typed extension, programmers can add type definitions to
- describe 
+Contributions.
 
-In a mixed-typed language, programmers can use types to document the untyped
- code without 
-
-In a mixed-typed language, programmers can introduce types that describe
-
-
-@;On one hand, journalists hail the research area as a great success
-@; because thousands of programmers currently use mixed-typed languages
-@; to add discipline to untyped code@~cite[].
-@;@; TODO cite more
-@;The type systems of these languages are furthermore industry adaptations of
-@; academic ideas@~cite[]---a headline-perfect example of technology transfer.
-@;On the other hand, none of the mainstream languages offer guarantees
-@; about the @emph{interactions} between typed and untyped code.
-@;The central research contribution has not yet made an impact.
-@;
-@;There is one exception: Dart 2.
-@;
-@;@; Erasure vs. others? Where to add ... academic works?
-@;In short, languages such as TypeScript offer a static analysis for
-@; closed-world typed code.
-@;Consider a typed function @tt{add_subscriber} that expects two @tt{User} objects
-@; and creates a link between them.
-@;If untyped code has access to this function,
-@; perhaps because @tt{add_subscriber} is a new addition to an untyped codebase,
-@; then the function can receive any sort of input at runtime.
-@;Research on gradual typing shows how to build a sound static analysis
-@; using run-time checks.
- 
 
 
 @; Greenberg is a 2nd impasse ... worth mentioning?
