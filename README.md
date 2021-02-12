@@ -22,6 +22,8 @@ work with Shriram.
 - background and constraints
 - why TR
 - why Natural, why Transient ... which semantics cannot fit? migratory
+  - behavioral, cm
+  - proxy free
 - model and proofs
 - implementation, compiler reuse (brief), boundary challenges
   + unclear what's of general interest here
