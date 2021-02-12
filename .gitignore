@@ -5,3 +5,9 @@ compiled/
 *.swp
 *~
 \.\#*
+
+acmart.cls
+paper.tex
+*.aux
+*.log
+*.out

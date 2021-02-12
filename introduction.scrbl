@@ -1,5 +1,12 @@
+#lang scribble/acmart @acmsmall @10pt @screen
+@(require "main.rkt" "bib.rkt")
 
-@; TODO model TransientExperience for scribble
+@; THESIS Deep + Shallow is better than Deep or Shallow
+@;  - saves guarantees, performance, and expressiveness
+@;  - is expressiveness incidental?
+@;  - maybe add constraints = no new compiler, no new language
+
+@; ---
 
 @; - gradual typing ... tradeoff guarantees expr perf ...
 @; - incompatible designs ... some cannot coexist ... others can lets try
@@ -15,12 +22,13 @@
 @; RQ is it possible?
 @; RQ any benefits?
 
-@section[#:tag "sec:introduction"]{A Way Out}
+@title[#:tag "sec:introduction"]{A Way Out}
 
 Gradual typing is stuck in an awkward position.
 On one hand, the basic research idea is a success.
 Several companies have adapted gradual type system designs to specific
- untyped languages@~cite[ts],
+ untyped languages@~cite[cvgrl-oopsla-2017],
+ @; TODO cite more
  and thousands of programmers use these mixed-typed languages to
  incrementally improve large software projects.
 On the other hand, the key technical contribution is a failure.
@@ -54,27 +62,28 @@ In a mixed-typed language, programmers can use types to document the untyped
 In a mixed-typed language, programmers can introduce types that describe
 
 
-On one hand, journalists hail the research area as a great success
- because thousands of programmers currently use mixed-typed languages
- to add discipline to untyped code@~cite[].
-The type systems of these languages are furthermore industry adaptations of
- academic ideas@~cite[]---a headline-perfect example of technology transfer.
-On the other hand, none of the mainstream languages offer guarantees
- about the @emph{interactions} between typed and untyped code.
-The central research contribution has not yet made an impact.
-
-There is one exception: Dart 2.
-
-@; Erasure vs. others? Where to add ... academic works?
-In short, languages such as TypeScript offer a static analysis for
- closed-world typed code.
-Consider a typed function @tt{add_subscriber} that expects two @tt{User} objects
- and creates a link between them.
-If untyped code has access to this function,
- perhaps because @tt{add_subscriber} is a new addition to an untyped codebase,
- then the function can receive any sort of input at runtime.
-Research on gradual typing shows how to build a sound static analysis
- using run-time checks.
+@;On one hand, journalists hail the research area as a great success
+@; because thousands of programmers currently use mixed-typed languages
+@; to add discipline to untyped code@~cite[].
+@;@; TODO cite more
+@;The type systems of these languages are furthermore industry adaptations of
+@; academic ideas@~cite[]---a headline-perfect example of technology transfer.
+@;On the other hand, none of the mainstream languages offer guarantees
+@; about the @emph{interactions} between typed and untyped code.
+@;The central research contribution has not yet made an impact.
+@;
+@;There is one exception: Dart 2.
+@;
+@;@; Erasure vs. others? Where to add ... academic works?
+@;In short, languages such as TypeScript offer a static analysis for
+@; closed-world typed code.
+@;Consider a typed function @tt{add_subscriber} that expects two @tt{User} objects
+@; and creates a link between them.
+@;If untyped code has access to this function,
+@; perhaps because @tt{add_subscriber} is a new addition to an untyped codebase,
+@; then the function can receive any sort of input at runtime.
+@;Research on gradual typing shows how to build a sound static analysis
+@; using run-time checks.
  
 
 
