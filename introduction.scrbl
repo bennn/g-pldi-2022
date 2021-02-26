@@ -3,7 +3,7 @@
 
 @; THESIS Deep + Shallow is better than Deep or Shallow
 @;  - saves guarantees, performance, and expressiveness
-@;  - is expressiveness incidental?
+@;  - TODO is expressiveness incidental?
 @;  - maybe add constraints = no new compiler, no new language
 
 @; ---
@@ -22,36 +22,33 @@
 @; RQ is it possible?
 @; RQ any benefits?
 
+@; ps Greenberg is a 2nd impasse, stat-first vs dyn-first ... worth mentioning?
+
 @title[#:tag "sec:introduction"]{A Way Out}
 
-Gradual typing is stuck in an awkward position.
-On one hand, the basic research idea is a success.
-Several companies have adapted gradual type system designs to specific
- untyped languages@~cite[cvgrl-oopsla-2017],
- @; TODO cite more
- and thousands of programmers use these mixed-typed languages to
- incrementally improve large software projects.
-On the other hand, the key technical contribution is not a mainstream success.
-Research languages show that mixed types can be sound in the face of untyped
- code, but none of the widely-used implementations offer a soundness guarantee.
-At best, such languages are sound only for closed-world typed code.
+@; awkward, superficial success
 
-To illustrate the benefits of sound interaction, picture an untyped codebase
- that represents a social network using objects to represent people and
- a graph structure to record links among users.
-In any mixed-typed language, programmers can reuse the untyped code and
- introduce types that describe the existing APIs and objects.
-Future maintainers can use these types to write new code, such as a function
- @tt{add_sponsor} that expects two @tt{Person} objects and creates a business
- relationship.
-But there may be trouble if untyped code can access the @tt{add_sponsor} function.
-An unsound language does not promise that function inputs match the @tt{Person}
- type, and so a malformed call may result in either an error or a nonsensical
- result that corrupts the underlying graph.
-In a sound mixed-typed language, programmers have some guarantee that inputs
- match the types.
+Gradual typing is something of a disappointing success.
+On one hand, the research has clearly made an impact.
+Several industry teams have developed gradual languages,
+ and thousands of programmers use these languages to incrementally
+ improve large software projects.
+On the other hand, the impact is merely static.
+Industry languages have adapted designs for a dynamic type
+ and methods for imposing types on an untyped language.
+But the adaptations ignore the main research contribution;
+ namely, how types can guide interactions among typed and untyped blocks
+ of code.
+If untyped JavaScript sends an object to a TypeScript application,
+ the object can invalidate type assumptions.
+Types help industry programmers write new code, but say nothing about
+ how that code interacts with the rest of the application.
 
-Guarantees, though, are not free.
+There is good reason that industry teams have been slow to adopt sound
+ gradual typing: performance.
+Potentially huge costs.
+But inspired many efforts, situation now is much better than five years ago.
+Alas competing designs emerged.
 In fact, mixed-typed languages must navigate a tradeoff along three dimensions:
  the soundness guarantees that types provide;
  the expressiveness of the type system, in particular at typed/untyped boundaries;
@@ -63,16 +60,18 @@ Reticulated Python has weak guarantees, strong expressiveness, and
 By sacrifing guarantees, optional languages run no worse than untyped code.
 @; bg: may remove this paragraph, but try your best for now
 
-Tradeoff has been quite an issue.
-Research looks stuck.
-Alas.
 
-In this paper we explore.
+Current alternatives.
+Forgo compositional guarantees 
+Switch to new language or new compiler technology.
+If only could interoperate different gradual semantics.
+@; hey what is a gradual semantics yet?
+
+This paper contributes a way to resolve the dilemma without new compiler
+ without new language.
+The Natural Deep types and Transient Shallow types can work together.
+Doing so offers concrete benefits.
+
 
 Contributions.
-
-
-
-@; Greenberg is a 2nd impasse ... worth mentioning?
-
 
