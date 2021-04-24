@@ -9,5 +9,7 @@
 
 @title[#:tag "sec:background"]{Background}
 
+
 Natural and Transient are only realistic options.
+Right@~cite{gdf-draft-2020}.
 

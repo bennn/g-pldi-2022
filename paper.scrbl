@@ -58,8 +58,6 @@
 @include-section{related.scrbl}
 @include-section{conclusion.scrbl}
 
-@generate-bibliography[]
-
 @;@if-techrpt[
 @; @include-section{blank.scrbl}
 @; @include-section{appendix.scrbl}]
