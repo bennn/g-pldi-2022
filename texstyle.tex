@@ -1,44 +1,9 @@
 \usepackage{mathpartir}
 \usepackage{pifont}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usetikzlibrary{positioning}
 
-\overfullrule=1mm
+\renewcommand{\preDoc}{\bibliographystyle{ACM-Reference-Format}\citestyle{acmauthoryear}}
 
-\mathchardef\mhyphen="2D
-
-\newcommand{\sfont}[1]{\mathsf{#1}}
-
-\newcommand{\stypeenv}{\Gamma}
-\newcommand{\sWT}{\vdash}
-\newcommand{\sexpr}{e}
-\newcommand{\stype}{\tau}
-\newcommand{\sshape}{\sigma}
-\newcommand{\scompilesto}{\rightsquigarrow}
-\newcommand{\scoerce}{{\small\vartriangleright}}
-\newcommand{\sref}{\sfont{Ref}}
-\newcommand{\slist}{\sfont{List}}
-\newcommand{\spair}{\times}
-\newcommand{\sfun}{\Rightarrow}
-\newcommand{\scheck}{\sfont{check}}
-\newcommand{\scast}{\sfont{cast}}
-\newcommand{\sbigcheckmark}{\ding{51}}
-\newcommand{\sbigxmark}{\ding{53}}
-\newcommand{\stblY}{\mbox{\sbigcheckmark}}
-\newcommand{\stblN}{\scalebox{0.8}{\sbigxmark}}
-\newcommand{\sfunshape}{\sfont{Fun}}
-
-\newcommand{\tnat}{\sfont{Nat}}
-\newcommand{\tint}{\sfont{Int}}
-\newcommand{\tpair}[2]{#1\!\spair\!#2}
-\newcommand{\tref}[1]{\sref\,#1}
-\newcommand{\tlist}[1]{\slist\,(#1)}
-\newcommand{\tfun}[2]{#1\!\sfun\!#2}
-\newcommand{\tforall}[2]{\forall\,#1.~#2}
-\newcommand{\tinst}[2]{#1{\{#2\}}}
-
-\newcommand{\echeckone}[2]{\tinst{\scheck}{#1}\,{#2}}
-\newcommand{\ecastone}[2]{\tinst{\scast}{#1}\,{#2}}
-\newcommand{\esubst}[3]{#1[#2\!\leftarrow\!#3]}
-
-\newcommand{\ftagof}[1]{\lfloor #1 \rfloor}
-
-\newcommand{\turnpage}{\vfill \newpage}
+\input{def.tex}

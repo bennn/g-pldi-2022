@@ -29,10 +29,10 @@ Gradual typing research presents several @emph{type-enforcement strategies}
 for combining typed code with untyped code@~cite{gf-icfp-2018}.
 Each strategy uses run-time assertions to guarantee that untyped code cannot
 undermine certain parts of the static types.
-For example, the @emph{Natural} strategy enforces full types with higher-order contracts@~cite{mf-toplas-2009 tf-dls-2006 st-sfp-2006},
+For example, the @emph{Natural} strategy enforces full types with higher-order contracts@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006},
 the @emph{Transient} strategy enforces type constructors with first-order tests@~cite{vss-popl-2017},
 and the @emph{Concrete} strategy enforces full types by tagging newly-created values
-and imposing tag checks@~cite{wnlov-popl-2010 mt-oopsla-2017}.
+and imposing tag checks@~cite{wnlov-popl-2010,mt-oopsla-2017}.
 Further variations abound.
 
 Unsurprisingly, the various strategies in the literature have benefits and
@@ -42,7 +42,7 @@ Natural offers strong guarantees, in particular type soundness and complete
 monitoring@~cite{gfd-oopsla-2019}, but may require a huge performance cost
 and depends on wrappers that can be overly conservative.
 Transient offers weak guarantees, but uses simpler checks that are
-easier to implement and suggest a more promising cost model@~cite{vss-popl-2017 gm-pepm-2018 rmhn-ecoop-2019}.
+easier to implement and suggest a more promising cost model@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
 The question thus arises, whether one language can incorporate two
 type-enforcement strategies in addition to untyped code.

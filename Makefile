@@ -1,13 +1,16 @@
 paper:
-	scribble --dest ./ --pdf ++style texstyle.tex paper.scrbl ; open paper.pdf
+	scribble --dest ./ --pdf ++style texstyle.tex ++extra def.tex paper.scrbl ; open paper.pdf
 
 tex:
-	raco scribble --dest ./ --latex ++style texstyle.tex paper.scrbl
+	raco scribble --dest ./ --latex ++style texstyle.tex ++extra def.tex paper.scrbl
 
 pdf: 
 	scribble --latex paper.scrbl && \
 	pdflatex paper.tex && \
 	open paper.pdf 
+
+install:
+	raco pkg install --auto scribble-abbrevs pict-abbrevs gtp-plot gtp-util with-cache
 
 clean: 
 	rm -Rf paper.pdf

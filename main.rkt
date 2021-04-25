@@ -5,6 +5,7 @@
   exact
   $
   noindent
+  ddeliverable
   Table-ref
   table-ref
   Figure-ref
@@ -18,19 +19,51 @@
   NSA-timeout-minutes
   benchmark-name*
   bm
+  parag
   rnd
   shorturl
   github-commit
   POPL-2017-BENCHMARK-NAMES
   PYBENCH
   SR
+  snatural
+  sNatural
+  stransient
+  sTransient
+  sdeep
+  sDeep
+  sshallow
+  sShallow
+  suntyped
+  sUntyped
+  swrap
+  sscan
+  snoop
+  figureref
+  Figureref
+  section-ref
+  Section-ref
+  sectionref
+  Sectionref
+  gtp-url
+  make-lib
+  render-lib
+  user-inspiration
+  nested-inset
+  glob-first
+  default-rkt-version
+  transient-rkt-version
+  github-issue
+  github-pull
   (all-from-out scribble-abbrevs/scribble))
 
 (require
+  file/glob
+  racket/match
   scribble/core
   scribble/base
   scriblib/figure
-  (only-in scribble-abbrevs/scribble Integer->word integer->word)
+  (only-in scribble-abbrevs/scribble Integer->word integer->word format-url)
   (only-in racket/string string-replace)
   (only-in racket/format ~a ~r))
 
@@ -78,6 +111,12 @@
 ;; TODO render the word "table" not "figure"
 (define Table-ref Figure-ref)
 (define table-ref figure-ref)
+(define figureref figure-ref)
+(define Figureref Figure-ref)
+(define section-ref secref)
+(define Section-ref Secref)
+(define sectionref section-ref)
+(define Sectionref Section-ref)
 
 (define (example-type-shape #:type t-str #:shape s-str #:cost c-str)
   @exact{\begin{tabular}[t]{l@"@" {\hspace{1mm}}c@"@" {\hspace{1mm}}l}
@@ -105,6 +144,9 @@
 (define (bm str)
   (exact (list "\\textsf{" (latex-escape (~a str)) "}")))
 
+(define (parag . x)
+  (apply elem #:style "paragraph" x))
+
 (define (shorturl a b)
   (hyperlink (string-append a b) (tt b)))
 
@@ -125,4 +167,91 @@
   spectralnorm
 ))
 
+(define snatural "natural")
+(define sNatural "Natural")
+(define stransient "transient")
+(define sTransient "Transient")
+
+(define sdeep "deep")
+(define sDeep "Deep")
+(define sshallow "shallow")
+(define sShallow "Shallow")
+(define suntyped "untyped")
+(define sUntyped "Untyped")
+
+(define swrap "wrap")
+(define sscan "scan")
+(define snoop "noop")
+
+(define gtp-url
+  @format-url{https://docs.racket-lang.org/gtp-benchmarks/index.html})
+
+(struct lib [name url] #:prefab)
+
+(define make-lib lib)
+
+(define (render-lib lb)
+  (define u (lib-url lb))
+  (define name (tt (lib-name lb)))
+  (if u
+    (hyperlink u name)
+    name))
+
+(define ui-name car)
+(define ui-title cadr)
+(define ui-date caddr)
+(define ui-url cadddr)
+
+(define (user-inspiration data*)
+  (define num-msgs (length data*))
+  (nested-inset
+    (list (emph (format "Inspired by ~a messages to the Racket-Users mailing list:" num-msgs))
+          (apply itemlist
+                 (for/list ((ui (in-list data*)))
+                   (item
+                     (elem (emph (ui-title ui))
+                           ", sent by "
+                           (ui-name ui)
+                           " on "
+                           (ui-date ui)
+                           ". ")
+                     (linebreak)
+                     (format-url (ui-url ui))))))))
+
+(define (nested-inset . content)
+  (nested #:style 'inset content))
+
+(define (glob-first str)
+  (match (glob str)
+    [(cons r '())
+     r]
+    ['()
+     (raise-user-error 'glob-first "No results for glob '~a'" str)]
+    [r*
+     (printf "WARNING: ambiguous results for glob '~a'. Returning the first.~n" str)
+     (car r*)]))
+
+(define default-rkt-version "7.7")
+(define transient-rkt-version "7.8.0.5")
+
+(define (ddeliverable [D "D"])
+  (define d-str
+    (cond
+     [(string? D)
+      D]
+     [(and (real? D) (positive? D))
+      (number->string D)]
+     [else
+      (raise-argument-error 'ddeliverable "(or/c positive-real? string?)" D)]))
+  (elem ($ d-str) "-deliverable"))
+
+(define ((make-github-url kind) user repo name)
+  (define url-str
+    (format "https://github.com/~a/~a/~a/~a" user repo kind name))
+  (define short-str
+    (format "~a/~a #~a" user repo name))
+  (hyperlink url-str (tt short-str)))
+
+(define github-issue (make-github-url "issues"))
+(define github-pull (make-github-url "pull"))
 

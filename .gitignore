@@ -5,6 +5,8 @@ compiled/
 *.swp
 *~
 \.\#*
+*.bbl
+*.blg
 
 acmart.cls
 paper.tex
