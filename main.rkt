@@ -231,8 +231,8 @@
      (printf "WARNING: ambiguous results for glob '~a'. Returning the first.~n" str)
      (car r*)]))
 
-(define default-rkt-version "7.7")
 (define transient-rkt-version "7.8.0.5")
+(define default-rkt-version transient-rkt-version)
 
 (define (ddeliverable [D "D"])
   (define d-str

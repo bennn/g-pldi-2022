@@ -32,9 +32,9 @@
 (define-runtime-path HERE ".")
 (define cache-dir (build-path HERE ".." "with-cache"))
 (define data-dir HERE)
+(define data-3d-dir* (list (build-path HERE "nsa-2020-11-04") (build-path HERE "nsa-2020-12-30")))
 
-(define (make-3d-table fn*)
-  ;; TODO cache
+(define (quick-make-3d-table fn*)
   (for/list ((fn (in-list fn*)))
     (define pi (filename->performance-info3d fn))
     (define bm (filename->benchmark-name fn))
@@ -103,7 +103,21 @@
   (cons (cfg->simple-time val) (has-mix? (car val))))
 
 (define (filename-3d orig-filename)
-  (path-add-extension orig-filename ".best3d"))
+  (path-add-extension (~a orig-filename) ".3d"))
+
+(define (filename-3d+ bm-name)
+  (define orig-filename
+    (or
+      (for/or ((dir-3d (in-list data-3d-dir*)))
+        (let ((m* (append
+                    (glob (build-path dir-3d (format "~a-*.rktd" bm-name)))
+                    (glob (build-path dir-3d (format "*-~a.out" bm-name))))))
+          (if (or (null? m*) (not (null? (cdr m*))))
+            #f
+            (car m*))))
+      (raise-arguments-error 'filename-3d+ "no data found" "benchmark" bm-name "data-dirs" data-3d-dir*)))
+  (define best-filename (path-add-extension orig-filename ".3d"))
+  (values orig-filename best-filename))
 
 (define (filename->benchmark-name fn)
   (let-values (((base name mbd?) (split-path fn)))
@@ -144,7 +158,7 @@
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () bm-name))]
                  [*with-cache-fasl?* #f])
-    (with-cache (cachefile "mixed-bestpath.rktd")
+    (with-cache (cachefile (format "mixed-bestpath-~a.rktd" bm-name))
       (λ ()
         (define pi (benchmark-name->performance-info3d bm-name))
         (define total-paths (factorial (performance-info->num-units pi)))
@@ -156,37 +170,35 @@
           (raise-arguments-error 'both "cannot find D for 100% paths" "bm" bm-name))))))))
 
 (define (benchmark-name->performance-info3d bm-name)
-  (define-values [orig-filename best-filename] (filename-3d bm-name))
-  (define best-cfg*
-    (with-input-from-file
-      orig-filename
-      (lambda ()
-        (void (read-line)) ;; ignore lang
-        (define (read-cfg) (string->value (read-line)))
-        (define untyped-cfg (read-cfg))
-        (define num-units (string-length (car untyped-cfg)))
-        (cons
-          untyped-cfg
-          (for/list ((i (in-range (- (expt 2 num-units) 1))))
-            (define cfg0 (read-cfg))
-            (define num-types (for/sum ((c (in-string (car cfg0))) #:unless (eq? #\0 c)) 1))
-            (define cfg* (for/list ((j (in-range (- (expt 2 num-types) 1)))) (read-cfg)))
-            (car (sort (cons cfg0 cfg*) <=2 #:key cfg->simple-time+mix #:cache-keys? #true)))))))
-  (void
-    (with-output-to-file
-      best-filename
-      #:exists 'replace
-      (lambda ()
-        (displayln "#lang gtp-measure/output/typed-untyped")
-        (for ((ln (in-list best-cfg*)))
-          (writeln ln)))))
+  (define-values [orig-filename best-filename] (filename-3d+ bm-name))
+  (unless (file-exists? best-filename)
+    (let ((best-cfg*
+           (with-input-from-file
+             orig-filename
+             (lambda ()
+               (void (read-line)) ;; ignore lang
+               (define (read-cfg) (string->value (read-line)))
+               (define untyped-cfg (read-cfg))
+               (define num-units (string-length (car untyped-cfg)))
+               (cons
+                 untyped-cfg
+                 (for/list ((i (in-range (- (expt 2 num-units) 1))))
+                   (define cfg0 (read-cfg))
+                   (define num-types (for/sum ((c (in-string (car cfg0))) #:unless (eq? #\0 c)) 1))
+                   (define cfg* (for/list ((j (in-range (- (expt 2 num-types) 1)))) (read-cfg)))
+                   (car (sort (cons cfg0 cfg*) <=2 #:key cfg->simple-time+mix #:cache-keys? #true))))))))
+      (with-output-to-file
+        best-filename
+        (lambda ()
+          (displayln "#lang gtp-measure/output/typed-untyped")
+          (for ((ln (in-list best-cfg*)))
+            (writeln ln))))))
   (make-typed-racket-info best-filename #:name (string->symbol (format "~a-3d" bm-name))))
-
 
 ;; ---
 
 (define (quick-table fn*)
-  (define DDD (make-3d-table fn*))
+  (define DDD (quick-make-3d-table fn*))
   (for ((d-row (in-list DDD)))
     (printf " ~a% of ~a configs~n" (cadr d-row) (car d-row)))
   (void))
@@ -209,7 +221,6 @@
              (map cdr row*)))))
 
 (define (get-mixed-worst-table name*)
-  ;; TODO copied from above
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () name*))]
                  [*with-cache-fasl?* #f])
@@ -255,7 +266,6 @@
              (map cdr row*)))))
 
 (define (get-mixed-path-table D name*)
-  ;; TODO copied from above
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () (cons D name*)))]
                  [*with-cache-fasl?* #f])
@@ -371,7 +381,7 @@
         (for/list ((bm (in-list bm-name*)))
           (define pi (benchmark-name->performance-info3d bm))
           (define total-configs (performance-info->num-configurations pi))
-          (define-values [_orig best-filename] (filename-3d bm))
+          (define-values [_orig best-filename] (filename-3d+ bm))
           (define num-good
             (with-input-from-file
               best-filename
