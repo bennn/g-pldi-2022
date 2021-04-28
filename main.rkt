@@ -1,7 +1,7 @@
 #lang at-exp racket/base
 
 (provide
-  ~a
+  ~a ~s
   exact
   $
   noindent
@@ -65,7 +65,7 @@
   scriblib/figure
   (only-in scribble-abbrevs/scribble Integer->word integer->word format-url)
   (only-in racket/string string-replace)
-  (only-in racket/format ~a ~r))
+  (only-in racket/format ~a ~r ~s))
 
 ;; -----------------------------------------------------------------------------
 

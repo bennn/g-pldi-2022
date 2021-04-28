@@ -5,6 +5,7 @@
   get-mixed-path-table
   render-mixed-path-table
   find-lowest-3dpath-D
+  find-lowest-3dpath-D*
   get-3d-table
   get-mixed-worst-table
   render-mixed-worst-table)
@@ -168,6 +169,24 @@
             (and (= total-paths (count-deliv-path D pi))
                  D))
           (raise-arguments-error 'both "cannot find D for 100% paths" "bm" bm-name))))))))
+
+(define (find-lowest-3dpath-D* bm-name*)
+  (map (lambda (nv) (cons (car nv) (if (cdr nv) (string->number (rnd (cdr nv))) #f)))
+    (parameterize ([*current-cache-directory* cache-dir]
+                   [*current-cache-keys* (list (λ () bm-name*))]
+                   [*with-cache-fasl?* #f])
+      (with-cache (cachefile "mixed-bestpath.rktd")
+        (λ ()
+          (for/list ((bm-name (in-list bm-name*)))
+            (define pi (benchmark-name->performance-info3d bm-name))
+            (define total-paths (factorial (performance-info->num-units pi)))
+            (cons
+              bm-name
+              (for*/or ((fst (in-range 1 5))
+                        (pre-d (in-range 10)))
+                (define D (+ fst (/ pre-d 10)))
+                (and (= total-paths (count-deliv-path D pi))
+                     D)))))))))
 
 (define (benchmark-name->performance-info3d bm-name)
   (define-values [orig-filename best-filename] (filename-3d+ bm-name))

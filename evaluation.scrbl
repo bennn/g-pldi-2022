@@ -9,6 +9,7 @@
    (only-in "data/analyze.rkt"
      benchmark-name->performance-info
      find-lowest-3dpath-D
+     find-lowest-3dpath-D*
      get-3d-table
      get-mixed-path-table
      render-mixed-path-table
@@ -345,6 +346,10 @@ Such libraries are ideal, but until we have them for the next data exchange
         [mix-best-D
          ;; TODO apply to more benchmarks?
          (find-lowest-3dpath-D mix-path-bm)]
+        [mix-best-D*
+         (find-lowest-3dpath-D*
+           '(forth fsm fsmoo mbta morsecode zombie dungeon
+             jpeg zordoz lnm suffixtree kcfa snake take5))]
         )
 @list[
 @figure*[
@@ -379,6 +384,8 @@ Fine-grained combinations of @|sdeep| and @|sshallow| types can further improve
  the number of viable migration paths.
 In @bm[mix-path-bm], for example, every path is @ddeliverable[mix-best-D] if the programmer
  picks the fastest-running mix of @|sdeep| and @|sshallow| types for each configuration.
+
+Others look good too @~s[mix-best-D*].
 }])
 
 @parag{Case Study: GTP Benchmarks}
