@@ -28,6 +28,8 @@
   (only-in scribble/base bold centered hyperlink tabular hspace tt linebreak)
   (only-in gtp-util rnd pct string->value time-string->cpu-time natural->bitstring))
 
+(module+ test (require rackunit))
+
 ;; -----------------------------------------------------------------------------
 
 (define-runtime-path HERE ".")
@@ -237,7 +239,11 @@
       #:row-properties '(bottom-border 1)
       #:column-properties '(left right)
       (list* MIXED-WORST-TITLE
-             (map cdr row*)))))
+             (map cleanup-mixed-row row*)))))
+
+(define (cleanup-mixed-row rr)
+  (let* ((rr (cdr rr)))
+    (cons (car rr) (map sig2 (cdr rr)))))
 
 (define (get-mixed-worst-table name*)
   (parameterize ([*current-cache-directory* cache-dir]
@@ -410,6 +416,39 @@
                           #:when (has-mix? (car (string->value cfg))))
                   1))))
           (list bm (rnd (pct num-good total-configs))))))))
+
+(define (sig2 pre-num)
+  ;; cut to 2 significant figures
+  (define num (overhead-str->number pre-num))
+  (if num
+    (let ((short-num
+           (cond
+             [(< num 10)
+              num]
+             [(< num 100)
+              (exact-round num)]
+             [else
+               (let ((k (expt 10 (sub1 (order-of-magnitude num)))))
+                 (* k (exact-round (/ num k))))])))
+      (format "~ax" short-num))
+    pre-num))
+
+(module+ test
+  (test-case "sig2"
+    (check-equal? (sig2 "3.14x") "3.14x")
+    (check-equal? (sig2 "31x") "31x")
+    (check-equal? (sig2 "31.4x") "31x")
+    (check-equal? (sig2 "31.8x") "32x")
+    (check-equal? (sig2 "314x") "310x")
+    (check-equal? (sig2 "31456x") "31000x")))
+
+(define (overhead-str->number str)
+  (define L (string-length str))
+  (string->number
+    (if (and (< 0 L)
+             (eq? #\x (string-ref str (sub1 L))))
+      (substring str 0 (sub1 L))
+      str)))
 
 ;; -----------------------------------------------------------------------------
 
