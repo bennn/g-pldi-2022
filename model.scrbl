@@ -1037,65 +1037,88 @@ In fact, these boundaries are safe @|snoop|s because @|sshallow| pre-emptively
 @; TODO present as table
 @figure*[
   "fig:model:completion2"
-  @elem{Completion for module boundaries}
+  @elem{Completion for module boundaries. Recall @figure-ref{fig:model:base-interaction}.}
 
-  @exact|{
+  @list[@exact|{
 \begin{mathpar}
   \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_1
+    \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
   }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tdyn \scompile \enoop{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tdyn \scompile \ewrap{\stype_0}{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emod{\sslang}{\sexpr_0} : \tdyn \scompile \enoop{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \stype_0 \scompile \ewrap{\stype_0}{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \stype_0 \scompile \enoop{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \stype_0 \scompile \ewrap{\stype_0}{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tfloor{\stype_0} \scompile \escan{\sshape_0}{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tfloor{\stype_0} \scompile \ewrap{\stype_0}{\sexpr_1}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_1
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tfloor{\stype_0} \scompile \enoop{\sexpr_1}
+    \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1 \scompile \sexpr_2
   }
 \end{mathpar}
-}|]
+}|
+@exact|{
+\(\begin{array}{llll}
+  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
+  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
+  \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \\
+  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
+  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1} \\
+  \sU & \tdyn & \tfloor{\stype_0} & \escan{\sexpr_1} \\
+  \sD & \stype_0 & \tdyn & \ewrap{\sexpr_1} \\
+  \sU & \tdyn & \stype_0 & \ewrap{\sexpr_1} \\
+  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\sexpr_1} \\
+  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\sexpr_1}
+\end{array}\)
+
+%\begin{mathpar}
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tdyn \scompile \enoop{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tdyn \scompile \ewrap{\stype_0}{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emod{\sslang}{\sexpr_0} : \tdyn \scompile \enoop{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \stype_0 \scompile \ewrap{\stype_0}{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \stype_0 \scompile \enoop{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \stype_0 \scompile \ewrap{\stype_0}{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tfloor{\stype_0} \scompile \escan{\sshape_0}{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tfloor{\stype_0} \scompile \ewrap{\stype_0}{\sexpr_1}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tfloor{\stype_0} \scompile \enoop{\sexpr_1}
+%  }
+%\end{mathpar}
+
+}|]]
 
 
 @figure*[
