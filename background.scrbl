@@ -24,5 +24,15 @@ TODO
   | @|sDeep| types are characterized by complete monitoring
 - 
 
+Natural Transient vs Deep Shallow?
+
+Runtime tools = wrapper, shape check ... ahead-of-time compiler, no jit
+
+@; migratory vs gradual is not important, right?
+
+informally TS, CM ... distinct example
+
+ditto for blame?!
+
 
 

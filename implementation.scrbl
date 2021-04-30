@@ -18,6 +18,8 @@
 @title[#:tag "sec:implementation"]{Implementation}
 @; TODO cite experience report
 
+@; 2021-04-29 do we really need to discuss typed/untyped API? could point to dissertation for details
+
 The Typed Racket compiler can incorporate Shallow types.
 
 @; X typed-context? hook = easy

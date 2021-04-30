@@ -29,6 +29,8 @@ Lastly, a @emph[snoop] boundary does nothing.
  @|sshallow| types that satisfy shape-soundness and @|sdeep| types that
  satisfy complete monitoring.
 
+TODO explain that boundaries come from practical runtime tools.
+
 
 @figure*[
   "fig:model:base-interaction"
@@ -370,7 +372,7 @@ These are both standard.
 
 @figure*[
   "fig:model:extra-type"
-  @elem{Subtyping judgment, and types for primitive operations.}
+  @elem{Subtyping judgment and types for primitive operations.}
 
   @exact|{
 \lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
@@ -397,7 +399,7 @@ These are both standard.
 \end{mathpar}}
 
 \begin{minipage}[t]{0.5\columnwidth}
-\lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop}{\stype}}{\stype}$}}{
+\lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\stype}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\sfst, \tpair{\stype_0}{\stype_1}) & \feq & \stype_0
   \\
@@ -406,7 +408,7 @@ These are both standard.
 }
 
 \end{minipage}\begin{minipage}[t]{0.5\columnwidth}
-\lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop}{\tpair{\stype}{\stype}}}{\stype}$}}{
+\lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop\,}{\tpair{\stype}{\stype}}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\ssum, \tnat, \tnat) & \feq & \tnat
   \\
@@ -447,7 +449,7 @@ A @${\swraperror} arises when a @|swrap| boundary receives invalid input,
 The final error, @${\stagerror}, is the result of a malformed term that cannot
  reduce further.
 Such errors can easily occur in untyped code without any boundaries;
- for instance, the application of a number (@${\eappu{2~}{4}}) signals a tag error.
+ for instance, the application of a number (@${\eappu{2\,}{4}}) signals a tag error.
 Reduction in typed code, whether @|sdeep| or @|sshallow|, should never raise a
  tag error.
 
