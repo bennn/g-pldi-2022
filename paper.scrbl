@@ -1,13 +1,6 @@
 #lang scribble/acmart @acmsmall @10pt @review @anonymous
 
-@(require "bib.rkt" (for-syntax racket/base))
-
-@(define-for-syntax TECHRPT #true)
-@(define-syntax (if-techrpt stx)
-    (if TECHRPT
-      (syntax-case stx ()
-       [(_ x ...) #'(begin x ...)])
-      #'(void)))
+@(require "bib.rkt" (only-in "main.rkt" if-techrpt))
 
 @title{Deep and Shallow Types for Gradual Languages}
 
@@ -58,7 +51,7 @@
 @include-section{related.scrbl}
 @include-section{conclusion.scrbl}
 
-@;@if-techrpt[
-@; @include-section{blank.scrbl}
-@; @include-section{appendix.scrbl}]
+@if-techrpt[
+ @include-section{blank.scrbl}
+ @include-section{appendix.scrbl}]
 

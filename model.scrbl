@@ -135,7 +135,7 @@ These are both standard.
 
 @figure*[
   "fig:model:surface-type"
-  @elem{Surface typing judgment (selected rules, others in @seclink{appendix:rules})}
+  @elem{Surface typing judgment (selected rules, others in @appendixref{appendix:rules})}
 
 @exact|{
 \begin{mathpar}
@@ -927,7 +927,7 @@ In fact, these boundaries are safe @|snoop|s because @|sshallow| pre-emptively
 
 @figure*[
   "fig:model:completion1"
-  @elem{Surface-to-evaluation completion (selected rules, others in @seclink{appendix:rules})}
+  @elem{Surface-to-evaluation completion (selected rules, others in @appendixref{appendix:rules})}
 
 @exact|{
 \begin{mathpar}

@@ -1,6 +1,8 @@
 #lang at-exp racket/base
 
 (provide
+  appendixref
+  if-techrpt
   ~a ~s
   exact
   $
@@ -65,9 +67,26 @@
   scriblib/figure
   (only-in scribble-abbrevs/scribble Integer->word integer->word format-url)
   (only-in racket/string string-replace)
-  (only-in racket/format ~a ~r ~s))
+  (only-in racket/format ~a ~r ~s)
+  (for-syntax racket/base))
 
 ;; -----------------------------------------------------------------------------
+
+(define-syntax-rule (def2 k v)
+  (begin (define k v) (define-for-syntax k v)))
+
+(def2 TECHRPT #true)
+
+(define-syntax if-techrpt
+  (if TECHRPT
+    (lambda (stx) (syntax-case stx ()
+     [(_ x ...) #'(begin x ...)]))
+    (lambda (stx) #'(void))))
+
+(define appendixref
+  (if TECHRPT
+    (lambda (str) (secref str))
+    (lambda (str) "supplementary material")))
 
 (define SR "Shallow Racket")
 
