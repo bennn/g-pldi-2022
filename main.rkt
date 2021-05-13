@@ -29,6 +29,8 @@
   PYBENCH
   SR
   snatural
+  sforgetful
+  sForgetful
   sNatural
   stransient
   sTransient
@@ -190,6 +192,8 @@
 (define sNatural "Natural")
 (define stransient "transient")
 (define sTransient "Transient")
+(define sforgetful "forgetful")
+(define sForgetful "Forgetful")
 
 (define sdeep "deep")
 (define sDeep "Deep")

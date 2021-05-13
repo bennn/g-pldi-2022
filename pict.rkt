@@ -5,6 +5,8 @@
   typed-codeblock
   untyped-codeblock
   fig:model-interaction
+  fig:opt0
+  fig:opt1
   fig:any-wrap
   fig:no-wrap
   fig:index-of
@@ -699,6 +701,52 @@ eos
                ;;
                (list "noop" 13 0 (code-arrow 'S-S lb-find 'U-E rt-find (* 75/100 turn) (* 55/100 turn)  40/100 40/100 'solid))
                (list "scan" 10 52 (code-arrow 'U-E rb-find 'S-S rb-find (* 96/100 turn) (* 30/100 turn)  60/100 60/100 'solid))
+               )))
+      (for/fold ((pp pp))
+                ((l+a (in-list lbl+arr*)))
+        (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a))))))
+
+(define fig:opt0
+  ;; only D <-> S, weaken
+  (ppict-do
+    (blank 300 80)
+    #:go (coord 0 30/100 'lt #:abs-x 10)
+    (add-hubs (te-mode-text "Deep") 'D)
+    #:go (coord 1 30/100 'rt #:abs-x -10)
+    (add-hubs (te-mode-text "Shallow") 'S)
+    #:set
+    (let* ((pp ppict-do-state)
+           (lbl+arr*
+             (list
+               (list "wrap, if value escapes to U" -10 -24 (code-arrow 'D-E rt-find 'S-W lt-find (* 11/100 turn) (* 89/100 turn)  1/4 1/4 'solid))
+               (list "wrap, if value from U" 10  38 (code-arrow 'S-W lb-find 'D-E rb-find (* 61/100 turn) (* 39/100 turn)  1/4 1/4 'solid))
+               )))
+      (for/fold ((pp pp))
+                ((l+a (in-list lbl+arr*)))
+        (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a))))))
+
+(define fig:opt1
+  (ppict-do
+    (blank 400 80)
+    #:go (coord 0 30/100 'lt #:abs-x 10)
+    (add-hubs (te-mode-text "Deep") 'D)
+    #:go (coord 45/100 30/100 'rt #:abs-x -10)
+    (add-hubs (te-mode-text "Shallow") 'S)
+    #:go (coord 1 30/100 'rt #:abs-x -10)
+    (add-hubs (te-mode-text "Untyped") 'U)
+    #:set
+    (let* ((pp ppict-do-state)
+           (pp (pin-arrows-line
+                 6 pp
+                 (find-tag pp 'D-E) rc-find (find-tag pp 'S-W) lc-find
+                 #:label (sc-text "noop") #:line-width 2 #:style 'solid #:color "black"
+                 #:x-adjust-label 0
+                 #:y-adjust-label -4
+                 #:start-angle 0 #:end-angle 0 #:start-pull 0 #:end-pull 0))
+           (lbl+arr*
+             (list
+               (list "wrap, if value from D" -10 -24 (code-arrow 'S-E rt-find 'U-W lt-find (* 11/100 turn) (* 89/100 turn)  1/4 1/4 'solid))
+               (list "wrap, if value escapes to D" 24  38 (code-arrow 'U-W lb-find 'S-E rb-find (* 61/100 turn) (* 39/100 turn)  1/4 1/4 'solid))
                )))
       (for/fold ((pp pp))
                 ((l+a (in-list lbl+arr*)))
