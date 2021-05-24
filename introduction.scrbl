@@ -25,24 +25,28 @@
 
 @title[#:tag "sec:introduction"]{A Spectrum of Type Enforcement}
 
-Gradual typing research presents several @emph{type-enforcement strategies}
+Taken broadly, the research area of gradual typing
+presents several @emph{type-enforcement strategies}
 for combining typed code with untyped code@~cite{gf-icfp-2018}.
 Each strategy uses run-time assertions to guarantee that untyped code cannot
 undermine certain parts of the static types.
-For example, the @emph{Natural} strategy enforces full types with higher-order contracts@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006},
-the @emph{Transient} strategy enforces type constructors with first-order tests@~cite{vss-popl-2017},
-and the @emph{Concrete} strategy enforces full types by tagging newly-created values
-and imposing tag checks@~cite{wnlov-popl-2010,mt-oopsla-2017}.
-Further variations abound.
+The @emph{Natural} strategy uses higher-order contracts to
+enforce the behavioral claims of higher-order types@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006}.
+The @emph{Transient} strategy uses first-order tests to enforce basic aspects
+of types@~cite{vss-popl-2017}.
+The @emph{Concrete} strategy uses a tagging protocol and tag checks to
+enforce full types@~cite{wnlov-popl-2010,mt-oopsla-2017}.
+And the @emph{Erasure} strategy uses no checks and consequently makes no
+guarantee to enforce types.
 
 Unsurprisingly, the various strategies in the literature have benefits and
 drawbacks.
 Two illustrative points of comparison are the Natural and Transient strategies.
-Natural offers strong guarantees, in particular type soundness and complete
-monitoring@~cite{gfd-oopsla-2019}, but may require a huge performance cost
-and depends on wrappers that can be overly conservative.
-Transient offers weak guarantees, but uses simpler checks that are
-easier to implement and suggest a more promising cost model@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
+The contract checks in Natural lead to the strong guarantees of type soundness
+and complete monitoring@~cite{gfd-oopsla-2019}
+but often impose a huge performance cost~\cite{gtnffvf-jfp-2019}.
+The first-order checks in Transient offer only a weak type soundness guarantee,
+but these cheaper run-time checks suggest a more promising cost model@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
 The question thus arises, whether one language can incorporate two
 type-enforcement strategies in addition to untyped code.
@@ -52,9 +56,12 @@ typed code with the first strategy, and
 typed code with the second strategy.
 For the mix to be meaningful, each part satisfy the same properties that it
 did in the original.
-For the mix to be useful, the parts must have complementary strengths.
+For the mix to be useful, the parts must bring unique strengths to the table.
 
-@; TODO from Natural,Transient to Deep,Shallow ?
+A compelling union would be the deep, costly guarantees of Natural and the
+shallow, inexpensive guarantees of transient.
+Such a language, with both Deep and Shallow types, may strike an ergonomic
+(at least, user-tunable) tradeoff among expressiveness and performance.
 
 This paper supports two general claims:
 (1) Deep and Shallow types can safely interoperate,
