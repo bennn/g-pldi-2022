@@ -21,10 +21,9 @@ Let's write the rest of the paper first, then circle back and see what we need h
 TODO
 - sec model
   + "Note that module boundaries are similar to the boundary expressions"
-  | @|sDeep| types are characterized by complete monitoring
-- 
+  + @|sDeep| types are characterized by complete monitoring
 
-Natural Transient vs Deep Shallow?
+Relate Deep Shallow to Natural Transient
 
 Runtime tools = wrapper, shape check ... ahead-of-time compiler, no jit
 

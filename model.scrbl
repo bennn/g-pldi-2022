@@ -9,14 +9,22 @@
 
 @title[#:tag "sec:model"]{Model}
 
-First, I prove that @|sdeep| types via @|snatural| and @|sshallow| types
- via @|stransient| can coexist in a formal model.
-The model combines @|sdeep|-typed code, @|sshallow|-typed code, and
- untyped code in one surface language.
-Each of these three disciplines is recognized by a surface-typing
- judgment and comes with a complier.
-The three compilers translate well-typed code to a common evaluation
- syntax that has one untyped semantics.
+The primary goal of the formal model is to prove that @|sdeep| types via the @|snatural|
+semantics and @|sshallow| types via the @|stransient| semantics can coexist.
+The model therefore begins with a three-part surface language; each chunk of
+code in the model is labeled as either @|sdeep|-typed code, @|sshallow|-typed
+code, of untyped code.
+A surface type system validates these chunks, and a compiler translates all
+three down to a common evaluation language that uses @emph{boundary terms}
+to mediate among the three disciplines.
+
+The secondary goal of the model is to serve as the outline for an implementation.
+It is for this reason that the three varieties of surface-language code
+compile to a common evaluation language, which resembles a standard untyped
+kernel language.
+The boundary terms have clear interpretations as contracts and first-order
+checks, and the semantics does not depend on run-time type informating---making
+the model applicable to a variety of languages.
 
 Although the three varieties of surface code give rise to six kinds of
  interactions, the model keeps these interactions under control with
@@ -28,8 +36,6 @@ Lastly, a @emph[snoop] boundary does nothing.
 @Sectionref{sec:model:model:theorems} proves that these checks are strong enough to realize
  @|sshallow| types that satisfy shape-soundness and @|sdeep| types that
  satisfy complete monitoring.
-
-TODO explain that boundaries come from practical runtime tools.
 
 
 @figure*[
