@@ -62,6 +62,19 @@
 \newcommand{\makebnd}[3]{\mktwoapp{#1}{#2~#3}}
 \newcommand{\addlangs}[3]{{#1}^{#2}_{#3}}
 
+\newcommand{\makerred}[1]{\mathrel{\rrarrow_{_{\!#1}}^{\kern-0.1em*}}}
+\newcommand{\srredX}{\makerred{}}
+
+\newcommand{\rrarrow}{\rightarrow}
+\newcommand{\longrrarrow}{\longrightarrow}
+\newcommand{\compilesto}{\scompile}
+\newcommand{\rrsymb}{\vartriangleright}
+\newcommand{\rastar}{\rrarrow^{*}}
+\newcommand{\rtclosure}[1]{\rastar_{\bigcup\eset{#1}}}
+\newcommand{\samplerrsym}{\textbf{r}}
+\newcommand{\samplerrarrow}{\mathrel{~{\samplerrsym}~}}
+\newcommand{\samplerred}{\makerred{\samplerrsym}}
+
 \newcommand{\sfont}[1]{\mathsf{#1}}
 \newcommand{\typefont}[1]{\mathsf{#1}}
 \newcommand{\mffont}[1]{\textit{#1}}
