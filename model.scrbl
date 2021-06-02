@@ -7,35 +7,32 @@
 @;   - (2021-04-25) that means, don't present the self-loops? or don't focus on them?
 @; - don't worry about false-start designs ... point to dissertation for now
 
-@title[#:tag "sec:model"]{Model}
+@title[#:tag "sec:model"]{Model and Metatheory}
 
-The primary goal of the formal model is to prove that @|sdeep| types via the @|snatural|
-semantics and @|sshallow| types via the @|stransient| semantics can coexist.
-The model therefore begins with a three-part surface language; each chunk of
-code in the model is labeled as either @|sdeep|-typed code, @|sshallow|-typed
-code, of untyped code.
-A surface type system validates these chunks, and a compiler translates all
-three down to a common evaluation language that uses @emph{boundary terms}
-to mediate among the three disciplines.
+A typical mixed-typed language allows for two kinds of code, typed and untyped,
+and employs run-time checks to protect the claims made by static types.
+The model of this section goes further by allowing three variants:
+@|sdeep|-typed code, @|sshallow|-typed code, and untyped code.
+Both the @|sdeep| and @|sshallow| code must satisfy a type checker that
+validates typical well-formedness properties.
+The untyped code has fewer constraints, but is nevertheless free to
+communicate with @|sdeep| and @|sshallow| chunks of code.
+All three syntaxes compile to an evaluation language that uses run-time
+checks to mediate any interactions.
 
-The secondary goal of the model is to serve as the outline for an implementation.
-It is for this reason that the three varieties of surface-language code
-compile to a common evaluation language, which resembles a standard untyped
-kernel language.
-The boundary terms have clear interpretations as contracts and first-order
-checks, and the semantics does not depend on run-time type informating---making
-the model applicable to a variety of languages.
-
-Although the three varieties of surface code give rise to six kinds of
- interactions, the model keeps these interactions under control with
- only three kinds of run-time boundaries (@figureref{fig:model:base-interaction}).
-A @emph[swrap] boundary inserts a higher-order check to support @|sdeep|
- types.
-A @emph[sscan] boundary validates a top-level shape for @|sshallow| code.
-Lastly, a @emph[snoop] boundary does nothing.
-@Sectionref{sec:model:model:theorems} proves that these checks are strong enough to realize
- @|sshallow| types that satisfy shape-soundness and @|sdeep| types that
- satisfy complete monitoring.
+Overall, the primary goal of the model is to prove that @|sdeep|, @|sshallow|,
+and untyped code can safely interoperate.
+The @|sdeep| types must satisfy type soundness and complete monitoring properties,
+and the @|sshallow| types must satisfy only a weak type soundness.
+A secondary goal of the model is to serve as the outline for an implementation.
+For this reason, the three syntaxes compile to @emph{one} kernel language
+that uses standard run-time-checking concepts.
+A @emph[swrap] term corresponds to a higher-order contract,
+a @emph[sscan] performs a first-order check,
+and a @emph[snoop] does nothing.
+@Sectionref{sec:model:model:theorems} proves the main result of this section;
+namely, that a careful use of these checks
+can ensure safe, three-dimensional interactions.
 
 
 @figure*[
@@ -75,6 +72,8 @@ Lastly, a @emph[snoop] boundary does nothing.
     %% TODO correct?
 \end{langarray}
 }|]
+
+
 
 The surface syntax begins with simple expressions and adds module boundaries
  to enable a three-way interpretation.
