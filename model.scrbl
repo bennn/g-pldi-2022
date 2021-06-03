@@ -41,7 +41,7 @@ can ensure safe, three-dimensional interactions.
   fig:model-interaction]
 
 
-@section[#:tag "sec:model:model:syntax"]{Syntax}
+@section[#:tag "sec:model:model:syntax"]{Three-way Surface Syntax}
 
 @figure*[
   "fig:model:surface"
@@ -61,56 +61,47 @@ can ensure safe, three-dimensional interactions.
   \\ & &
     \emod{\slang}{\ssurface}
   \\
-  \stype & \slangeq &
-    \tnat \mid \tint \mid \tpair{\stype}{\stype} \mid \tfun{\stype}{\stype}
-  \\
   \slang & \slangeq &
     \sD \mid \sS \mid \sU
   \\
+  \stype & \slangeq &
+    \tnat \mid \tint \mid \tpair{\stype}{\stype} \mid \tfun{\stype}{\stype}
+  \\
   \stspec & \slangeq &
     \stype \mid \tfloor{\stype} \mid \tdyn
-    %% TODO correct?
 \end{langarray}
 }|]
 
-
-
-The surface syntax begins with simple expressions and adds module boundaries
- to enable a three-way interpretation.
-The simple expressions are function application (@${\eappu{\ssurface}{\ssurface}}),
- primitive operation application (@${\eunop{\ssurface}}, @${\ebinop{\ssurface}{\ssurface}}),
+The surface syntax (@figure-ref{fig:model:surface}) equips a basic expression
+language with optional type annotations and module boundaries.
+Expressions @${\ssurface} consist of function applications (@${\eappu{\ssurface}{\ssurface}}),
+ primitive operation applications (@${\eunop{\ssurface}}, @${\ebinop{\ssurface}{\ssurface}}),
  variables (@${\svar}),
  integers (@${\sint}),
  pairs (@${\epair{\ssurface}{\ssurface}}),
  and functions.
-Functions come in three flavors:
- an untyped function has no type annotation (@${\efun{\svar}{\ssurface}}),
- a @|sdeep|-typed function has a type annotation (@${\efun{\tann{\svar}{\stype}}{\ssurface}}),
+Functions may come with type annotations.
+An untyped function has no annotation (@${\efun{\svar}{\ssurface}}),
+ a @|sdeep|-typed function has a plain type annotation (@${\efun{\tann{\svar}{\stype}}{\ssurface}}),
  and a @|sshallow|-typed function has an underlined type annotation (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}}).
-The underline mark simplifies proofs, and serves as a hint to readers that
- only the top-level shape of this type is guaranteed at run-time.
-It is @emph{not} a meta-function.
+The underline is simply a notational device; it is meant to suggest that only
+the top-level shape of this type is guaranteed at run-time.
 Types (@${\stype}) express natural numbers (@${\tnat}),
  integers (@${\tint}),
  pairs (@${\tpair{\stype}{\stype}}),
  and functions (@${\tfun{\stype}{\stype}}).
-
-Module-boundary expressions declare the intent of the code within them.
-For example, the term @${\emod{\sD}{\ssurface_0}} asks for @|sdeep| types
- in expression @${\ssurface_0} by default.
-If another boundary appears within @${\ssurface_0}, then its language flag
- (@${\sD}, @${\sS}, or @${\sU}) sets a new default.
-
-Note that module boundaries are similar to the boundary expressions
- from @section-ref{sec:background}.
-Instead of adding a third boundary term to split the old @${\sstat} boundaries
- into @|sdeep| and @|sshallow| versions, the present model uses one
- parameterized term.
-Both the old and new boundary terms correspond to module boundaries in a
- realistic language.
+Modules associate a label with an expression (@${\emod{\slang}{\ssurface}}).
+The label (@${\slang}) is either @${\sD} for @|sdeep|-typed code,
+ @${\sS} for @|sshallow|-typed code, or @${\sU} for untyped code.
+For example, the term @${(\emod{\sD}{\ssurface_0})} says that @${\ssurface_0}
+is a @|sdeep|-typed expression.
+Module expressions within @${\ssurface_0} can
+be @|sshallow|-typed and/or untyped.
 
 
 @section[#:tag "sec:model:model:types"]{Surface Typing}
+
+
 
 In principle, the surface language comes with three typing judgments
  to recognize @|sdeep|, @|sshallow|, and untyped code.
@@ -328,7 +319,7 @@ These are both standard.
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
   }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tdyn
+    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tdyn
   }
 
   \inferrule*{
@@ -346,7 +337,7 @@ These are both standard.
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
   }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \stype_0
+    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \stype_0
   }
 
   \inferrule*{
@@ -364,7 +355,7 @@ These are both standard.
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
   }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tfloor{\stype_0}
+    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tfloor{\stype_0}
   }
 
   \inferrule*{

@@ -201,7 +201,7 @@ surface language types
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
   }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tdyn
+    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tdyn
   }
 
   \inferrule*{
@@ -219,7 +219,7 @@ surface language types
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
   }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \stype_0
+    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \stype_0
   }
 
   \inferrule*{
@@ -237,7 +237,7 @@ surface language types
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
   }{
-    \stypeenv \sST \emodule{\stlang}{\sexpr_0} : \tfloor{\stype_0}
+    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tfloor{\stype_0}
   }
 
   \inferrule*{
