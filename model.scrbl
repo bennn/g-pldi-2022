@@ -12,16 +12,16 @@
 A typical mixed-typed language allows for two kinds of code, typed and untyped,
 and employs run-time checks to protect the claims made by static types.
 The model of this section goes further by allowing three variants:
-@|sdeep|-typed code, @|sshallow|-typed code, and untyped code.
+@|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
 Both the @|sdeep| and @|sshallow| code must satisfy a type checker that
 validates typical well-formedness properties.
-The untyped code has fewer constraints, but is nevertheless free to
+The @|suntyped| code has fewer constraints, but is nevertheless free to
 communicate with @|sdeep| and @|sshallow| chunks of code.
 All three syntaxes compile to an evaluation language that uses run-time
 checks to mediate any interactions.
 
-Overall, the primary goal of the model is to prove that @|sdeep|, @|sshallow|,
-and untyped code can safely interoperate.
+Overall, the primary goal of the model is to test whether @|sdeep|, @|sshallow|,
+and @|suntyped| code can safely interoperate.
 The @|sdeep| types must satisfy type soundness and complete monitoring properties,
 and the @|sshallow| types must satisfy only a weak type soundness.
 A secondary goal of the model is to serve as the outline for an implementation.
@@ -37,7 +37,7 @@ can ensure safe, three-dimensional interactions.
 
 @figure*[
   "fig:model:base-interaction"
-  @elem{@|sDeep|, @|sShallow|, and untyped interactions.}
+  @elem{@|sDeep|, @|sShallow|, and @|suntyped| interactions.}
   fig:model-interaction]
 
 
@@ -76,57 +76,65 @@ The surface syntax (@figure-ref{fig:model:surface}) equips a basic expression
 language with optional type annotations and module boundaries.
 Expressions @${\ssurface} consist of function applications (@${\eappu{\ssurface}{\ssurface}}),
  primitive operation applications (@${\eunop{\ssurface}}, @${\ebinop{\ssurface}{\ssurface}}),
- variables (@${\svar}),
- integers (@${\sint}),
- pairs (@${\epair{\ssurface}{\ssurface}}),
- and functions.
-Functions may come with type annotations.
-An untyped function has no annotation (@${\efun{\svar}{\ssurface}}),
+ variables @${\svar},
+ integers @${\sint},
+ pairs @${\epair{\ssurface}{\ssurface}},
+ and optionally-annotated functions.
+An @|suntyped| function has no annotation (@${\efun{\svar}{\ssurface}}),
  a @|sdeep|-typed function has a plain type annotation (@${\efun{\tann{\svar}{\stype}}{\ssurface}}),
  and a @|sshallow|-typed function has an underlined type annotation (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}}).
 The underline is simply a notational device; it is meant to suggest that only
 the top-level shape of this type is guaranteed at run-time.
-Types (@${\stype}) express natural numbers (@${\tnat}),
- integers (@${\tint}),
- pairs (@${\tpair{\stype}{\stype}}),
+Types @${\stype} express natural numbers (@${\tnat}),
+ integers @${\tint},
+ pairs @${\tpair{\stype}{\stype}},
  and functions (@${\tfun{\stype}{\stype}}).
 Modules associate a label with an expression (@${\emod{\slang}{\ssurface}}).
-The label (@${\slang}) is either @${\sD} for @|sdeep|-typed code,
- @${\sS} for @|sshallow|-typed code, or @${\sU} for untyped code.
+The label @${\slang} is either @${\sD} for @|sdeep|-typed code,
+ @${\sS} for @|sshallow|-typed code, or @${\sU} for @|suntyped| code.
 For example, the term @${(\emod{\sD}{\ssurface_0})} says that @${\ssurface_0}
 is a @|sdeep|-typed expression.
-Module expressions within @${\ssurface_0} can
-be @|sshallow|-typed and/or untyped.
+Any module expressions within @${\ssurface_0} can
+be @|sdeep|-typed, @|sshallow|-typed, or @|suntyped|.
 
 
-@section[#:tag "sec:model:model:types"]{Surface Typing}
+@section[#:tag "sec:model:model:types"]{Three-way Surface Typing}
 
+Both @|sdeep| and @|sshallow| code must satisfy type constraints,
+and @|suntyped| code cannot reference variables that it did not bind.
+These well-formedness conditions are spelled out in the typing judgment
+of @figure-ref{fig:model:surface-type}, which relates a type environment
+@${\stypeenv} and an expression @${\ssurface} to a result specification.
+A result @${\stspec} is either a type @${\stype} for @|sdeep|-typed code,
+an underlined type @${\tfloor{\stype}} for @|sshallow|-typed code,
+or the uni-type @${\tdyn} for @|suntyped| code.
 
+With the exception of modules, the typing rules are standard for a basic
+functional language.
+Note that the subsumption rule means the judgment is not syntax-directed.
+The rules for modules allow one kind of expression to appear within another.
+For instance, an @|suntyped| expression may appear within a @|sdeep|
+expression @${\ssurface_0} via a module boundary.
+The full expression @${\ssurface_0} satisfies the typing judgment if the
+@|sdeep| parts are well-typed and the @|suntyped| parts are well-formed.
 
-In principle, the surface language comes with three typing judgments
- to recognize @|sdeep|, @|sshallow|, and untyped code.
-These judgments are mutually recursive at module-boundary terms.
-To keep things simple, however, @figure-ref{fig:model:surface-type}
- presents one judgment (@${\stypeenv \sST \sexpr : \stspec})
- that supports three possible conclusions.
-A conclusion (@${\stspec}) is one of:
- the uni-type @${\tdyn} of untyped code,
- a type @${\stype} for @|sdeep|-typed code,
- or a decorated type @${\tfloor{\stype}} for @|sshallow| code.
-The notation is again a hint.
-A decorated type is equal to a normal type during static type checking,
- but makes a weaker statement about program behavior.
-
-The typing rules are relatively simple, but declarative.
-The rules for modules, for example, give no hint about how to find a type
- conclusion that fits the rest of the program.
-A second notably aspect is that one module may contain another with
- the same language flag.
-
-@Figureref{fig:model:extra-type} defines a
- subtyping judgment (@${\ssubt}) and a type-assignment for primitive
- operations (@${\sDelta}).
+@Figureref{fig:model:extra-type} defines a subtyping judgment (@${\ssubt}
+and a type-assignment for primitive operations (@${\sDelta}).
 These are both standard.
+Subtyping says that natural numbers are valid integers, and is covariant
+for pairs and contravariant for functions.
+The primitive operations are overloaded to combine natural numbers or
+integers.
+
+@;One way to comprehend the typing judgment is as three separate judgments
+@;for @|sdeep|, @|sshallow|, and @|suntyped| code.
+@;Grouping the rules by their result specification and focusing on each group
+@;in sequence may make for easier reading.
+@;Ultimately, though, module expressions call for mutual dependencies.
+@;
+@;- if separate judgments, would need common type environment
+@;- PS deep and shallow are identical but for underline, matters for implementation
+
 
 
 @figure*[
@@ -178,14 +186,14 @@ These are both standard.
     \stypeenv \sST \sint_0 : \tfloor{\tint}
   }
 
-  \inferrule*{
-    \stypeenv \sST \ssurface_0 : \tdyn
-    \\
-    \stypeenv \sST \ssurface_1 : \tdyn
-  }{
-    \stypeenv \sST \epair{\ssurface_0}{\ssurface_1} : \tdyn
-  }
-
+%  \inferrule*{
+%    \stypeenv \sST \ssurface_0 : \tdyn
+%    \\
+%    \stypeenv \sST \ssurface_1 : \tdyn
+%  }{
+%    \stypeenv \sST \epair{\ssurface_0}{\ssurface_1} : \tdyn
+%  }
+%
 %  \inferrule*{
 %    \stypeenv \sST \ssurface_0 : \stype_0
 %    \\
@@ -260,16 +268,16 @@ These are both standard.
 %    \stypeenv \sST \ebinop{\sexpr_0}{\sexpr_1} : \stype_2
 %  }
 %
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-    \\
-    \stypeenv \sST \sexpr_1 : \tfloor{\stype_1}
-    \\\\
-    \sDelta(\sbinop, \stype_0, \stype_1) = \stype_2
-  }{
-    \stypeenv \sST \ebinop{\sexpr_0}{\sexpr_1} : \tfloor{\stype_2}
-  }
-
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
+%    \\
+%    \stypeenv \sST \sexpr_1 : \tfloor{\stype_1}
+%    \\\\
+%    \sDelta(\sbinop, \stype_0, \stype_1) = \stype_2
+%  }{
+%    \stypeenv \sST \ebinop{\sexpr_0}{\sexpr_1} : \tfloor{\stype_2}
+%  }
+%
 %  \inferrule*{
 %    \stypeenv \sST \ssurface_0 : \tdyn
 %    \\
@@ -419,7 +427,7 @@ These are both standard.
 }|]
 
 
-@section[#:tag "sec:model:model:eval-syntax"]{Evaluation Syntax}
+@section[#:tag "sec:model:model:eval-syntax"]{Common Evaluation Syntax}
 
 The evaluation syntax removes the declarative parts of the surface syntax
  and adds tools for enforcing types.
