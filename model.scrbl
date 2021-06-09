@@ -381,6 +381,7 @@ integers.
   @elem{Subtyping judgment and types for primitive operations.}
 
   @exact|{
+  \begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
   \inferrule*{
   }{
@@ -403,7 +404,7 @@ integers.
     \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
   }
 \end{mathpar}}
-
+\end{minipage}%
 \begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\stype}}{\stype}$}}{
   \begin{langarray}
@@ -413,7 +414,6 @@ integers.
   \end{langarray}
 }
 
-\end{minipage}\begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop\,}{\tpair{\stype}{\stype}}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\ssum, \tnat, \tnat) & \feq & \tnat
@@ -500,7 +500,7 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 }|]
 
 
-@section[#:tag "sec:model:model:eval-types"]{Evaluation Typing}
+@section[#:tag "sec:model:model:eval-types"]{Three-way Evaluation Typing}
 
 The evaluation syntax comes with three typing judgments that describe the
 run-time invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
@@ -508,22 +508,20 @@ The @|sdeep| typing judgment (@${\sWTD}) validates full types.
 The @|sshallow| judgment (@${\sWTS}) checks top-level type shapes.
 Lastly, the @|suntyped| judgment (@${\sWTU}) checks that all variables
 have proper bindings.
+
 Both the @|sdeep| and @|suntyped| rules are similar to the corresponding
-surface-language rules.
-
-Because the @|sshallow| judgment confirms only the top-level shape of a value,
-it makes especially weak claims about elimination forms.
-Consider a variable @${\svar_0} with the @|sshallow| static type
-@${\tfloor{\tpair{\tnat}{\tnat}}} representing a pair of natural numbers.
-The @|sshallow| typing judgment checks the shape of @${\svar_0},
-which is @${\kpair}, 
-The shape for this type is @${\kpair}
-
-
-In this judgment, elimination forms have a catch-all shape (@${\kany}) because
- they can produce any value at run-time;
- these must appear within a @|sscan| expression to guarantee a non-trivial
- shape.
+surface-language rules because they support equally-strong conclusions
+(full types and the unitype).
+The @|sshallow| judgment is rather different because it validates type
+shapes instead of full (underlined) types.
+When inspecting a pair, for example, the judgment concludes with the @${\kpair}
+shape no matter what shapes the elements have.
+Consequently, a pair elimination form such as @${(\efstu{\svar_0})} has the
+@${\kany} shape because the pair may contain any sort of value.
+Similar comments apply to functions and applications.
+Thus, if a program expects a particular shape from the element of a pair or the
+range of a function, then the program must use a @${\sscan} assertion to
+check the expected shape.
 
 @figure*[
   "fig:model:deep-type"
@@ -690,8 +688,10 @@ In this judgment, elimination forms have a catch-all shape (@${\kany}) because
     \stypeenv \sWTS \sexpr_0 : \sshape_0
     \\
     \stypeenv \sWTS \sexpr_1 : \sshape_1
+    \\
+    \sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2
   }{
-    \stypeenv \sWTS \ebinop{\sexpr_0}{\sexpr_1} : \kany
+    \stypeenv \sWTS \ebinop{\sexpr_0}{\sexpr_1} : \sshape_2
   }
 
   \inferrule*{
@@ -750,6 +750,7 @@ In this judgment, elimination forms have a catch-all shape (@${\kany}) because
   }
 \end{mathpar}
 
+\begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
   \inferrule*{
   }{
@@ -761,7 +762,8 @@ In this judgment, elimination forms have a catch-all shape (@${\kany}) because
     \fsubt{\sshape_0}{\kany}
   }
 \end{mathpar}}
-
+\end{minipage}%
+\begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
   \begin{langarray}
     \fshape{\tnat} & \feq & \knat
@@ -773,6 +775,7 @@ In this judgment, elimination forms have a catch-all shape (@${\kany}) because
     \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
   \end{langarray}
 }
+\end{minipage}
 }|]
 
 
@@ -880,7 +883,7 @@ In this judgment, elimination forms have a catch-all shape (@${\kany}) because
 }|]
 
 
-@section[#:tag "sec:model:model:completion"]{Compilation}
+@section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
 
 A compilation pass links the surface and evaluation syntaxes.
 Since the goal of compilation is to insert enough run-time checks
