@@ -885,73 +885,6 @@ check the expected shape.
 \end{mathpar}
 }|]
 
-
-@section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
-
-The surface syntax has no semantics of its own.
-Instead, a compilation pass maps surface terms to simpler evaluation-language
-terms which state exactly which run-time checks to perform.
-Most checks appear at boundaries; indeed, the main task of compilation is
-to replace surface module boundaries with check boundaries.
-Additional checks appear is @|sshallow|-typed code to support its type
-soundness property.
-
-Because compilation inserts run-time checks and little more, it is more
-like a completion pass that makes implicit operations explicit@~cite{h-scp-1994}
-than a typical compiler.
-Henceforth, this paper uses the term @emph{completion} instead of compilation.
-
-The overall goal of completion-inserted checks is to map all well-typed surface
-expressions to well-typed evaluation expressions
-(@exact{\lemmaref{lemma:model:completion}}).
-@itemlist[
-@item{
- In @|sdeep|-typed code, completion inserts @|swrap| expressions at the
-  module boundaries to less-typed code.
- Other @|sdeep| expressions have no checks.
-}
-@item{
- In @|sshallow| code, completion scans incoming untyped code and the result
-  of every elimination form.
-}
-@item{
- In untyped code, completion adds no run-time checks.
- At the boundaries to @|sdeep| and @|sshallow| code, however, the above
-  strategies call for a @|swrap| or @|sscan| check.
-}
-]
-@|noindent|The rules shown in @figureref["fig:model:completion2" "fig:model:completion1"]
-say exactly how to insert the checks.
-@Figure-ref{fig:model:completion2} presents the rules for module boundaries
-using a tabular notation.
-The parameterized judgment at the left of the figure summarizes the rules for
-boundaries, and the table at the right shows the specific parameters for the
-nine possible combinations.
-These nine rules correspond to the six edges in
-@figure-ref{fig:model:base-interaction} plus three self-edges.
-
-@Figureref{fig:model:completion1} illustrates the completion rules for
-functions.
-In @|sdeep|-typed and @|suntyped| code, the completion of an application is simply
-the completion of its subexpressions.
-In @|sshallow|-typed code, this elimination form requires a @|sscan| check to
-validate the result.
-Pairs and pair elimination forms follow a similar pattern.
-The completion rules for other expressions simply transform their subexpressions
-and are deferred to an appendix.
-
-@bold{Note}: The completion of a @|sshallow| function is very simple---to the point of
-being misleading---because the evaluation language is too simple.
-In a realistic language, @|sshallow| functions must translate to an un-annotated
-function that first @|sscan|s the shape of its input and then proceeds with the
-body expression.
-The model does not show the domain check, and instead expects the underlying
-semantics to always @${\sscan} the inputs of @|sshallow| functions (@sectionref{sec:model:model:reduction}).
-Although this baked-in design simplifies the model and proof details regarding
-substitution, the lack of an explicit domain check means that the model cannot
-support a pass that eliminates redundant checks.
-
-
 @figure*[
   "fig:model:completion1"
   @elem{Surface-to-evaluation completion (selected rules, others in @appendixref{appendix:rules})}
@@ -1090,6 +1023,73 @@ support a pass that eliminates redundant checks.
 \end{tabular}
 
 }|]
+
+
+@section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
+
+The surface syntax has no semantics of its own.
+Instead, a compilation pass maps surface terms to simpler evaluation-language
+terms which state exactly which run-time checks to perform.
+Most checks appear at boundaries; indeed, the main task of compilation is
+to replace surface module boundaries with check boundaries.
+Additional checks appear is @|sshallow|-typed code to support its type
+soundness property.
+
+Because compilation inserts run-time checks and little more, it is more
+like a completion pass that makes implicit operations explicit@~cite{h-scp-1994}
+than a typical compiler.
+Henceforth, this paper uses the term @emph{completion} instead of compilation.
+
+The overall goal of completion-inserted checks is to map all well-typed surface
+expressions to well-typed evaluation expressions
+(@exact{\lemmaref{lemma:model:completion}}).
+@itemlist[
+@item{
+ In @|sdeep|-typed code, completion inserts @|swrap| expressions at the
+  module boundaries to less-typed code.
+ Other @|sdeep| expressions have no checks.
+}
+@item{
+ In @|sshallow| code, completion scans incoming untyped code and the result
+  of every elimination form.
+}
+@item{
+ In untyped code, completion adds no run-time checks.
+ At the boundaries to @|sdeep| and @|sshallow| code, however, the above
+  strategies call for a @|swrap| or @|sscan| check.
+}
+]
+@|noindent|The rules shown in @figureref["fig:model:completion2" "fig:model:completion1"]
+say exactly how to insert the checks.
+@Figure-ref{fig:model:completion2} presents the rules for module boundaries
+using a tabular notation.
+The parameterized judgment at the left of the figure summarizes the rules for
+boundaries, and the table at the right shows the specific parameters for the
+nine possible combinations.
+These nine rules correspond to the six edges in
+@figure-ref{fig:model:base-interaction} plus three self-edges.
+
+@Figureref{fig:model:completion1} illustrates the completion rules for
+functions.
+In @|sdeep|-typed and @|suntyped| code, the completion of an application is simply
+the completion of its subexpressions.
+In @|sshallow|-typed code, this elimination form requires a @|sscan| check to
+validate the result.
+Pairs and pair elimination forms follow a similar pattern.
+The completion rules for other expressions simply transform their subexpressions
+and are deferred to an appendix.
+
+@bold{Note}: The completion of a @|sshallow| function is very simple---to the point of
+being misleading---because the evaluation language is too simple.
+In a realistic language, @|sshallow| functions must translate to an un-annotated
+function that first @|sscan|s the shape of its input and then proceeds with the
+body expression.
+The model does not show the domain check, and instead expects the underlying
+semantics to always @${\sscan} the inputs of @|sshallow| functions (@sectionref{sec:model:model:reduction}).
+Although this baked-in design simplifies the model and proof details regarding
+substitution, the lack of an explicit domain check means that the model cannot
+support a pass that eliminates redundant checks.
+
 
 
 @figure*[
