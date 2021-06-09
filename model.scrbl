@@ -99,6 +99,8 @@ be @|sdeep|-typed, @|sshallow|-typed, or @|suntyped|.
 
 
 @section[#:tag "sec:model:model:types"]{Three-way Surface Typing}
+@; TODO why not reformat, present as 2 or 3 judgments?
+@;  the evaluation typing is 3 judgments (different invariants)
 
 Both @|sdeep| and @|sshallow| code must satisfy type constraints,
 and @|suntyped| code cannot reference variables that it did not bind.
@@ -299,7 +301,7 @@ integers.
     \\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_0}
   }{
-    \stypeenv \sST \eapp{\sexpr_0}{\sexpr_1} : \tfloor{\stype_1}
+    \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tfloor{\stype_1}
   }
 
 %  \inferrule*{
@@ -429,33 +431,37 @@ integers.
 
 @section[#:tag "sec:model:model:eval-syntax"]{Common Evaluation Syntax}
 
-The evaluation syntax removes the declarative parts of the surface syntax
- and adds tools for enforcing types.
-First to go are the module boundary expressions, which express a desire
- for a style of type enforcement.
-Instead, the evaluation syntax has three kinds of run-time check expression:
- a @|swrap| boundary fully enforces a type, perhaps with a guard wrapper (@${\emon{\stype}{\svalue}});
- a @|sscan| boundary checks a type-shape (@${\sshape}),
- and a @|snoop| boundary checks nothing.
-Second, the @|sshallow|-typed functions from the surface syntax (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}})
- are replaced with shape-annotated functions (@${\efun{\tann{\svar}{\sshape}}{\sexpr}}).
-Type-shapes (@${\sshape}) express the outermost constructor of a type;
- the weakened function annotation reflects a weakened run-time guarantee.
+By contrast to the declarative surface syntax, the purpose of the evaluation
+syntax is to present a core set of expressions that can support three-way
+interactions.
+The syntax removes surface terms that merely express an intent and adds
+terms for run-time checks.
 
-The evaluation syntax also includes values (@${\svalue}),
- errors (@${\serror}),
- and evaluation contexts (@${\sctx}).
-Running a program may produce a value or an error.
-For the most part, the different errors come from boundaries.
-A @${\swraperror} arises when a @|swrap| boundary receives invalid input,
- a @${\sscanerror} comes from a failed @|sscan|,
- and a @${\sdivzeroerror} occurs when a primitive operation rejects its input.
-The final error, @${\stagerror}, is the result of a malformed term that cannot
- reduce further.
-Such errors can easily occur in untyped code without any boundaries;
- for instance, the application of a number (@${\eappu{2\,}{4}}) signals a tag error.
-Reduction in typed code, whether @|sdeep| or @|sshallow|, should never raise a
- tag error.
+Evaluation expressions @${\sexpr} consist of variables, values, primitive
+applications, function applications, errors, and boundary terms.
+The module boundaries from the surface syntax are gone.
+Instead, three @emph{boundary terms} directly suggest run-time checks.
+A @|swrap| boundary asks for the full enforcement of a type, either with a comprehensive first-order
+check or a higher-order wrapper;
+a @|sscan| boundary asks for a first-order type-shape (@${\sshape}) check;
+and a @|snoop| boundary asks for no check.
+
+Together, values and errors represent the possible results of an evaluation.
+A value is either an integer, a pair, a function, or a guard wrapper.
+A guard @${(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})} is a restricted
+function; it provides access to the function @${\svalue_0} subject to run-time
+checks based on the @${(\tfun{\stype_0}{\stype_1})} type.
+Note also that @|sshallow|-typed functions have a shape annotation in
+the evaluation syntax (@${\efun{\tann{\svar}{\sshape}}{\sexpr}}) rather
+than an underlined type annotation (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}}).
+An error may arise from either a failed check at @|swrap| boundary (@${\swraperror}),
+a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
+(@${\sdivzeroerror}), or a malformed untyped expression (@${\stagerror}).
+
+@; other notes 2021-06-08
+@; - shape-ann on functions reflects runtime knowledge ... and also the dom-check to insert
+@; - example tag error = app 3 4
+
 
 @figure*[
   "fig:model:eval-syntax"
@@ -477,7 +483,7 @@ Reduction in typed code, whether @|sdeep| or @|sshallow|, should never raise a
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
     \mid \efun{\tann{\svar}{\sshape}}{\sexpr}
-    \mid \emon{\stype}{\svalue}
+    \mid \emon{(\tfun{\stype}{\stype})}{\svalue}
   \\
   \sshape & \slangeq &
     \knat \mid \kint \mid \kpair \mid \kfun \mid \kany
@@ -497,14 +503,27 @@ Reduction in typed code, whether @|sdeep| or @|sshallow|, should never raise a
 @section[#:tag "sec:model:model:eval-types"]{Evaluation Typing}
 
 The evaluation syntax comes with three typing judgments that describe the
- run-time invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
-The @|sdeep| typing judgment (@${\sWTT}) validates full types.
-The @|sshallow| judgment (@${\sWTS}) checks top-level shapes.
+run-time invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
+The @|sdeep| typing judgment (@${\sWTD}) validates full types.
+The @|sshallow| judgment (@${\sWTS}) checks top-level type shapes.
+Lastly, the @|suntyped| judgment (@${\sWTU}) checks that all variables
+have proper bindings.
+Both the @|sdeep| and @|suntyped| rules are similar to the corresponding
+surface-language rules.
+
+Because the @|sshallow| judgment confirms only the top-level shape of a value,
+it makes especially weak claims about elimination forms.
+Consider a variable @${\svar_0} with the @|sshallow| static type
+@${\tfloor{\tpair{\tnat}{\tnat}}} representing a pair of natural numbers.
+The @|sshallow| typing judgment checks the shape of @${\svar_0},
+which is @${\kpair}, 
+The shape for this type is @${\kpair}
+
+
 In this judgment, elimination forms have a catch-all shape (@${\kany}) because
  they can produce any value at run-time;
  these must appear within a @|sscan| expression to guarantee a non-trivial
  shape.
-Lastly, the @|suntyped| judgment (@${\sWTU}) guarantees no free variables.
 
 @figure*[
   "fig:model:deep-type"
