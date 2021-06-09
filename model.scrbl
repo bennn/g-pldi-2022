@@ -750,6 +750,7 @@ check the expected shape.
   }
 \end{mathpar}
 
+\bigskip
 \begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
   \inferrule*{
@@ -785,6 +786,8 @@ check the expected shape.
   @; ... aka dynamic typing, most types checked at runtime
 
 @exact|{
+\bigskip
+\bigskip
 \begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\tdyn} \in \stypeenv
@@ -885,16 +888,22 @@ check the expected shape.
 
 @section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
 
-A compilation pass links the surface and evaluation syntaxes.
-Since the goal of compilation is to insert enough run-time checks
- to give a well-typed result, the compiler is effectively a @emph{completion}
- pass that fills in details missing from the surface term@~cite{h-scp-1994}.
-The basic goal is to translate module boundaries to appropriate run-time
- checks, but other terms may require checks as well.
-Formally, the goal is to map all well-typed surface expressions to well-typed
- evaluation expressions (@exact{\lemmaref{lemma:model:completion}}).
-The completion rules shown in @figureref["fig:model:completion1" "fig:model:completion2"]
- meet this goal via different strategies for each kind of code:
+The surface syntax has no semantics of its own.
+Instead, a compilation pass maps surface terms to simpler evaluation-language
+terms which state exactly which run-time checks to perform.
+Most checks appear at boundaries; indeed, the main task of compilation is
+to replace surface module boundaries with check boundaries.
+Additional checks appear is @|sshallow|-typed code to support its type
+soundness property.
+
+Because compilation inserts run-time checks and little more, it is more
+like a completion pass that makes implicit operations explicit@~cite{h-scp-1994}
+than a typical compiler.
+Henceforth, this paper uses the term @emph{completion} instead of compilation.
+
+The overall goal of completion-inserted checks is to map all well-typed surface
+expressions to well-typed evaluation expressions
+(@exact{\lemmaref{lemma:model:completion}}).
 @itemlist[
 @item{
  In @|sdeep|-typed code, completion inserts @|swrap| expressions at the
@@ -911,44 +920,36 @@ The completion rules shown in @figureref["fig:model:completion1" "fig:model:comp
   strategies call for a @|swrap| or @|sscan| check.
 }
 ]
-@|noindent|@Figureref{fig:model:completion1} in particular shows how surface
- functions translate to evaluation syntax functions and how applications translate.
-For @|sdeep| and @|suntyped| code, the completion of an application is simply
- the completion of its subexpressions.
-For @|sshallow| code, this elimination form requires a @|sscan| check to
- validate the result.
-Other elimination forms have similar completions.
+@|noindent|The rules shown in @figureref["fig:model:completion2" "fig:model:completion1"]
+say exactly how to insert the checks.
+@Figure-ref{fig:model:completion2} presents the rules for module boundaries
+using a tabular notation.
+The parameterized judgment at the left of the figure summarizes the rules for
+boundaries, and the table at the right shows the specific parameters for the
+nine possible combinations.
+These nine rules correspond to the six edges in
+@figure-ref{fig:model:base-interaction} plus three self-edges.
 
-The completion of a @|sshallow| function is deceptively simple.
-@; cmon, just be clear that the functions are too simple
-In a realistic language, such functions would translate to an un-annotated
- function that first @|sscan|s the shape of its input and then proceeds with the
- body expression.
-This model, however, gets an implicit domain check thanks to cooperation
- from the upcoming semantics.
-The application of a @|sshallow|-typed function always @|sscan|s the
- argument before substituting into the function body (@sectionref{sec:model:model:reduction}).
-This design simplifies the model and proof details regarding substitution,
- but the lack of an explicit domain check means that the model cannot
- support a pass that eliminates redundant checks.
-Fixing this limitation is a top priority for future extensions of the model.
+@Figureref{fig:model:completion1} illustrates the completion rules for
+functions.
+In @|sdeep|-typed and @|suntyped| code, the completion of an application is simply
+the completion of its subexpressions.
+In @|sshallow|-typed code, this elimination form requires a @|sscan| check to
+validate the result.
+Pairs and pair elimination forms follow a similar pattern.
+The completion rules for other expressions simply transform their subexpressions
+and are deferred to an appendix.
 
-@Figure-ref{fig:model:completion2} presents the completion rules for module
- boundaries.
-Aside from the self-boundaries, the picture in @figure-ref{fig:model:base-interaction}
- is an accurate summary of these rules.
-Each module represents a channel of communication between a context and the inside of the module.
-The module declares its type discipline and the context's style is clear
- from the conclusion of the surface typing judgment.
-To protect against mis-communications, the side with the stronger type requirements
- determines the check that a module boundary completes to.
-@|sDeep| always directs, @|sshallow| wins over @|suntyped|, and the others---with
- one exception---are clear @|snoop|s.
-The exception is for @|sshallow| values that exit to @|suntyped| code;
- for integers there is nothing to protect, but functions would seem to need
- some kind of wrapper to protect their body against untyped input.
-In fact, these boundaries are safe @|snoop|s because @|sshallow| pre-emptively
- protects functions as noted above.
+@bold{Note}: The completion of a @|sshallow| function is very simple---to the point of
+being misleading---because the evaluation language is too simple.
+In a realistic language, @|sshallow| functions must translate to an un-annotated
+function that first @|sscan|s the shape of its input and then proceeds with the
+body expression.
+The model does not show the domain check, and instead expects the underlying
+semantics to always @${\sscan} the inputs of @|sshallow| functions (@sectionref{sec:model:model:reduction}).
+Although this baked-in design simplifies the model and proof details regarding
+substitution, the lack of an explicit domain check means that the model cannot
+support a pass that eliminates redundant checks.
 
 
 @figure*[
@@ -1306,18 +1307,18 @@ In fact, these boundaries are safe @|snoop|s because @|sshallow| pre-emptively
 
 The semantics of the evaluation syntax is based on one notion of reduction (@figure-ref{fig:model:rr}).
 @; ... like how MT reuses host reduction, but don't get too excited we still play tricks with transient
-Aside from the domain checks for @|sshallow|-typed functions, reduction proceeds
- in a standard, untyped fashion.
-Unary and binary operations proceed according to the @${\sdelta} metafunction (@figureref{fig:model:extra-rr}).
+Aside from the domain checks for @|sshallow|-typed functions, the reduction
+rules are straightforward.
+Unary and binary operations rely on the @${\sdelta} metafunction to compute a result (@figureref{fig:model:extra-rr}).
 Basic function application substitutes an argument value into a function body.
-Wrapped function application decomposes into two wrap boundaries: one
+Guard-wrapped function application decomposes into two wrap boundaries: one
  for the input and another for the result.
-Lastly, boundary terms optionally perform a run-time check.
-A @|snoop| boundary performs no check and lets any value cross.
-A @|sscan| boundary checks the top-level shape of a value against the expected
- type.
-And a @|swrap| boundary checks top-level shapes and either installs a wrapper
- around a higher-order value or recursively checks a data structure.
+Lastly, boundary terms optionally perform a run-time check:
+a @|snoop| boundary performs no check and lets any value cross;
+a @|sscan| boundary checks the top-level shape of a value against the expected
+type; and
+a @|swrap| boundary checks top-level shapes and either installs a wrapper
+around a higher-order value or recursively checks a data structure.
 
 @Figure-ref{fig:model:extra-rr} defines evaluation metafunctions.
 The @${\sdelta} function gives semantics to primitives.

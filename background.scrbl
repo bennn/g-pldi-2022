@@ -23,6 +23,8 @@ TODO
   + "Note that module boundaries are similar to the boundary expressions"
   + @|sDeep| types are characterized by complete monitoring
 
+single-owner consistency ... dont put laws here but do add a sketch
+
 Relate Deep Shallow to Natural Transient
 
 Runtime tools = wrapper, shape check ... ahead-of-time compiler, no jit
