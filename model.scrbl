@@ -1079,8 +1079,11 @@ Pairs and pair elimination forms follow a similar pattern.
 The completion rules for other expressions simply transform their subexpressions
 and are deferred to an appendix.
 
+@; TODO sounds like a great improvement!!!
+@; what about 2 kinds of shallow function? (\(x:o) ...) (\(scan x:o)[check] ...) ?
 @bold{Note}: The completion of a @|sshallow| function is very simple---to the point of
-being misleading---because the evaluation language is too simple.
+being misleading---because the evaluation syntax has no way to represent domain
+checks.
 In a realistic language, @|sshallow| functions must translate to an un-annotated
 function that first @|sscan|s the shape of its input and then proceeds with the
 body expression.
@@ -1132,7 +1135,7 @@ support a pass that eliminates redundant checks.
   & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
   \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
-  \eappu{(\emon{\tfun{\stype_0}{\stype_1}}{\svalue_0})}{\svalue_1} & \snr
+  \eappu{(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})}{\svalue_1} & \snr
   & \ewrap{\stype_1}{(\eappu{\svalue_0}{(\ewrap{\stype_0}{\svalue_1})})}
   \\[1.0ex]
   \enoop{\svalue_0} & \snr
@@ -1148,13 +1151,13 @@ support a pass that eliminates redundant checks.
   \\[1.0ex]
   \ewrap{\stype_0}{\svalue_0} & \snr
   & \swraperror
-  \\\sidecond{if $\fshapematch{\fshape{\sshape_0}}{\svalue_0}$}
+  \\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
   \\[1.0ex]
-  \ewrap{\tfun{\stype_0}{\stype_1}}{\svalue_0} & \snr
-  & \emon{\tfun{\stype_0}{\stype_1}}{\svalue_0}
+  \ewrap{(\tfun{\stype_0}{\stype_1})}{\svalue_0} & \snr
+  & \emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0}
   \\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
   \\[1.0ex]
-  \ewrap{\tpair{\stype_0}{\stype_1}}{\epair{\svalue_0}{\svalue_1}} & \snr
+  \ewrap{(\tpair{\stype_0}{\stype_1})}{\epair{\svalue_0}{\svalue_1}} & \snr
   & \epair{\ewrap{\stype_0}{\svalue_0}}{\ewrap{\stype_1}{\svalue_1}}
   \\[1.0ex]
   \ewrap{\stype_0}{\svalue_0} & \snr
@@ -1217,7 +1220,7 @@ support a pass that eliminates redundant checks.
   & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
-  \obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2}
+  \obars{\eappu{\obbars{\emon{(\tfun{\stype_0}{\stype_1})}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2}
   & \snr
   \\\sidecond{\qquad\(\obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}\)}
   \\[1.0ex]
@@ -1238,14 +1241,14 @@ support a pass that eliminates redundant checks.
   \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
   & \snr
   & \obars{\swraperror}{\sowner_1}
-  \\\sidecond{if $\fshapematch{\fshape{\sshape_0}}{\svalue_0}$}
+  \\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
   \\[1.0ex]
-  \obars{\ewrap{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  \obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
   & \snr
-  & \obars{\emon{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \obars{\emon{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
   \\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
   \\[1.0ex]
-  \obars{\ewrap{\tpair{\stype_0}{\stype_1}}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1}
+  \obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1}
   & \snr
   \\\sidecond{\qquad\(\obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)}
   \\[1.0ex]
@@ -1305,27 +1308,57 @@ support a pass that eliminates redundant checks.
 
 @section[#:tag "sec:model:model:reduction"]{Reduction Relation}
 
-The semantics of the evaluation syntax is based on one notion of reduction (@figure-ref{fig:model:rr}).
-@; ... like how MT reuses host reduction, but don't get too excited we still play tricks with transient
-Aside from the domain checks for @|sshallow|-typed functions, the reduction
-rules are straightforward.
-Unary and binary operations rely on the @${\sdelta} metafunction to compute a result (@figureref{fig:model:extra-rr}).
-Basic function application substitutes an argument value into a function body.
-Guard-wrapped function application decomposes into two wrap boundaries: one
- for the input and another for the result.
-Lastly, boundary terms optionally perform a run-time check:
-a @|snoop| boundary performs no check and lets any value cross;
-a @|sscan| boundary checks the top-level shape of a value against the expected
-type; and
-a @|swrap| boundary checks top-level shapes and either installs a wrapper
-around a higher-order value or recursively checks a data structure.
+@Figure-ref{fig:model:rr} presents a notion of reduction for the evaluation
+syntax.
+Each rule @${(\sexpr \snr \sexpr)} in the figure relates two expressions.
+Rules that share a common domain additionally come with a test to disambiguate.
+These tests often use basic set theory to pattern-match on expressions;
+for example, the test @${(\svalue_0 \in \efun{\svar}{\sexpr})} holds when
+the value @${\svalue_0} is an unannotated lambda.
+The rules also depend on two metafunctions, @${\sdelta} and @${\sshapematch},
+that are defined in @figure-ref{fig:model:extra-rr}.
 
-@Figure-ref{fig:model:extra-rr} defines evaluation metafunctions.
-The @${\sdelta} function gives semantics to primitives.
-The @${\sshapematch} function matches a type shape against the outer structure of a value.
+The reduction rules for unary and binary operations apply the @${\sdelta}
+metafunction and halt with a tag error if @${\sdelta} is undefined.
+In general, @${\sdelta} models the behavior of a run-time system that works
+at a lower level of abstraction than the evaluation language.
+For unary operations, @${\sdelta} extracts an element from a pair.
+For binary operations, @${\sdelta} performs arithmetic.
+
+The rules for function application check that the first expression is a
+function and typically substitute the argument expression into the function
+body.
+If the function has a type-shape annotation (@${\sshape}), then an additional
+shape check validates the argument.
+And if the function is enclosed in a guard wrapper, then the application
+unfolds into two @${\swrap} checks: one for the argument and one for
+the result.
+Functions that are wrapped in several guards must unfold an equal number of
+times.
+
+The remaining rules state the behavior of run-time checks.
+A @|snoop| boundary performs no check and lets any value across.
+A @|sscan| boundary checks the top-level shape of an incoming value against the
+expected type-shape, and halts if the two disagree.
+Lastly, a @|swrap| boundary checks the top-level shape of a value then proceeds
+based on the type.
+For function types, a @${\swrap} installs a guard wrapper.
+For pairs, a @${\swrap} validates both components and creates a new pair value.
+For base type, a shape check is enough for a comprehensive run-time check.
+
+The overall semantics for the evaluation syntax is given by the reflexive,
+transitive closure of the compatible closure of @${\snr} relative to the
+evaluation contexts from @figure-ref{fig:model:eval-syntax}@~cite{fff-2009}.
+Note that these left-to-right contexts are such that each expression has
+a unique redex.
 
 
 @section[#:tag "sec:model:model:ownership"]{Single-Owner Consistency}
+
+@; TODO 2021-06-10
+@; - labeling an art, gotta avoid depending on labels, dropping, bad propagating
+@; - but have laws to guide
+@; - 
 
 @|sDeep| types are characterized by complete monitoring (@section-ref{sec:background}).
 To state a complete monitoring theorem, the model needs a labeled syntax,
