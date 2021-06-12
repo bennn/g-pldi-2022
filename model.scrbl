@@ -285,7 +285,7 @@ integers.
 %    \\
 %    \stypeenv \sST \ssurface_1 : \tdyn
 %  }{
-%    \stypeenv \sST \eapp{\ssurface_0}{\ssurface_1} : \tdyn
+%    \stypeenv \sST \eappu{\ssurface_0}{\ssurface_1} : \tdyn
 %  }
 %
 %  \inferrule*{
@@ -293,7 +293,7 @@ integers.
 %    \\
 %    \stypeenv \sST \sexpr_1 : \stype_0
 %  }{
-%    \stypeenv \sST \eapp{\sexpr_0}{\sexpr_1} : \stype_1
+%    \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \stype_1
 %  }
 %
   \inferrule*{
@@ -1171,6 +1171,95 @@ support a pass that eliminates redundant checks.
 
 }|]
 
+@figure*[
+  "fig:model:rrlbl"
+  @elem{Labeled semantics for the evaluation language}
+
+@exact|{
+\begin{rrarray}
+  \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obars{\stagerror}{\sowner_1}
+  \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sunop, \svalue_0)$ is undefined}
+  \\[1.0ex]
+  \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}
+  \\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is defined}
+  \\[1.0ex]
+  \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
+  & \snr
+  & \obars{\stagerror}{\sowner_2}
+  \\\sidecond{if $\svalue_i \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is undefined}
+  \\[1.0ex]
+  \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
+  & \snr
+  & \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}
+  \\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is defined}
+  \\[1.0ex]
+  \obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1}
+  & \snr
+  & \obars{\stagerror}{\sowner_1}
+  \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \efun{\tann{\svar}{\sshape}}{\sexpr} \cup \emon{\stype}{\svalue}$}
+  \\[1.0ex]
+  \obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+  & \snr
+  & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
+  \\[1.0ex]
+  \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+  & \snr
+  & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
+  \\[1.0ex]
+  \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+  & \snr
+  & \obars{\sscanerror}{\sowner_1}
+  \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
+  \\[1.0ex]
+  \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+  & \snr
+  & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
+  \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
+  \\[1.0ex]
+  \obars{\eappu{\obbars{\emon{(\tfun{\stype_0}{\stype_1})}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2}
+  & \snr
+  & \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}
+  \\[1.0ex]
+  \obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1}
+  & \snr
+  & \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
+  \\[1.0ex]
+  \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obars{\sscanerror}{\sowner_1}
+  \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
+  \\[1.0ex]
+  \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
+  \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
+  \\[1.0ex]
+  \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obars{\swraperror}{\sowner_1}
+  \\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
+  \\[1.0ex]
+  \obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obars{\emon{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  \\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
+  \\[1.0ex]
+  \obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}
+  \\[1.0ex]
+  \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+  & \snr
+  & \obars{\svalue_0}{\sowner_1}
+  \\\sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
+\end{rrarray}
+
+}|]
+
 
 @figure*[
   "fig:model:extra-rr"
@@ -1222,7 +1311,8 @@ support a pass that eliminates redundant checks.
 @Figure-ref{fig:model:rr} presents a notion of reduction for the evaluation
 syntax.
 Each rule @${(\sexpr \snr \sexpr)} in the figure relates two expressions.
-Rules that share a common domain additionally come with a test to disambiguate.
+Rules that share a syntactically-equal domain come with additional test
+for the domain expression.
 These tests often use basic set theory to pattern-match on expressions;
 for example, the test @${(\svalue_0 \in \efun{\svar}{\sexpr})} holds when
 the value @${\svalue_0} is an unannotated lambda.
@@ -1264,10 +1354,276 @@ Note that these left-to-right contexts are such that each expression has
 a unique redex.
 
 
+
+@section[#:tag "sec:model:model:ownership"]{Labeled Reduction Relation, @|sDeep| Label Consistency}
+
+The model requires two final definitions to enable a syntactic analysis of
+complete monitoring: a label-annotated reduction relation and a
+consistency judgment that validates the labels.
+Labels provide a specification of who owns what in a running program.
+More precisely, the labels on an expression describe the source-language
+modules that are responsible for the evaluation-time behavior of the expression.
+A consistently-labeled expression keeps @|sdeep|-typed code separate
+from @|sshallow| and @|suntyped| code.
+Informally, consistent labelling is possible if a semantics fully enforces
+the types that it claims are @|sdeep|.
+
+@Figure-ref{fig:model:rrlbl} presents a labeled notion of reduction for the
+evaluation language.
+By design, the reduction rules are identical to the basic rules from
+@figure-ref{fig:model:rr} except for superscript labels and additional parentheses.
+Labels are metadata; they do not change the underlying behavior of a reduction rule.
+The labels on the left-hand expression of each rule give names to the
+parties responsible for any relevant subexpressions.
+The labels on the right-hand expression show how responsibilities change
+in response to the reduction step.
+For example, an untyped function application (@${\eappu{(\efun{\svar_0}{\sexpr_0})}{\svalue_0}})
+substitutes an argument value into the function body.
+Because of the substitution, the parties that were responsible for the
+function become responsible for both the value and for the expression that
+the function computes.
+Labels typically accumulate, but disappear after a successful run-time check
+For example, the final @${\swrap} rule says that party @${\sowner_1} may
+assume full responsibility of numbers that reach a well-typed boundary.
+
+@bold{Note}: The design of a labeled reduction relation is like any other
+definition in that it requires ingenuity to create and close scrutiny to trust.
+To help readers gain an intuition about what makes for a good labeling,
+the appendix presents the guidelines that the authors followed to create
+@figure-ref{fig:model:rrlbl}.
+@bold{End Note}
+
+@figure*[
+  "fig:model:label-syntax"
+  @elem{Labelled evaluation syntax}
+
+@list[
+@exact|{
+\begin{langarray}
+  \sexpr & \slangeq &
+    \svar \mid \svalue \mid \epair{\sexpr}{\sexpr}
+    \mid \eunop{\sexpr} \mid
+    \ebinop{\sexpr}{\sexpr} \mid \eappu{\sexpr}{\sexpr} \mid \serror \mid
+  \\ & &
+    \ewrap{\stype}{\obars{\sexpr}{\sowner}}
+    \mid \escan{\sshape}{\obars{\sexpr}{\sowner}}
+    \mid \enoop{\obars{\sexpr}{\sowner}}
+    \mid \obars{\sexpr}{\sowner}
+  \\
+  \svalue & \slangeq &
+    \sint \mid \epair{\svalue}{\svalue}
+    \mid \efun{\svar}{\sexpr}
+    \mid \efun{\tann{\svar}{\stype}}{\sexpr}
+    \mid \efun{\tann{\svar}{\sshape}}{\sexpr}
+    \mid \emon{\stype}{\obars{\svalue}{\sowner}}
+    \mid \obars{\svalue}{\sowner}
+  \\
+  \sctx & \slangeq &
+    \ldots \mid \obars{\sctx}{\sowner}
+  \\
+  \sowner & \slangeq &
+    \sdowner_0 \mid \sdowner_1 \mid \ldots \mid
+  %\\ & &
+    \ssowner_0 \mid \ssowner_1 \mid \ldots \mid
+  %\\ & &
+    \suowner_0 \mid \suowner_1 \mid \ldots
+  \\
+  \sownerlist & \slangeq &
+    \mbox{sequence of ownership labels ($\sowner$)}
+  \\
+  \sownerenv & \slangeq &
+    \cdot \mid \fcons{\tann{\svar}{\sowner}}{\sownerenv}
+\end{langarray}
+}|
+@centered{Abbreviation: @$|{\obars{\cdots\obars{\sexpr_0}{\sowner_0}\cdots}{\sowner_n} = \obbars{\sexpr_0}{\fcons{\sowner_0}{\fcons{\cdots}{\sowner_n}}}}|}
+]]
+
+Technically, the addition of labels to the evaluation language calls for an
+entirely new syntax.
+@Figure-ref{fig:model:label-syntax} spells out the details.
+The expression form @${\obars{\sexpr}{\sowner}} attaches a label to any
+subexpression.
+A similar value form @${\obars{\svalue}{\sowner}} lets any value appear
+under an arbitrary number of labels.
+Labels correspond to modules from the surface syntax, and therefore combine
+both a kind (@|sdeep|, @|sshallow|, or @|suntyped|) and a unique identifying
+number.
+Beyond these straightforward changes, there are two important points
+about the labeled syntax:
+@itemlist[
+@item{
+All boundaries require a label for their subexpression.
+This means that the @${\svalue_0} in the following four patterns must be
+a labeled value: @${(\ewrap{\stype_0}{\sexpr_0})},
+@${(\escan{\sshape_0}{\sexpr_0})}, @${(\enoop{\sexpr_0})}, and @${(\emon{\stype_0}{\svalue_0})}.
+@linebreak{}
+}
+@item{
+To minimize parenthesis and superscripts, the abbrevation @${\obbars{\cdot}{\cdot}}
+captures a sequence of labels.
+For example, the labeled value @${\obars{\obars{\obars{4}{\sowner_0}}{\sowner_1}}{\sowner_2}}
+matches the pattern @${\obbars{\svalue_0}{\sownerlist_0}} with @${\svalue_0 = 42}
+and @${\sownerlist_0 = \fcons{\sowner_0}{\fcons{\sowner_1}{\sowner_2}}}.
+}
+]
+
+@Figure-ref{fig:model:ownership-consistency} presents a consistency
+judgment for labeled expressions.
+The judgment allows any mix of @|sshallow| (@${\sS}) and @|suntyped| (@${\sU})
+labels around an expression, but restricts the use of @|sdeep| (@${\sD}) labels.
+Concretely, the judgment analyzes an expression relative to a context label
+and an environment (@${\sownerenv}).
+Any variables must have a binding in the label environment that matches the
+context label.
+Most expressions simply need consistent subterms.
+Boundary expressions and guards values are switch points; these terms
+are consistent if their subterm matches the context label that appears
+inside the boundary.
+Lastly, the rules for labeled expressions describe the allowed mixtures.
+A @|sdeep|-labeled expression may have other @|sdeep| labels, but nothing else.
+@|sShallow| and @|suntyped|-labeled expressions can mix together.
+Hence the name @emph{@|sdeep|-label consistency} describes what the judgment
+checks for.
+
+
+@figure*[
+  "fig:model:ownership-consistency"
+  @elem{Single-owner consistency}
+
+@exact|{
+\begin{mathpar}
+  \inferrule*{
+    \tann{\svar_0}{\sowner_0} \in \sownerenv_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \svar_0
+  }
+
+  \inferrule*{
+  }{
+    \sowner_0; \sownerenv_0 \sWL \sint_0
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+    \\
+    \sowner_0; \sownerenv_0 \sWL \sexpr_1
+  }{
+    \sowner_0; \sownerenv_0 \sWL \epair{\sexpr_0}{\sexpr_1}
+  }
+
+  \inferrule*{
+    \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \efun{\svar_0}{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \eunop{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+    \\
+    \sowner_0; \sownerenv_0 \sWL \sexpr_1
+  }{
+    \sowner_0; \sownerenv_0 \sWL \ebinop{\sexpr_0}{\sexpr_1}
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+    \\
+    \sowner_0; \sownerenv_0 \sWL \sexpr_1
+  }{
+    \sowner_0; \sownerenv_0 \sWL \eappu{\sexpr_0}{\sexpr_1}
+  }
+
+  \inferrule*{
+  }{
+    \sowner_0; \sownerenv_0 \sWL \serror
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \enoop{\obars{\sexpr_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \escan{\sshape_0}{\obars{\sexpr_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \ewrap{\stype_0}{\obars{\sexpr_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \svalue_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \emon{\stype_0}{\obars{\svalue_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sdowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sdowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\sdowner_1}
+  }
+
+  \inferrule*{
+    \ssowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \ssowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\ssowner_1}
+  }
+
+  \inferrule*{
+    \suowner_0; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \ssowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\suowner_0}
+  }
+
+  \inferrule*{
+    \suowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \suowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\suowner_1}
+  }
+
+  \inferrule*{
+    \ssowner_0; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \suowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\ssowner_0}
+  }
+
+\end{mathpar}
+}|]
+
+
+
 @section[#:tag "sec:model:model:theorems"]{Properties}
 
-The primary meta-theoretic results are about type soundness and
- complete monitoring.
+At last, the time has come to substantiate the model's claim that it provides
+@|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
+Cleary the surface language defines three kinds of code and the evaluation
+language lets differently-typed code interact, but it is unclear whether
+the mixed language satisfies the properties that characterize @|sdeep| and
+@|sshallow| types.
+
 Type soundness predicts the possible outcomes of a well-typed expression.
 Naturally, these outcomes depend on the ``strength'' of the static types;
  for example, @|suntyped| code has weaker guarantees than @|sshallow| code.

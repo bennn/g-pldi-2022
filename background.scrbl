@@ -24,6 +24,7 @@ TODO
   + @|sDeep| types are characterized by complete monitoring
 
 single-owner consistency ... dont put laws here but do add a sketch
+ ... syntactic analysis, 
 
 Relate Deep Shallow to Natural Transient
 
