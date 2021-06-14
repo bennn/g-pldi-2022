@@ -1715,123 +1715,124 @@ Both @${\sexpr_0} and @${\sexpr_1} refer to labeled expressions.
   \item[Case:]
     \(\obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\stagerror}{\sowner_1}\)
   \item[]
-    by the definition, \(\sowner_1; \cdot \sWL \obars{\stagerror}{\sowner_1}\).
+    by the definition, \(\sowner_1; \cdot \sWL \obars{\stagerror}{\sowner_1}\)
 
   \item[Case:]
     \(\obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \subitem
     \begin{enumerate}
     \item
-      $\sownerlist_0$ is either all \sdeep{} labels or a mix of \sshallow{} and \suntyped{}, by single-owner consistency of the redex.
+      $\sownerlist_0$ is either all \sdeep{} labels or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
     \item
       similarly, $\sowner_1$ must match $\sownerlist_0$
     \item
-      $\svalue_0$ is a pair, because $\sdelta$ is defined on it.
+      $\svalue_0$ is a pair, because $\sdelta$ is defined on it
     \item
-      both components of $\svalue_0$ are well-labeled, again by single-owner consistency on the redex.
+      both components of $\svalue_0$ are well-labeled, again by \sdeep{}-label consistency on the redex
     \item
-      by the definition of $\sdelta$.
+      by the definition of $\sdelta$
     \end{enumerate}
 
   \item[Case:]
     \(\obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2} \snr \obars{\stagerror}{\sowner_2}\)
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \item[Case:]
     \(\obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2} \snr \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}\)
   \item[]
-    by the definition of $\sWL$ and $\sdelta$; note that the binary operators are not elimination forms.
+    by the definition of $\sWL$ and $\sdelta$; note that the binary operators are not elimination forms in the model, thus the number
+    computed by $\sdelta$ does not acquire the labels on $\svalue_0$ and $\svalue_1$
 
   \item[Case:]
     \(\obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1} \snr \obars{\stagerror}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \item[Case:]
     \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \subitem
     \begin{enumerate}
     \item\label{step:model:cm:1}
-      $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by single-owner consistency of the redex.
+      $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
     \item\label{step:model:cm:2}
-      $\sowner_2; \cdot \sWL \svalue_0$, also by single-owner consistency of the redex.
+      $\sowner_2; \cdot \sWL \svalue_0$, also by \sdeep{}-label consistency of the redex
     \item
-      $\flast{\sownerlist_0}; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}.
+      $\flast{\sownerlist_0}; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}
     \item
-      $\flast{\sownerlist_0}; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by single-owner consistency of the redex.
+      $\flast{\sownerlist_0}; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by \sdeep{}-label consistency of the redex
     \item
-      by a substitution lemma.
+      by a substitution lemma
     \end{enumerate}
 
   \item[Case:]
     \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
-    similar to the previous case.
+    similar to the previous case
 
   \item[Case:]
     \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obars{\sscanerror}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \item[Case:]
     \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
-    similar to the other substitution cases.
+    similar to the other substitution cases
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snr\)
-    \\\qquad\(\obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}\)
+    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snr
+      \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}\)
   \subitem
     \begin{enumerate}
     \item
-      $\sowner_0; \cdot \sWL \svalue_0$, by single-owner consistency of the redex.
+      $\sowner_0; \cdot \sWL \svalue_0$, by \sdeep{}-label consistency of the redex
     \item
-      $\sowner_2; \cdot \sWL \svalue_1$, again by the redex.
+      $\sowner_2; \cdot \sWL \svalue_1$, again by \sdeep{}-label consistency of the redex
     \item
-      $\sownerlist_1$ is either all \sdeep{} or a mix of \sshallow{} and \suntyped{}, again by the redex.
+      $\sownerlist_1$ is either all \sdeep{} or a mix of \sshallow{} and \suntyped{}, again by the redex
     \item
-      by the definition of $\sWL$.
+      by the definition of $\sWL$
     \end{enumerate}
 
   \item[Case:]
     \(\obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1} \snr \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
     by the definition of $\scompile$, because a $\snoop{}$ boundary connects either:
-     two \sdeep{} components, two \sshallow{} components, two \suntyped{} components, or one \sshallow{} and one \suntyped{} component.
+     two \sdeep{} components, two \sshallow{} components, two \suntyped{} components, or one \sshallow{} and one \suntyped{} component
 
   \item[Case:]
     \(\obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\sscanerror}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \item[Case:]
     \(\obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
-    by the definition of $\scompile$, because a $\sscan{}$ boundary only links an \suntyped{} component to a \sshallow{} component.
+    by the definition of $\scompile$, because a $\sscan{}$ boundary only links an \suntyped{} component to a \sshallow{} component
 
   \item[Case:]
     \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\swraperror}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\ewrap{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\emon{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}\)
+    \(\obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\emon{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\ewrap{\tpair{\stype_0}{\stype_1}}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snr\)
-    \\\qquad\(\obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)
+    \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snr
+      \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$.
-    Note that the rule moves the elements of the pair in the redex into a new pair in the contractum.
+    by the definition of $\sWL$;
+    note that the rule moves the elements of the pair in the redex into a new pair in the contractum
 
   \item[Case:]
   \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\svalue_0}{\sowner_1}\)
   \\ where $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$ 
   \item[]
-    by the definition of $\sWL$.
+    by the definition of $\sWL$
 
   \end{description}
 \end{proofsketch}
