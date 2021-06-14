@@ -48,7 +48,7 @@
 \newtheorem{example}[theorem]{Example}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
-\newenvironment{proofsketch}{\renewcommand{\proofname}{Proof Idea}\begin{proof}}{\end{proof}}
+\newenvironment{proofsketch}{\renewcommand{\proofname}{Proof Sketch}\begin{proof}}{\end{proof}}
 
 \newcommand{\lbl}[2]{\noindent\parbox[t]{\columnwidth}{#1\\#2}}
 \newenvironment{rrarray}{\(\begin{array}{l@{\hspace{0.5em}}c@{\hspace{0.5em}}l}}{\end{array}\)}
@@ -355,6 +355,7 @@
 \newcommand{\sDeep}{Deep}
 \newcommand{\sShallow}{Shallow}
 \newcommand{\sUntyped}{Untyped}
+\newcommand{\sTS}{\propfont{TS}}
 
 \newcommand{\ownerarrow}{\Uparrow}
 \newcommand{\sownerarrow}{\ownerarrow}
@@ -545,7 +546,7 @@
 \newcommand{\fshape}[1]{\mktwoapp{\sshapecheck}{(#1)}}
 \newcommand{\ftypemap}[1]{\mktwoapp{\stypemap}{(#1)}}
 \newcommand{\ftypemapshape}[1]{\mktwoapp{\stypemapshape}{(#1)}}
-\newcommand{\fTS}[1]{\mktwoapp{\propfont{TS}}{(#1)}}
+\newcommand{\fTS}[2]{\mkthreeapp{\sTS}{(#1,}{#2)}}
 \newcommand{\finhole}[2]{#1[#2]}
 \newcommand{\fdefined}[1]{#1 \mbox{ is defined}}
 \newcommand{\fshapematch}[2]{\mktwoapp{\sshapematch}{(#1, #2)}}

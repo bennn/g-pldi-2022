@@ -1488,7 +1488,7 @@ checks for.
 
 @figure*[
   "fig:model:ownership-consistency"
-  @elem{Single-owner consistency}
+  @elem{@|sDeep|-label consistency}
 
 @exact|{
 \begin{mathpar}
@@ -1617,46 +1617,37 @@ checks for.
 
 @section[#:tag "sec:model:model:theorems"]{Properties}
 
-At last, the time has come to substantiate the model's claim that it provides
-@|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
-Cleary the surface language defines three kinds of code and the evaluation
-language lets differently-typed code interact, but it is unclear whether
-the mixed language satisfies the properties that characterize @|sdeep| and
-@|sshallow| types.
+The time has come to test the model's claim that it allows safe interactions
+among @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
+Cleary the surface language defines three kinds of code and
+the evaluation language lets differently-typed code interact,
+but it is unclear whether the mixed language satisfies the properties that
+characterize @|sdeep| and @|sshallow| types.
+@|sDeep| code should provide a strong type soundness guarantee and
+complete monitoring.
+@|sShallow| code should satisfy a weak type soundness.
 
-Type soundness predicts the possible outcomes of a well-typed expression.
-Naturally, these outcomes depend on the ``strength'' of the static types;
- for example, @|suntyped| code has weaker guarantees than @|sshallow| code.
-Complete monitoring asks whether single-owner consistency is an invariant;
- if so, then programmers can trust @|sdeep| types as behavioral guarantees.
+@;Naturally, these outcomes depend on the ``strength'' of the static types;
+@; for example, @|suntyped| code has weaker guarantees than @|sshallow| code.
+@;Complete monitoring asks whether single-owner consistency is an invariant;
+@; if so, then programmers can trust @|sdeep| types as behavioral guarantees.
 
-The statement of type soundness relies on one new notation and a family of
- metafunctions.
-The notation @${\ssurface_0 \srr \sexpr_0} defines evaluation for surface
- expressions; the meaning is that @${\ssurface_0} is well-typed somehow
- (@${\fexists{\stspec}{\sST \ssurface_0 : \stspec}}),
- compiles to an evaluation expression (@${\sST \ssurface_0 : \stspec \scompile \sexpr_1}),
- and then the compiled expression steps to the result (@${\sexpr_1 \srr \sexpr_0}).
-The metafunctions---@${\stypemapzero}, @${\stypemapshape}, and @${\stypemapone}---map
- surface-language types to evaluation types.
-One function, @${\stypemapshape}, extends the similarly-name function from
- @figureref{fig:model:shallow-type} to map the unitype @${\tdyn} to itself.
-The others are simple: @${\stypemapzero} maps all types to @${\tdyn}
- and @${\stypemapone} is the identity.
-These tools enable a concise, parameterized statement of type soundness.
-
-Note that type soundness does not rule out any particular errors.
-Two extensions could enable a finer statement:
- (1) split the one notion of reduction into three and introduce new errors
- for invariant failues; (2) introduce three kinds of evaluation context
- and show that steps inside typed code do not raise tag errors.
-@citet{gdf-draft-2020} demonstrate the first method.
-@citet{gf-icfp-2018} demonstrate the second.
+In general, type soundness predicts the possible outcomes of a well-typed expression.
+Because the surface language allows three kinds of typed expression
+(@|sdeep|, @|sshallow|, and @|suntyped|), the following statement of type
+soundness is parameterized over both a kind @${\slang} and a characterization
+@${\stypemap} of possible outcomes.
+Additionally, the notation @${\ssurface_0 \srr \sexpr_0} defines evaluation for surface
+ expressions.
+The meaning is that @${\ssurface_0} is well-typed
+ (@${\fexists{\stspec}{\sST \ssurface_0 : \stspec}}) and
+ compiles to an evaluation expression (@${\sST \ssurface_0 : \stspec \scompile \sexpr_1})
+ that steps to the result (@${\sexpr_1 \srr \sexpr_0}).
 
 @exact|{
-\begin{definition}[TS$(\stypemap)$]
+\begin{definition}[$\fTS{\slang}{\stypemap}$]
   Language\ $\slang$
-  satisfies\ $\fTS{\stypemap}$
+  satisfies\ $\fTS{\slang}{\stypemap}$
   if for all\ $\ssurface_0$
   such that\ $\sST \ssurface_0 : \stspec$
   holds, one of the following holds:
@@ -1668,31 +1659,43 @@ Two extensions could enable a finer statement:
 \end{definition}
 }|
 
+@|noindent|Note that @${\sTS} does not rule out any particular errors.
+Two methods could enable a finer statement:
+ (1) split the evaluation-language notion of reduction into three notions
+ and introduce new errors to distinguish invariant failures from allowed tag errors;
+ or (2) introduce three kinds of evaluation context
+ and show that reductions in typed code do not raise tag errors.
+@citet{gdf-draft-2020} demonstrate the first method.
+@citet{gf-icfp-2018} demonstrate the second.
+
+There are three important characterization functions @${\stypemap} for the analysis:
+ @${\stypemapzero} maps every surface type to @${\tdyn};
+ @${\stypemapshape} maps types to shapes (same as @${\sshapecheck} from @figure-ref{fig:model:shallow-type})
+ and the unitype @${\tdyn} to itself;
+ and @${\stypemapone} is the identity function on types and @${\tdyn}.
+
 @exact|{
 \begin{theorem}[type soundness]\leavevmode
   \begin{itemize}
-    \item Language\ $\sU$ satisfies\ $\fTS{\stypemapzero}$
-    \item Language\ $\sS$ satisfies\ $\fTS{\stypemapshape}$
-    \item Language\ $\sT$ satisfies\ $\fTS{\stypemapone}$
+    \item Language\ $\sU$ satisfies\ $\fTS{\sU}{\stypemapzero}$
+    \item Language\ $\sS$ satisfies\ $\fTS{\sS}{\stypemapshape}$
+    \item Language\ $\sD$ satisfies\ $\fTS{\sD}{\stypemapone}$
   \end{itemize}
 \end{theorem}
-\begin{proof}
-  \Lemmaref{lemma:model:completion} guarantees that the compiled form
-   of the surface expression is well-typed.
-  The rest follows from straightforward progress and preservation lemmas for the evaluation typing judgments.
-  \Lemmaref{lemma:model:delta} is essential to preservation for primitive operations.
-  Lemmas~\ref{lemma:model:su} and~\ref{lemma:model:boundary} are key aspects of preservation for boundary terms.
-\end{proof}
+\begin{proofsketch}
+ By three lemmas for progress, preservation, and compilation (deferred to the appendix).
+ The compilation lemma says that every well-typed surface expression compiles
+ to a well-typed evaluation expression.
+\end{proofsketch}
 }|
 
-Complete monitoring is technically a statement about labeled expressions
- and a label-propagating reduction relation.
-But, because the propagating reduction is derived from the basic reduction
- relation in a straightforward manner, our theorem statement uses the
- basic symbol (@${\srr}).
-Likewise, both @${\sexpr_0} and @${\sexpr_1} refer to a labeled variant
- of an evaluation-language expression.
-If no such labeling exist for a term, then the theorem holds vacuously.
+Complete monitoring guarantees that the evaluation language has control
+over every interaction between @|sdeep|-typed code and weaker code.
+The following theorem captures this intuition by asking whether the labels
+that arise in evaluation are consistent according to the @${\sWL} judgment
+(@figure-ref{fig:model:ownership-consistency}).
+Both @${\sexpr_0} and @${\sexpr_1} refer to labeled expressions.
+@; if no labeling for (compiled s0) exists, then vacuously true, victory
 
 @exact|{
 \begin{theorem}[complete monitoring]
@@ -1702,7 +1705,7 @@ If no such labeling exist for a term, then the theorem holds vacuously.
   and\ $\sexpr_0 \srr \sexpr_1$
   then\ $\sowner_0; \cdot \Vdash \sexpr_1$.
 \end{theorem}
-\begin{proof}
+\begin{proofsketch}
   By a preservation argument.
   The proofs for each basic reduction step are sketched below.
   These depend on two metafunctions: $\srev$ reverses a sequence of labels
@@ -1831,7 +1834,7 @@ If no such labeling exist for a term, then the theorem holds vacuously.
     by the definition of $\sWL$.
 
   \end{description}
-\end{proof}
+\end{proofsketch}
 }|
 
 
