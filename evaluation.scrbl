@@ -28,14 +28,36 @@
 @;   * Any => Procedure => (f x) ... may require static typing changes to really improve
 @; - focus on worst case for performance
 
-@title[#:tag "sec:evaluation"]{Evaluation}
+@title[#:tag "sec:evaluation"]{Exceeding Expectations}
 
-A mix of Deep and Shallow types is better than either alone.
+The integration of @|sDeep| and @|sShallow| Typed Racket offers substantial
+benefits over either one alone:
+@itemlist[
+@item{
+  Switching from @|sshallow| to @|sdeep| strengthens the formal guarantees
+  for a block of code.
+  A one-line change to the @tt{#lang line} improves types from local spot-checks
+  to claims that hold throughout the program, including in untyped modules.
+}
+@item{
+  @|sShallow| Racket can express new combinations of typed and untyped code
+  because it enforces weaker guarantees (@sectionref{sec:evaluation:expressiveness}).
+  The new combinations offer a surprising amount of flexibility,
+  and enable several desirable programs that are inexpressible in
+  @|sDeep| Racket.
+}
+@item{
+  Together, the combination of @|sDeep| and @|sShallow| improves the worst-case
+  overhead of mixing typed and untyped code (@sectionref{sec:evaluation:performance}).
+  In fully-typed programs, @|sdeep| types add no cost and often run faster
+  than untyped code because of the type-directed optimizer.
+  In mixed-typed programs, @|sshallow| avoids the high overheads that
+  can arise from @|sdeep| contracts.
+}
+]
 
-The integration of @|sShallow| Racket and @|sDeep| Racket has implications for
- expressiveness (@sectionref{sec:evaluation:expressiveness}) and performance (@sectionref{sec:evaluation:performance}).
-Switching between these two type-enforcement strategies can help programmers
- express new designs and avoid huge performance costs.
+
+
 
 
 @section[#:tag "sec:evaluation:expressiveness"]{Expressiveness}
