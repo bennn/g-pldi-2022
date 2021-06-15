@@ -15,54 +15,89 @@
 @;
 @; - for technical details, point to PR or dissertation
 
-@title[#:tag "sec:implementation"]{Implementation}
-@; TODO cite experience report
-
+@title[#:tag "sec:implementation"]{Theory to Practice: Typed Racket}
 @; 2021-04-29 do we really need to discuss typed/untyped API? could point to dissertation for details
 
-The Typed Racket compiler can incorporate Shallow types.
+Using the above model as a guide, the authors have extended Typed Racket to
+support three-way interactions among @|sdeep|, @|sshallow|, and @|suntyped| code.
+Thanks to the standard @|sdeep| semantics of Typed Racket@~cite{tf-popl-2008}
+and the recent @|sshallow| semantics@~cite{glfd-draft-2021}, the implementation
+was largely a matter of gluing code together.
+In particular, the run-time tools for @${\swrap} and @${\sscan} checks were
+readily available.
+The gluing process brought its own challenges, however, especially because
+Typed Racket includes a small API to customize @|sdeep|--@|suntyped| boundaries.
 
-@; X typed-context? hook = easy
-@; X reuse ctc + type = hard
-@; x #%module-begin, to reuse contract defs save space ... NVM
-@; X require/untyped-contract
-@; X define-typed/untyped-id
-@; X reuse G macros in S code
-@; - manual type env needs manual trust
 
-The implementation of @|sShallow| Racket begins with two new @tt{#lang}
- languages to communicate the options available to programmers.
+@section[#:tag "sec:implementation:overview"]{User-Facing API}
+
+All Racket modules begin with a @tt{#lang} declaration.
+@|sDeep| Typed Racket and @|sShallow| Racket are no different,
+thus the three-way integration gives programmers three basic choices
+for writing a new module:
 @itemlist[
 @item{
-  Modules that start with @tt{#lang typed/racket} continue to use @|sdeep| types,
-   same as earlier versions of Typed Racket;
+  @tt{#lang typed/racket/deep} provides the @|sdeep| semantics, which
+  enforces the types at module boundaries with higher-order contracts
+  (same as the @tt{typed/racket} language).
 }
 @item{
-  @tt{#lang typed/racket/deep} is a new way to opt-in to @|sdeep| types;
+  @tt{#lang typed/racket/shallow} provides a @|sshallow| semantics that
+  checks type shapes at all boundaries and all elimination forms.
 }
 @item{
-  and @tt{#lang typed/racket/shallow} provides @|sshallow| types.
-}]
-@|noindent|All three languages invoke the same type checker.
-At steps where @|sdeep| and @|sshallow| disagree,
- the compiler queries the current language to proceed.
-For example, the type-directed optimizer checks that it has @|sdeep| types
- before rewriting code based on the @|sdeep| soundness guarantee.
-@; Such queries are made possible by a module-level variable.
+  @tt{#lang racket} provides the untyped Racket semantics.
+}
+]
 
-Many parts of the modified compiler use a similar, one-or-the-other strategy
- to handle @|sdeep| and @|sshallow| types.
-This section deals with the more challenging aspects.
-Sharing variables between @|sdeep| and @|sshallow| required changes to
- type-lookup and wrapper generation (@sectionref{sec:implementation:impl:code}).
-Sharing macros requires further changes; currently, @|sdeep|-typed syntax can only
- be re-used through unsafe mechanisms (@sectionref{sec:implementation:impl:code}).
-Lastly, Typed Racket has a small API that gives programmers control
- over the @|sdeep| type enforcement strategy.
-This API needed generalizations to handle @|sshallow| types (@sectionref{sec:implementation:impl:tu}).
+Both @|sdeep| and @|sshallow| modules rely on the same type checker, thus
+programmers can easily switch between them.
+If a module is well-typed in the @|sdeep| language, then with few exceptions
+(@section-ref{sec:implementation:impl:tu}) it is well-typed in @|sshallow|.
+Same goes for the reverse direction, when changing the @tt{#lang} line
+from @|sshallow| to @|sdeep|.
+
+@|sShallow| types are more permissive than @|sdeep| types at run-time.
+Operationally, first-order checks enforce fewer properties than higher-order
+contracts.
+Thus, the set of programs that run to completion with @|sshallow| types is
+a superset of the programs that run with @|sdeep| types.
+@Section-ref{sec:evaluation:expressiveness} explores this semantic gap in detail.
 
 
-@section[#:tag "sec:implementation:impl:code"]{@|sDeep| and @|sShallow| Interaction}
+@section[#:tag "sec:implementation:internals"]{Three-way Internals}
+
+The Racket compiler processes an untyped module in two steps.
+First, the macro expander simplifies expressions within the module to
+a kernel language@~cite{f-icfp-2002,f-popl-2016}.
+Second, the compiler backend optimizes the kernel code and tranforms it to a
+native representation@~cite{fddkmstz-icfp-2018}.
+
+Standard @|sDeep| Typed Racket injects three passes between the macro expander
+and the compiler backend@~cite{tscff-pldi-2011}.
+The first pass is the type checker.
+The second pass generates contracts for module exports.
+The final pass is a type-directed optimizer@~cite{stff-padl-2012} that generates
+efficient untyped code for the compiler backend to further optimize.
+
+@|sShallow| Racket is implemented as a second mode of the Typed Racket compiler@~cite{g-dissertation-2020,glfd-draft-2021}.
+It too injects three passes between the macro expander and compiler backend,
+but with changes for the @|sshallow| semantics.
+The first pass, the type checker, remains unchanged.
+The second pass is entirely different.
+Instead of generating contracts at boundaries, @|sShallow| Racket generates
+first-order checks and additionally traverses the module to put a check around
+every potentially-unsafe elimination form.
+The final pass is an optimizer that performs a subset of the @|sdeep| optimizations.
+Any optimization the works for weak type soundness is part of the subset.
+Others, notably the dead-code elimination pass, do not apply.
+
+The unexpected challenges for the three-way implementation arose in two
+places: at the boundaries between @|sdeep| and @|sshallow| modules
+and in Typed Racket's boundary API.
+
+
+@subsection[#:tag "sec:implementation:impl:code"]{@|sDeep| and @|sShallow| Interaction}
 
 Racket supports both separate compilation and hygienic macros@~cite{f-icfp-2002}.
 Each module in a program gets compiled to a core language individually, and
@@ -112,7 +147,7 @@ In this way, only programs that depend on @|sdeep| code suffer from the expressi
  limits of wrappers.
 
 
-@section[#:tag "sec:implementation:impl:syntax"]{Syntax Re-Use}
+@subsection[#:tag "sec:implementation:impl:syntax"]{Syntax Re-Use}
 
 @|sShallow| code cannot use @|sdeep| macros.
 Re-use is desirable to avoid copying code, but it requires a static analysis
@@ -193,7 +228,7 @@ This work-around requires a manual inspection, but it is more appealing than
  forking the RackUnit library and asking programmers to choose the correct version.
 
 
-@section[#:tag "sec:implementation:impl:tu"]{@|sDeep|--@|sUntyped| Utilities}
+@subsection[#:tag "sec:implementation:impl:tu"]{@|sDeep|--@|sUntyped| Utilities}
 @; struggles = edit old code , 2 of these => new type errors
 
 Typed Racket has a small API by Neil Toronto to let programmers control boundaries
@@ -275,7 +310,7 @@ There is no way to uncover the type that a @tt{typed-f} would have, and
 
 For now, such type errors call for programmer-supplied annotations in
  the @|sshallow| client code.
-In the future, this  @;@tt{define-typed/untyped-identifier}
+In the future, the @tt{define-typed/untyped-identifier}
  form would benefit
  from a third argument that specifies behavior in @|sshallow| contexts.
 
