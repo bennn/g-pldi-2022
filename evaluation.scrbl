@@ -40,11 +40,10 @@ benefits over either one alone:
   to claims that hold throughout the program, including in untyped modules.
 }
 @item{
-  @|sShallow| Racket can express new combinations of typed and untyped code
-  because it enforces weaker guarantees (@sectionref{sec:evaluation:expressiveness}).
-  The new combinations offer a surprising amount of flexibility,
-  and enable several desirable programs that are inexpressible in
-  @|sDeep| Racket.
+  @|sShallow| types can express more programs than @|sdeep| because they
+  enforce weaker guarantees.
+  The added flexibility enables a surprising number of desirable Typed Racket
+  programs (@sectionref{sec:evaluation:expressiveness}).
 }
 @item{
   Together, the combination of @|sDeep| and @|sShallow| improves the worst-case
@@ -55,9 +54,6 @@ benefits over either one alone:
   can arise from @|sdeep| contracts.
 }
 ]
-
-
-
 
 
 @section[#:tag "sec:evaluation:expressiveness"]{Expressiveness}
