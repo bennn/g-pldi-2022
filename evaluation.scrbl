@@ -87,27 +87,21 @@ If such confusing situations arise in practice, the ability to change from
 @; - higher-order / any errors, gone
 @; - indexof ... weird result, gone
 
-Conversations with Typed Racket users have shown that @|sdeep| types can
- lead to unexpected outcomes.
-In some programs, type enforcement appears overly strict.
-In others, type enforcement is impossible because the implementation of
- @|sDeep| Racket lacks wrappers for certain kinds of values.
-Worst of all, the wrappers that @|sDeep| inserts can change hehavior.
-@|sShallow| Racket avoids all of these issues because of its weak, wrapper-free
- method of enforcing types.
+@|sShallow| Racket can express useful programs that @|sDeep| Racket
+flags as erroneous.
+At first glance, the existence of such programs is a surprise because
+the @|sdeep| semantics appears more ``correct'' than @|sshallow| in light
+of the theory (@section-ref{sec:model}).
+It turns out that the correct semantics for certain types is very restrictive,
+to the point that delayed @|sshallow| checks work better in practice
+(@section-ref{sec:evaluation:expr:any}).
+In other programs, the gap between @|sDeep| and @|sShallow| Racket is due
+technical challenge regarding higher-order contracts.
+Language designers should be aware of these issues when building a new
+@|sdeep| semantics.
 
 
-@subsection{Less-strict Any Type}
-
-@user-inspiration['(
- ("Denis Michiels"
-  "error : Attempted to use a higher-order value passed as `Any` in untyped code"
-  "2018-04-16"
-  "https://groups.google.com/g/racket-users/c/cCQ6dRNybDg/m/CKXgX1PyBgAJ")
- ("Marc Kaufmann"
-  "Typed Racket: 'Unable to protect opaque value passed as `Any`' with interesting behavior"
-  "2019-12-11"
-  "https://groups.google.com/g/racket-users/c/jtmVDFCGL28/m/jwl4hsjtBQAJ"))]
+@subsection[#:tag "sec:evaluation:expr:any"]{Less-strict Top Type}
 
 The @|sdeep| type named @tt{Any} is a normal ``top'' type at compile-time,
  but it is surprisingly strict at run-time.
@@ -143,7 +137,7 @@ If @|sshallow|-typed code tries to read a symbol from the
 Until then, the program runs.
 
 
-@subsection{No Missing Wrappers}
+@subsection[#:tag "sec:evaluation:expr:wrap"]{No Missing Wrappers}
 
 Every kind of mutable value that can appear in @|sdeep| code needs a kind of
  wrapper to protect it against untyped contexts.
@@ -179,17 +173,7 @@ Consequently, programmers gain the ability to send new types across boundaries
  and explore new mixed-typed designs.
 
 
-@subsection{Uniform Behavior}
-
-@user-inspiration['(
- ("Bertrand"
-  "Typed code from untyped code"
-  "2020-02-17"
-  "https://groups.google.com/g/racket-users/c/UD20HadJ9Ec/m/Lmuw0U8mBwAJ")
- ("John B. Clements"
-  "index-of + TR ... parametricity problem?"
-  "2019-12-15"
-  "https://groups.google.com/g/racket-users/c/ZbYRQCy93dY/m/kF_Ek0VvAQAJ"))]
+@subsection[#:tag "sec:evaluation:expr:uniform"]{Uniform Behavior}
 
 Although the purpose of @|sDeep| Racket wrappers is to reject certain operations
  without changing anything else about a program, wrappers can cause some
