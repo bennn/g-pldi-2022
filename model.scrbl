@@ -709,7 +709,7 @@ check the expected shape.
   }
 
   \inferrule*{
-    %% TODO why need this???
+    %% why need this???
     %% 2021-04-25 : because no way to check 'any' ... it should be a scan ... let's fix that
     \stypeenv \sWTU \sexpr_0 : \tdyn
   }{
@@ -994,10 +994,9 @@ check the expected shape.
 \end{mathpar}
 }|]
 
-@; TODO present as table
 @figure*[
   "fig:model:completion2"
-  @elem{Completion for module boundaries. Recall @figure-ref{fig:model:base-interaction}.}
+  @elem{Completion rules for module boundaries (@figure-ref{fig:model:base-interaction})}
 
 @exact|{
 \begin{tabular}{l@{\qquad}l}
