@@ -56,7 +56,31 @@ benefits over either one alone:
 ]
 
 
-@section[#:tag "sec:evaluation:expressiveness"]{Expressiveness}
+@section[#:tag "sec:evaluation:expressiveness"]{Guarantees by @|sDeep|}
+
+By design, @|sdeep| types enforce stronger guarantees than @|sshallow|.
+A @|sdeep| type is a valid claim about run-time behavior, plain and simple.
+No matter where a @|sdeep|-typed value ends up, the type constrains its behavior.
+A @|sshallow| type is valid only in a limited scope.
+If a value escapes to untyped or less-precisely typed (perhaps via @${\ssubt}) code,
+then its @|sshallow| type gets forgotten.
+Refer to the example in @section-ref{sec:background} to see how the weak
+@|sshallow| constraints can let an erroneous program silently compute a
+wrong result.
+
+Although the @|sshallow| semantics is new to Typed Racket, prior work
+suggests that its use will occasionally lead to confusing situations.
+@citet{lgfd-icfp-2021} performed an automated study of debugging in
+Typed Racket and found that @|sShallow| blame errors are more likely to
+reach a dead end than @|sDeep| blame errors.
+@citet{tgpk-dls-2018} conducted a survey using a hypothetical gradual language
+and reported that participants found the @|sshallow| semantics ``unexpected''
+more often than the @|sdeep| semantics.
+If such confusing situations arise in practice, the ability to change from
+@|sshallow| to @|sdeep| types may prove useful for understanding the issue.
+
+
+@section[#:tag "sec:evaluation:expressiveness"]{Expressiveness by @|sShallow|}
 @; - TODO can we fix occurrence typing? Any -> box? -> set-box! ???
 @;    ditto for objects, avoid the cast, is it worth changing the typechecker?
 @; - (Syntaxof (-> Int Int)) ... new mixed programs that TR doesn't allow
@@ -73,7 +97,7 @@ Worst of all, the wrappers that @|sDeep| inserts can change hehavior.
  method of enforcing types.
 
 
-@section{Less-strict Any Type}
+@subsection{Less-strict Any Type}
 
 @user-inspiration['(
  ("Denis Michiels"
@@ -119,7 +143,7 @@ If @|sshallow|-typed code tries to read a symbol from the
 Until then, the program runs.
 
 
-@section{No Missing Wrappers}
+@subsection{No Missing Wrappers}
 
 Every kind of mutable value that can appear in @|sdeep| code needs a kind of
  wrapper to protect it against untyped contexts.
@@ -155,7 +179,7 @@ Consequently, programmers gain the ability to send new types across boundaries
  and explore new mixed-typed designs.
 
 
-@section{Uniform Behavior}
+@subsection{Uniform Behavior}
 
 @user-inspiration['(
  ("Bertrand"
@@ -193,7 +217,7 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
  because the @|stransient| semantics does not use wrappers to enforce types.
 
 
-@section[#:tag "sec:evaluation:performance"]{Performance}
+@section[#:tag "sec:evaluation:performance"]{Performance by @|sDeep| and @|sShallow|}
 @; - worst-case table (can trace "min" line in "fig:transient:overhead"
 @; - 
 @; - ?? 2-way lattice? 3-way
@@ -212,7 +236,7 @@ Mixing @|sdeep| and @|sshallow| types in one program offers new ways of
  improving performance.
 
 
-@section[#:tag "sec:evaluation:perf:worst"]{GTP Benchmarks, Worst-Case}
+@subsection[#:tag "sec:evaluation:perf:worst"]{GTP Benchmarks, Worst-Case}
 
 @(define SHALLOW-CURRENT-BENCHMARK* '(
   sieve forth fsm fsmoo mbta morsecode zombie dungeon jpeg zordoz lnm
@@ -250,7 +274,7 @@ In short, the ``after'' case is always better and can be an arbitrarily large
 
 
 
-@section[#:tag "sec:evaluation:perf:both"]{Case Studies: @|sDeep| and @|sShallow|}
+@subsection[#:tag "sec:evaluation:perf:both"]{Case Studies: @|sDeep| and @|sShallow|}
 @; Are there any mixed lattice points, using guarded and transient, that do
 @;  better than a "pure" configuration?
 @; For a negative answer, need a lattice on top of every lattice point.
@@ -449,16 +473,5 @@ Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a
  combination of @|sdeep| and @|sshallow| types.
 }
 ])
-
-
-@section[#:tag "sec:evaluation:perf:release"]{Release Information}
-
-@|sShallow| Typed Racket is publicly available in a pull request to Typed Racket:
-@github-pull["racket" "typed-racket" "948"].
-The patch adds support for @|sshallow| types, giving Typed Racket programmers
- a choice between @|sshallow| and @|sdeep| type guarantees.
-I expect to merge the pull request early in 2021.
-After the release, I look forward to studying programmers' experience with
- the multi-faceted system.
 
 
