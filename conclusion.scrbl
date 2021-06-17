@@ -90,6 +90,21 @@ In particular, a @|sshallow| function with a confined-type domain may
 @;After the release, I look forward to studying programmers' experience with
 @; the multi-faceted system.
 
+@;@itemlist[#:style 'ordered
+@;@item{
+@;  Start by adding @|sdeep| types, because their strong guarantees may help
+@;  identify logical errors.
+@;}
+@;@item{
+@;  If performance becomes an issue, switch to @|sshallow| types and continue
+@;  adding @|sshallow| annotations to the next modules.
+@;}
+@;@item{
+@;  Once the codebase is predominantly typed, or once all high-traffic boundaries
+@;  are typed, switch back to @|sdeep| maximize performance.
+@;}
+@;]
+
 
 
 @exact|{\bibliography{bg}}|

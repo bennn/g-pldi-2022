@@ -228,7 +228,7 @@
   (list "Benchmark"
         "Worst Deep"
         "Worst Shallow"
-        "Worst D. or S."))
+        "Worst D∥S"))
 
 (define (render-mixed-worst-table row*)
   ;; TODO abstraction
@@ -242,8 +242,13 @@
              (map cleanup-mixed-row row*)))))
 
 (define (cleanup-mixed-row rr)
-  (let* ((rr (cdr rr)))
-    (cons (car rr) (map sig2 (cdr rr)))))
+  (let* ((rr (cdr rr))
+         (fst (car rr))
+         (rst* (map sig2 (cdr rr)))
+         (d (first rst*))
+         (s (second rst*))
+         (ds (third rst*)))
+    (list (car rr) d s (bold-if-winning ds d s))))
 
 (define (get-mixed-worst-table name*)
   (parameterize ([*current-cache-directory* cache-dir]
@@ -278,9 +283,9 @@
 
 (define MIXED-PATH-TITLE
   (list "Benchmark"
-        "Deep %"
-        "Shallow %"
-        "D. or S. %"))
+        "Deep paths"
+        "Shallow paths"
+        "D∥S paths"))
 
 (define (render-mixed-path-table row*)
   ;; TODO abstraction
@@ -291,7 +296,9 @@
       #:row-properties '(bottom-border 1)
       #:column-properties '(left right)
       (list* MIXED-PATH-TITLE
-             (map cdr row*)))))
+             (map (lambda (r)
+                    (cons (cadr r) (map (lambda (n) (string-append n "%")) (cddr r))))
+                  row*)))))
 
 (define (get-mixed-path-table D name*)
   (parameterize ([*current-cache-directory* cache-dir]
@@ -444,6 +451,14 @@
     (check-equal? (sig2 "31.8x") "32x")
     (check-equal? (sig2 "314x") "310x")
     (check-equal? (sig2 "31456x") "31000x")))
+
+(define (bold-if-winning after before0 before1)
+  (define n2 (overhead-str->number after))
+  (define n0 (overhead-str->number before0))
+  (define n1 (overhead-str->number before1))
+  (if (and n0 n1 n2 (< n2 n0) (< n2 n1))
+    (bold after)
+    after))
 
 (define (overhead-str->number str)
   (define L (string-length str))

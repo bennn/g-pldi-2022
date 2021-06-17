@@ -57,7 +57,7 @@ benefits over either one alone:
 ]
 
 
-@section[#:tag "sec:evaluation:expressiveness"]{Guarantees by @|sDeep|}
+@section[#:tag "sec:evaluation:guarantees"]{Guarantees by @|sDeep|}
 
 By design, @|sdeep| types enforce stronger guarantees than @|sshallow|.
 A @|sdeep| type is a valid claim about run-time behavior, plain and simple.
@@ -230,15 +230,7 @@ that extends Typed Racket v1.12.
 @; no need for a TR commit, sends the wrong message --- reproductions need not check that out
 
 
-@subsection[#:tag "sec:evaluation:perf:either-or"]{Better Worst-Case Overhead}
-
-Both @|sdeep| semantics and @|sshallow| semantics have known weaknesses.
-@|sDeep| types can impose a huge cost when values frequently cross
-type boundaries [CITE].
-@|sShallow| types impose more and more cost as the amount of typed code
-increases, meaning that a fully-typed codebase ends up with
-worst-case performance.
-By contrast @|sdeep| pays no cost at the top.
+@subsection[#:tag "sec:evaluation:perf:either-or"]{Worst-Case Overhead}
 
 @(let* ((WT (get-mixed-worst-table SHALLOW-CURRENT-BENCHMARK*))
        )
@@ -246,37 +238,53 @@ By contrast @|sdeep| pays no cost at the top.
 @figure*[
   "fig:evaluation:mixed-worst-table"
   @elem{
-   TBA
-   Worst-case overhead before (@|sdeep| types)
-    and after (either @|sdeep| or @|sshallow|)
-    the integration of @|sDeep| and @|sShallow| Racket.
+   Worst-case overheads for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
   }
   @render-mixed-worst-table[WT]
 ]
 @elem{
-Now that Racket programmers can easily switch between @|sdeep| and @|sshallow|
- types, worst-case overheads improve by orders of magnitude.
-Before, the cost of @|sdeep| types overwhelmed many configurations.
-After, the costs can be avoided by changing the first line (the language specification)
- of the typed modules.
+The literature on gradual typing reports bottlenecks for both @|sdeep|
+and @|sshallow| implementations.
+With @|sdeep| types, frequent boundary-crossings can result in a huge cost
+because the semantics creates wrappers for higher-order data and eagerly
+traverses first-order data@~cite{htf-hosc-2010,tfgnvf-popl-2016,gtnffvf-jfp-2019}.
+With @|sshallow| types, every line of typed code may add a small cost because
+of the defensive @|stransient| shape checks@~cite{vss-popl-2017,gm-pepm-2018}.
+These bottlenecks are indeed present and problematic in Typed Racket.
 
-@Figure-ref{fig:evaluation:mixed-worst-table} quantifies the improvements in the
- Typed Racket benchmarks.
-The first data column reports the old worst-case overheads.
-The second columns reports the new worst-case, now that programmers can
- pick the best of @|sdeep| and @|sshallow| types.
-The final column is the quotient between the first two.
-In short, the ``after'' case is always better and can be an arbitrarily large
- improvement.
+Fortunately for the combined language, the bottlenecks of @|sdeep| and
+@|sshallow| types are often complementary.
+Consider a program with @${N} modules.
+@|sDeep| suffers in program configurations that mix typed and untyped code,
+but typically runs quickly once all @${N} modules have types.
+@|sShallow| is pay-as-you go, meaning that the configuration with only typed
+modules is most likely the slowest.
+Toggling between @|sDeep| and @|sShallow| Racket is therefore an easy way
+to avoid the worst cases.
+
+@Figure-ref{fig:evaluation:mixed-worst-table} quantifies the benefits of
+switching between @|sdeep| and @|sshallow| types on the GTP benchmarks.
+The first column shows that, as expected, @|sDeep| Racket can lead to
+enormous run-time costs.
+The second column shows that the bottlenecks for @|sShallow| Racket are
+less severe; indeed, @|sShallow| typically improves performance across
+the board@~cite{glfd-draft-2021}.
+The third column shows, however, that a simple combined implementation
+that toggles between @|sDeep| and @|sShallow| (instead of mixing both
+in one program) can do even better.
+Numbers in this third column are typeset in bold if they provide evidence
+of complementary strengths; that is, if the third column reports a lower
+overhead than the first and second columns.
+Although some benchmarks have overlapping bottlenecks,
+most benefit from @|sDeep| in some configurations and @|sShallow| in others.
+The @tt{zombie} benchmark is a notable failure; @|sShallow| pays a high
+cost because one module contains a large number of elimination forms,
+and the @|sDeep| boundaries are even more costly.
+The @tt{sieve} and @tt{tetris} benchmarks are the best successes.
 }])
 
-By implication, Typed Racket can offer a new migration story.
 
-@nested-inset[@emph{
- use @|sshallow| types when converting an untyped application and switch to
- @|sdeep| types after the boundaries stabilize.}]
-
-Further supported by looking at migration paths.
+@subsection[#:tag "sec:evaluation:perf:path"]{Migration Paths}
 
 @(let* ([bm* '(sieve forth fsm fsmoo mbta morsecode
                zombie dungeon jpeg zordoz lnm suffixtree
@@ -295,42 +303,54 @@ Further supported by looking at migration paths.
          (find-lowest-3dpath-D*
            '(forth fsm fsmoo mbta morsecode zombie dungeon
              jpeg zordoz lnm suffixtree kcfa snake take5))]
+        [path-3d-D 1.2]
+        [path-3d
+         (for/list ((bmx (in-list mix-best-D*))
+                    #:when (and (cdr bmx) (<= (cdr bmx) path-3d-D)))
+           (bm (car bmx)))]
         )
 @list[
 @figure*[
   "fig:both:mixed-path"
-  @elem{Percent of @ddeliverable[D] paths in three lattices:
-   the @|sdeep|-typed lattice, the @|sshallow|-typed lattice,
-   and a hybrid that chooses the best of @|sdeep| or @|sshallow| types at each point.}
+  @elem{
+    Percent of @ddeliverable[D] paths for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
+  }
   @render-mixed-path-table[PT]
 ]
 @elem{
-@|sShallow| types make step-by-step migration more practical in Typed Racket.
-Originally, with @|sdeep| types, a programmer who adds types one module at
- a time is likely to hit a performance wall; that is, a few configurations
- along the migration path are likely to suffer a large overhead.
-Adding more @|sdeep| types is a sure way to reduce the overhead,
- especially if the programmer adds the best-possible types (@figure-ref{fig:example-path}),
- but these multi-step pitfalls contradict the promise of migratory typing.
-High overhead makes it hard to tell whether the new types are compatible with
- the rest of the codebase.
+The complementary aspects of @|sDeep| and @|sShallow| Racket can help
+programmers quickly migrate an untyped codebase toward a more-typed configuration.
+The reason is simple: switching between @|sdeep| and @|sshallow| often avoids
+performance bottlenecks.
 
-By choosing @|sdeep| or @|sshallow| types at each point along a path, the
- worst-case overhead along migration paths goes down.
-@Figure-ref{fig:both:mixed-path} quantifies the improvement by showing the
- percent of all paths that are @ddeliverable[D] at each step.
+For a fixed program with @${N} modules, a migration path is a sequence of
+@${N\!+\!1} configurations.
+The first element of a path must be the untyped configuration.
+Each successive element adds types to one new module.
+A @ddeliverable{D} migration path has the additional constraint that each
+configuration runs at most @${D} times slower than the untyped configuration.
+
+@Figure-ref{fig:both:mixed-path} counts the proportion of @ddeliverable{3}
+paths out of all @${N!} migration paths in a subset of the GTP benchmarks.
+Larger benchmarks are omitted.
+The first column counts paths in @|sDeep| Racket,
+the second column counts paths in @|sShallow| Racket, and
+the third column counts paths by @|sDeep| or @|sShallow| at each point.
 With @|sdeep| types alone, all paths in @integer->word[(length deep-dead*)]
- benchmarks hit a point that exceeds the @~a[D]x limit.
+benchmarks reach a bottleneck that exceeds the @~a[D]x limit.
 With @|sshallow| types alone, all paths in @integer->word[(length shallow-dead*)] benchmarks
- exceed the limit as well.
-With the mix, however, only @integer->word[(length mix-dead*)] benchmark (@bm[(car mix-dead*)])
+ exceed the limit as well---typically near the end of the migration path.
+With the either-or mix, only @integer->word[(length mix-dead*)] benchmark (@bm[(car mix-dead*)])
  has zero @ddeliverable[D] paths.
-Fine-grained combinations of @|sdeep| and @|sshallow| types can further improve
- the number of viable migration paths.
-In @bm[mix-path-bm], for example, every path is @ddeliverable[mix-best-D] if the programmer
- picks the fastest-running mix of @|sdeep| and @|sshallow| types for each configuration.
 
-Others look good too @~s[mix-best-D*].
+Additional paths become @ddeliverable{D} for low values of @${D} when
+configurations are allowed to use a combination of @|sdeep| and @|sshallow|
+modules.
+All paths in @oxfordize[path-3d] are @ddeliverable[path-3d-D]
+with fine-grained mixtures.
+That said, the authors found these mixtures through a brute-force search.
+It remains to be seen whether a heuristic can lead programmers to useful
+combinations in practice.
 }])
 
 

@@ -67,7 +67,7 @@
   scribble/core
   scribble/base
   scriblib/figure
-  (only-in scribble-abbrevs/scribble Integer->word integer->word format-url)
+  (only-in scribble-abbrevs/scribble Integer->word integer->word format-url oxfordize)
   (only-in racket/string string-replace)
   (only-in racket/format ~a ~r ~s)
   (for-syntax racket/base))
