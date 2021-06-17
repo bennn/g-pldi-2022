@@ -225,10 +225,10 @@
 (define ui-date caddr)
 (define ui-url cadddr)
 
-(define (user-inspiration data*)
+(define (user-inspiration tag data*)
   (define num-msgs (length data*))
   (nested-inset
-    (list (emph (format "Inspired by ~a messages to the Racket-Users mailing list:" num-msgs))
+    (list @elem{The examples in @section-ref[tag] are inspired by the following messages to the Racket-Users mailing list:}
           (apply itemlist
                  (for/list ((ui (in-list data*)))
                    (item

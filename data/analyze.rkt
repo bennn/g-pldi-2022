@@ -226,9 +226,9 @@
 
 (define MIXED-WORST-TITLE
   (list "Benchmark"
-        "worst before"
-        "worst after"
-        "   improvement"))
+        "Worst Deep"
+        "Worst Shallow"
+        "Worst D. or S."))
 
 (define (render-mixed-worst-table row*)
   ;; TODO abstraction
@@ -259,17 +259,20 @@
 (define (make-mixed-worst-row name pi-shallow pi-deep)
   (define s-max (max-overhead pi-shallow))
   (define d-max (max-overhead pi-deep))
-  (define worst-before (max s-max d-max))
-  (define worst-after (min s-max d-max))
-  (define x-improved (/ worst-before worst-after))
+  (define worst-after
+    (for/fold ((acc 0))
+              ((s-cfg (in-configurations pi-shallow))
+               (d-cfg (in-configurations pi-deep)))
+      (unless (equal? (configuration-info->id s-cfg) (configuration-info->id s-cfg))
+        (raise-argument-error 'make-mixed-worst-row "out-of-sync configurations" "shallow" s-cfg "deep" d-cfg "s-pi" pi-shallow "d-pi" pi-deep))
+      (max acc
+           (min (overhead pi-shallow (configuration-info->mean-runtime s-cfg))
+                (overhead pi-deep (configuration-info->mean-runtime d-cfg))))))
   (list name
         (bm name)
-        (string-append (rnd worst-before) "x")
-        (string-append (rnd worst-after) "x")
-        (let ((v (exact-floor x-improved)))
-          (if (= v 1)
-            "<2x"
-            (format "~ax" v)))))
+        (string-append (rnd d-max) "x")
+        (string-append (rnd s-max) "x")
+        (string-append (rnd worst-after) "x")))
 
 ;; ---
 

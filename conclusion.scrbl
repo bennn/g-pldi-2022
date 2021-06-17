@@ -80,6 +80,16 @@ In particular, a @|sshallow| function with a confined-type domain may
 
 
 
-The End
+@;@section[#:tag "sec:evaluation:perf:release"]{Release Information}
+@;
+@;@|sShallow| Typed Racket is publicly available in a pull request to Typed Racket:
+@;@github-pull["racket" "typed-racket" "948"].
+@;The patch adds support for @|sshallow| types, giving Typed Racket programmers
+@; a choice between @|sshallow| and @|sdeep| type guarantees.
+@;I expect to merge the pull request early in 2021.
+@;After the release, I look forward to studying programmers' experience with
+@; the multi-faceted system.
+
+
 
 @exact|{\bibliography{bg}}|

@@ -747,3 +747,29 @@ Although the design of a lifted reduction relation is a challenge
 @;\end{lemma}
 @;}|
 
+@section[#:tag "sec:racket-users"]{User Inspiration}
+
+
+@user-inspiration["sec:evaluation:expr:any" '(
+ ("Denis Michiels"
+  "error : Attempted to use a higher-order value passed as `Any` in untyped code"
+  "2018-04-16"
+  "https://groups.google.com/g/racket-users/c/cCQ6dRNybDg/m/CKXgX1PyBgAJ")
+ ("Marc Kaufmann"
+  "Typed Racket: 'Unable to protect opaque value passed as `Any`' with interesting behavior"
+  "2019-12-11"
+  "https://groups.google.com/g/racket-users/c/jtmVDFCGL28/m/jwl4hsjtBQAJ"))]
+
+
+@user-inspiration["sec:evaluation:expr:uniform" '(
+ ("Bertrand"
+  "Typed code from untyped code"
+  "2020-02-17"
+  "https://groups.google.com/g/racket-users/c/UD20HadJ9Ec/m/Lmuw0U8mBwAJ")
+ ("John B. Clements"
+  "index-of + TR ... parametricity problem?"
+  "2019-12-15"
+  "https://groups.google.com/g/racket-users/c/ZbYRQCy93dY/m/kF_Ek0VvAQAJ"))]
+
+
+
