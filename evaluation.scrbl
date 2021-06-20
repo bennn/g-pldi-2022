@@ -11,6 +11,7 @@
      find-lowest-3dpath-D
      find-lowest-3dpath-D*
      get-3d-table
+     render-3d-table
      get-mixed-path-table
      render-mixed-path-table
      get-mixed-worst-table
@@ -312,6 +313,7 @@ The @tt{sieve} and @tt{tetris} benchmarks are the best successes.
 @list[
 @figure*[
   "fig:both:mixed-path"
+  ;; TODO barchart? yes yes yes
   @elem{
     Percent of @ddeliverable[D] paths for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
   }
@@ -354,7 +356,6 @@ combinations in practice.
 }])
 
 
-
 @subsection[#:tag "sec:evaluation:perf:together"]{Useful Compositions}
 
 @(let* ((DDD (get-3d-table '(forth fsm fsmoo mbta morsecode zombie dungeon
@@ -367,6 +368,12 @@ combinations in practice.
         (fsm-non-mixed (+ 1 fsm-num-modules))
         (fsm-mixed (- fsm-num-configs fsm-non-mixed)))
 @list[
+@figure*[
+  "fig:both:3way"
+  @elem{
+    Percent of configurations that run fastest with a mix of @|sdeep| and @|sshallow| modules.
+  }
+  (render-3d-table DDD)]
 @elem{
   For @integer->word[num-DDD] small benchmarks, I measured the full
    space of @${3^N} configurations that can arise by combining @|sdeep|
@@ -376,22 +383,8 @@ combinations in practice.
   Furthermore, a surprising percent of all @${2^N} mixed-typed configurations
    in each benchmark ran fastest using a mixture of @|sdeep| and @|sshallow|
    types:
-}
-@(apply itemlist
-   (for/list ((d-row (in-list DDD))
-              (i (in-naturals 1)))
-     (item (format "~a% of " (cadr d-row))
-           (bm (car d-row))
-           (format " configurations~a"
-                   (cond
-                    [(= i num-DDD)
-                     "."]
-                    [(= (+ i 1) num-DDD)
-                     "; and"]
-                    [else
-                     ";"])))))
-@elem{
-@|noindent|In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
+
+In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
 @Integer->word[fsm-non-mixed] of these cannot mix @|sdeep| and @|sshallow|
  because they contain at most one typed module.
 Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a

@@ -7,6 +7,7 @@
   find-lowest-3dpath-D
   find-lowest-3dpath-D*
   get-3d-table
+  render-3d-table
   get-mixed-worst-table
   render-mixed-worst-table)
 
@@ -406,6 +407,29 @@
                 #:when (equal? cfg-id (configuration-info->id cfg)))
       (configuration-info->mean-runtime cfg))
     (raise-arguments-error 'performance-info->runtime "cfg not found" "pi" pi "cfg" cfg-id)))
+
+(define DDD-TITLE '("Benchmark" "Best with D+S"))
+
+(define (render-3d-table ddd)
+  (centered
+    (tabular
+      #:sep (hspace 8)
+      #:style 'block
+      #:row-properties '(1)
+      #:column-properties '(left)
+      (let-values (((l* r*) (split-at ddd (quotient (length ddd) 2))))
+        (list (list (ddd-table l*) (ddd-table r*)))))))
+
+(define (ddd-table ddd)
+  (tabular
+    #:sep (hspace 2)
+    #:style 'block
+    #:row-properties '(bottom-border 1)
+    #:column-properties '(left right)
+    (list* DDD-TITLE
+           (for/list ((r (in-list ddd)))
+             (list (bm (car r))
+                   (format "~a%" (exact-round (string->number (cadr r)))))))))
 
 (define (get-3d-table bm-name*)
   (parameterize ([*current-cache-directory* cache-dir]
