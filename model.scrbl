@@ -632,7 +632,7 @@ check the expected shape.
 
 @figure*[
   "fig:model:shallow-type"
-  @elem{@|sShallow| typing judgment, subtyping, and shape map}
+  @elem{@|sShallow| typing judgment, subtyping, and type-to-shape metafunction}
 
 @exact|{
 \begin{mathpar}
@@ -1394,7 +1394,7 @@ the appendix presents the guidelines that the authors followed to create
 
 @figure*[
   "fig:model:label-syntax"
-  @elem{Labelled evaluation syntax}
+  @elem{Labeled evaluation syntax}
 
 @list[
 @exact|{

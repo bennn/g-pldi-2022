@@ -115,8 +115,7 @@ values with this type@~cite{fb-tr-2006}.
 
 @figure*[
   "fig:evaluation:any-wrap"
-  @elem{@|sDeep| seals mutable values of type @tt{Any} in a wrapper. @|sShallow| lets untyped code modify the box.}
-
+  @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}
   fig:any-wrap]
 
 The opaque wrapper ensures full type soundness, but can be overly restrictive
@@ -167,7 +166,7 @@ But syntax wrappers would require changes to many parts of the Racket compiler,
 
 @figure*[
   "fig:evaluation:no-wrap"
-  @elem{@|sDeep| lacks wrappers for mutable pairs and a few other datatypes. @|sShallow| does not need wrappers, and can express mixed-typed programs that share such values with untyped code.}
+  @elem{@|sDeep| lacks wrappers for mutable pairs and a few other uncommon datatypes}
   fig:no-wrap]
 
 
@@ -197,7 +196,7 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
 
 @figure*[
   "fig:evaluation:index-of"
-  @elem{The @|sdeep| contract for an @tt{All} type can change the behavior of untyped code.}
+  @elem{@|sDeep| polymorphic contracts can change the behavior of untyped code}
   fig:index-of]
 
 @|sShallow| Racket avoids all such changes in behavior,
@@ -498,6 +497,6 @@ In principle, @|sdeep| code can avoid the slowdown with a custom parser
 Indeed, Phil Nguyen has written a @hyperlink["https://github.com/philnguyen/json-type-provider"]{library}
  for JSON that mitigates the overhead of @|sdeep| types.
 Such libraries are ideal, but until we have them for the next data exchange
- format (SQL, XML, YAML, ...) @|sshallow| types get the job done with the parsers
+ format (CSV, XML, YAML, ...) @|sshallow| types get the job done with the parsers
  that are available today.
 

@@ -289,9 +289,7 @@ The following example defines @tt{f} from two other names:
 
 @exact{\smallskip}
 @typed-codeblock['(
-  "(define-typed/untyped-identifier f"
-  "  typed-f"
-  "  untyped-f)")]
+  "(define-typed/untyped-identifier f typed-f untyped-f)")]
 
 @|noindent|The meaning of the new @tt{f} depends on the context in which it appears.
 In typed code, @tt{f} expands to @tt{typed-f}.
