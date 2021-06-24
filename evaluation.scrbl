@@ -3,7 +3,8 @@
    (only-in racket/math
      exact-round)
    (only-in math/statistics
-     mean)
+     mean
+     median)
    (only-in gtp-plot/performance-info
      performance-info->num-units)
    (only-in "data/analyze.rkt"
@@ -356,47 +357,63 @@ combinations in practice.
 }])
 
 
-@subsection[#:tag "sec:evaluation:perf:together"]{Useful Compositions}
+@subsection[#:tag "sec:evaluation:perf:together"]{Three-way Case Studies}
+@; three-way excellence ?
 
 @(let* ((DDD (get-3d-table '(forth fsm fsmoo mbta morsecode zombie dungeon
                              jpeg zordoz lnm suffixtree kcfa snake take5
                              acquire tetris )))
         (num-DDD (length DDD))
+        (DDD-n* (map (lambda (x) (string->number (cadr x))) DDD))
+        (DDD-mean (mean DDD-n*))
+        (DDD-median (median < DDD-n*))
         (S (benchmark-name->performance-info 'fsm default-rkt-version))
         (fsm-num-modules (performance-info->num-units S))
         (fsm-num-configs (expt 2 fsm-num-modules))
         (fsm-non-mixed (+ 1 fsm-num-modules))
         (fsm-mixed (- fsm-num-configs fsm-non-mixed)))
 @list[
+@elem{
+Mixing @|sdeep| and @|sshallow| types within one program can improve its
+performance.
+@|sDeep| types are best among a tightly-connected group of modules that
+rarely interact with untyped or @|sshallow|-typed code.
+@|sShallow| types run fastest in modules that communicate frequently
+with untyped code but do little computation on their own.
+When a program contains typed modules that fill each kind of role, a combination
+of @|sdeep| and @|sshallow| runs better that either alone.
+
+Such programs arise surprisingly often in the GTP benchmarks (@figure-ref{fig:both:3way}).
+Out of the @${2^N} configurations in @integer->word[num-DDD] of the smaller
+benchmarks, a median of @$[@~a[DDD-median] "\\%"] run fastest with a mix of
+@|sdeep| and @|sshallow| types.
+These results are especially encouraging because @${N\!+\!1} configurations in
+each benchmark cannot mix @|sdeep| and @|sshallow| because they contain @${<2}
+typed modules.
+In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
+@Integer->word[fsm-non-mixed] of these are out of the running.
+Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a
+combination of @|sdeep| and @|sshallow| types.
+Thus the data suggests that other programs can benefit from three-way mixtures.
+
+The challenge, however, lies in finding which typed modules ought to be @|sdeep|
+and which ought to be @|sshallow|.
+@Figure-ref{fig:both:3way} is the result of an exhaustive search in a
+@${3^N} lattice.
+In practice, developers may not be willing to run a search to find the best
+combinations.
+We conjecture that further experience with @|sdeep| and @|sshallow| types will
+reveal best practices for finding an efficient mix.
+For now, as a first step, we offer three example programs in which we quickly
+found a fast-running mix.
+}
 @figure*[
   "fig:both:3way"
   @elem{
     Percent of configurations that run fastest with a mix of @|sdeep| and @|sshallow| modules.
   }
   (render-3d-table DDD)]
-@elem{
-  For @integer->word[num-DDD] small benchmarks, I measured the full
-   space of @${3^N} configurations that can arise by combining @|sdeep|
-   and @|sshallow| types.
-  Each configuration ran successfully, affirming that @|sdeep| and @|sshallow|
-   can interoperate.
-  Furthermore, a surprising percent of all @${2^N} mixed-typed configurations
-   in each benchmark ran fastest using a mixture of @|sdeep| and @|sshallow|
-   types:
-
-In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
-@Integer->word[fsm-non-mixed] of these cannot mix @|sdeep| and @|sshallow|
- because they contain at most one typed module.
-Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a
- combination of @|sdeep| and @|sshallow| types.
-}
 ])
-
-
-@subsection[#:tag "sec:evaluation:perf:both"]{Case Studies: @|sDeep| and @|sShallow|}
-
-Three additional case studies, practical situations in which D + S is better
-than either alone.
 
 
 @parag{synth}
@@ -420,38 +437,35 @@ than either alone.
         (ds-slow (rnd (/ (mean (hash-ref synth-data 'd-lib-u-client))
                          (mean (hash-ref synth-data 's-lib-d-client))))))
   @elem{
-The @bm{synth} benchmark is derived from @hyperlink[synth-url]{an untyped program}
- that interacts with part of a typed math library.
-When the library code uses @|sdeep| types, the original client runs with
- high overhead---@~a[deep-delta]x slower that a @|sdeep|-typed client.
+The GTP benchmark named @bm{synth} is based on @hyperlink[synth-url]{an untyped program}
+that interacts with at typed math library to synthesize music.@note{@shorturl[synth-url "github.com/stamourv/synth"]}
+When the math library uses @|sdeep| types, the original client runs with
+high overhead; compared to a @|sdeep|-typed client program, the untyped client
+suffers a @~a[deep-delta]x slowdown.
 
-Changing the library to use @|sshallow| types improves
- the gap between an untyped and @|sdeep|-typed client to
- @~a[shallow-delta]x.
-This fast untyped configuration is about @~a[ds-fast]x slower than the fast
- @|sdeep|-@|sdeep| configuration, but the worst-case is @~a[ds-slow]x
- faster (@~a[ds-slow-sec] seconds) than before.
-Overall, the @|sshallow| library is a better tradeoff for @bm{synth}.
+Changing the library to use @|sshallow| types improves the gap between an
+untyped and @|sdeep|-typed client to @~a[shallow-delta]x.
+This fast untyped configuration is roughly @~a[ds-fast]x slower than the fast
+@|sdeep|-@|sdeep| configuration, but the worst-case is @~a[ds-slow]x
+faster (@~a[ds-slow-sec] seconds) than before.
+Overall, a @|sshallow| version of the math library is a better tradeoff for @bm{synth}.
 })
 
-@; if we have a few of these, organize into a figure with descriptions below
-@; ... or use a "benchmarks" format to convey the bottom line
 @parag{MsgPack}
 @hyperlink["http://msgpack.org/"]{MessagePack} is a serialization format.
 @hyperlink["https://gitlab.com/HiPhish/MsgPack.rkt"]{MsgPack} is a Typed Racket
- library that maps Racket values to binary data according to the format.
+ library that maps Racket values to binary data according to the format.@note{@shorturl["https://gitlab.com/HiPhish/MsgPack.rkt" "gitlab.com/HiPhish/MsgPack.rkt"]}
 The author of this library
  @hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]{reported a performance hit}
- after narrowing some types from @tt{Any} to a more-precise union type for serializable inputs.
+ after narrowing some types from @tt{Any} to a more-precise union type for serializable inputs.@note{@shorturl["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ" "groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]}
 Tests that formerly passed on the package server timed out after the change.
 
-I cloned MsgPack commit @github-commit["HiPhish" "MsgPack.rkt"]{64a60986b149703ff9436877da1dd3e86c6e4094}
- and found that running all unit tests took 320 seconds.
-Changing one file to @|sshallow| types brought the time down to 204 seconds---a
- huge improvement for a one-line switch.
-Moving the rest of the library from @|sdeep| to @|sshallow| types adds only a slight
+After changing the types in one bridge module from @|sdeep| to @|sshallow|
+(a one-line change),
+the time needed to run all tests improved from @${320} seconds to @${204} seconds.
+Migrating the rest of the library from @|sdeep| to @|sshallow| types adds only a slight
  improvement (down to 202 seconds), which suggests that a mix of @|sdeep| and
- @|sshallow| is best.
+ @|sshallow| is best for MsgPack.
 
 @; can do even better after changing the code:
 @;  Deep, no pack casts = 117 seconds
@@ -459,7 +473,7 @@ Moving the rest of the library from @|sdeep| to @|sshallow| types adds only a sl
 @;  untyped = 24 seconds!!!
 
 
-@parag{External Data}
+@parag{External Data, JSON}
 Typed code that deals with data from an external source is often better off
  with @|sshallow| types because they lazily validate data as it is accessed.
 By contrast, Typed Racket's implementation of @|sdeep| types eagerly
@@ -473,7 +487,7 @@ If the boundary types allow mutable values, then the traversal is even more
         (t/s (/ (mean t*) (mean s*)))
         (slowdown (if (< 10 t/s) "over 10x" (format "~ax" (rnd t/s)))))
   @elem{
-To illustrate the pitfall, I wrote a typed script that reads a large dataset of
+To illustrate the pitfall, the first author wrote a typed script that reads a large dataset of
  apartment data using on off-the-shelf JSON parser and accesses one field
  from each object in the dataset.
 @|sDeep| types make the script run @|slowdown| slower than @|sshallow| types.
