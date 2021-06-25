@@ -31,7 +31,7 @@
 @;   * Any => Procedure => (f x) ... may require static typing changes to really improve
 @; - focus on worst case for performance
 
-@title[#:tag "sec:evaluation"]{Exceeding Expectations}
+@title[#:tag "sec:evaluation"]{Evaluation}
 
 The integration of @|sDeep| and @|sShallow| Typed Racket offers substantial
 benefits over either one alone:

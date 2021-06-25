@@ -4,9 +4,9 @@ deep and shallow
 Goal: move chapter 6 of Ben G. dissertation to a paper
 
 Target: POPL 2022
-- deadline 2022-07-08
-- cfp will appear here <https://popl22.sigplan.org/track/POPL-2022-popl-research-papers>
-- 25 pages 10pt font, probably
+- deadline 2021-07-08
+- cfp <https://popl22.sigplan.org/track/POPL-2022-popl-research-papers#POPL-2022-Call-for-Papers>
+- 25 pages 10pt font
 
 
 MF outline:
