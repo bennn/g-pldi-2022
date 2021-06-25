@@ -39,7 +39,26 @@
 
 @; -----------------------------------------------------------------------------
 
-@abstract{TBA}
+@abstract{
+Research on sound gradual typing has identified several compelling strategies
+for mixing typed and untyped code.
+These strategies have complementary strengths.
+Two extremes are the natural and transient strategies, which offer deep
+and shallow type guarantees.
+Natural has strong types but depends on higher-order contracts.
+Transient promises only weak types, but does so with rudimentary first-order checks.
+
+Programmers would benefit from the ability to mix and match different
+type-enforcement strategies within the same program.
+To this end, we present a language design that supports both deep and shallow
+types by integrating the natural and transient strategies.
+The design is validated by both a theoretical analysis and an implementation
+for Typed Racket.
+Shallow types can express more programs, deep types provide stronger
+type guarantees and debugging help, and the combination of
+deep and shallow frequently out-performs either one alone on the GTP
+benchmark suite.
+}
 
 @; -----------------------------------------------------------------------------
 
