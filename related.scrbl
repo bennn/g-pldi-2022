@@ -17,7 +17,7 @@ at run-time.
 }
 @item{
 StrongScript extends TypeScript@~cite{bat-ecoop-2014} with concrete types,
-and thereby offers a similar combination in which programmers may opt in to
+and thereby offers a similar combination to like types in which programmers may opt in to
 run-time checking@~cite{rzv-ecoop-2015}.
 }
 @item{
