@@ -42,26 +42,25 @@ guarantee to enforce types.
 Unsurprisingly, the various strategies in the literature have benefits and
 drawbacks.
 Two illustrative points of comparison are the Natural and Transient strategies.
+Both be added to an untyped host language without severe restrictions, but they
+use extreme and opposite methods to enforce types.
 The contract checks in Natural lead to the strong guarantees of type soundness
 and complete monitoring@~cite{gfd-oopsla-2019}
-but often impose a huge performance cost~\cite{gtnffvf-jfp-2019}.
+but often impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
 The first-order checks in Transient offer only a weak type soundness guarantee,
 but these cheaper run-time checks suggest a more promising cost model@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
-The question thus arises, whether one language can incorporate two
-type-enforcement strategies in addition to untyped code.
+The question thus arises, whether two type-enforcement strategies can interoperate
+in a mixed-typed language.
 Such a multi-language offers three alternatives to programmers:
 untyped code,
 typed code with the first strategy, and
 typed code with the second strategy.
 For the mix to be meaningful, each part satisfy the same properties that it
 did in the original.
-For the mix to be useful, the parts must bring unique strengths to the table.
-
-A compelling union would be the deep, costly guarantees of Natural and the
-shallow, inexpensive guarantees of transient.
-Such a language, with both Deep and Shallow types, may strike an ergonomic
-(at least, user-tunable) tradeoff among expressiveness and performance.
+For the mix to be useful, the parts must bring distinct strengths to the table.
+A mix with the  deep, costly guarantees of Natural and the
+shallow, inexpensive guarantees of Transient satisfies both criteria.
 
 This paper supports two general claims:
 (1) Deep and Shallow types can safely interoperate,
