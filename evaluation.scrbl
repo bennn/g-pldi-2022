@@ -414,8 +414,8 @@ found a fast-running mix.
   (render-3d-table DDD)]
 ])
 
-
-@parag{synth}
+@itemlist[
+@item{@emph{Synth}@|~|@|~|
 @(let* ((synth-url "http://github.com/stamourv/synth")
         (synth-data
          (hash
@@ -442,15 +442,15 @@ When the math library uses @|sdeep| types, the original client runs with
 high overhead; compared to a @|sdeep|-typed client program, the untyped client
 suffers a @~a[deep-delta]x slowdown.
 
-Changing the library to use @|sshallow| types improves the gap between an
+@exact{\subitem}Changing the library to use @|sshallow| types improves the gap between an
 untyped and @|sdeep|-typed client to @~a[shallow-delta]x.
 This fast untyped configuration is roughly @~a[ds-fast]x slower than the fast
 @|sdeep|-@|sdeep| configuration, but the worst-case is @~a[ds-slow]x
 faster (@~a[ds-slow-sec] seconds) than before.
 Overall, a @|sshallow| version of the math library is a better tradeoff for @bm{synth}.
-})
+})}
 
-@parag{MsgPack}
+@item{@emph{MsgPack}@|~|@|~|
 @hyperlink["http://msgpack.org/"]{MessagePack} is a serialization format.
 @hyperlink["https://gitlab.com/HiPhish/MsgPack.rkt"]{MsgPack} is a Typed Racket
  library that maps Racket values to binary data according to the format.@note{@shorturl["https://gitlab.com/HiPhish/MsgPack.rkt" "gitlab.com/HiPhish/MsgPack.rkt"]}
@@ -459,7 +459,7 @@ The author of this library
  after narrowing some types from @tt{Any} to a more-precise union type for serializable inputs.@note{@shorturl["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ" "groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]}
 Tests that formerly passed on the package server timed out after the change.
 
-After changing the types in one bridge module from @|sdeep| to @|sshallow|
+@exact{\subitem}After changing the types in one bridge module from @|sdeep| to @|sshallow|
 (a one-line change),
 the time needed to run all tests improved from @${320} seconds to @${204} seconds.
 Migrating the rest of the library from @|sdeep| to @|sshallow| types adds only a slight
@@ -470,9 +470,9 @@ Migrating the rest of the library from @|sdeep| to @|sshallow| types adds only a
 @;  Deep, no pack casts = 117 seconds
 @;  Shallow, no pack casts = 67 seconds
 @;  untyped = 24 seconds!!!
+}
 
-
-@parag{External Data, JSON}
+@item{@emph{External Data, JSON}@|~|@|~|
 Typed code that deals with data from an external source is often better off
  with @|sshallow| types because they lazily validate data as it is accessed.
 By contrast, Typed Racket's implementation of @|sdeep| types eagerly
@@ -480,7 +480,7 @@ By contrast, Typed Racket's implementation of @|sdeep| types eagerly
 If the boundary types allow mutable values, then the traversal is even more
  expensive because it creates wrappers as it copies the dataset.
 
-@(let* ((script_name "QA/transient-expressive/json/custom.rkt")
+@exact{\subitem}@(let* ((script_name "QA/transient-expressive/json/custom.rkt")
         (s* '(169 157 162 159 162))
         (t* '(3007 2991 2920 3096 3308))
         (t/s (/ (mean t*) (mean s*)))
@@ -499,4 +499,4 @@ Indeed, Phil Nguyen has written a @hyperlink["https://github.com/philnguyen/json
 Such libraries are ideal, but until we have them for the next data exchange
  format (CSV, XML, YAML, ...) @|sshallow| types get the job done with the parsers
  that are available today.
-
+}]
