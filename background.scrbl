@@ -1,5 +1,8 @@
 #lang scribble/acmart @acmsmall @10pt @screen
-@(require "main.rkt" "bib.rkt" (only-in scriblib/footnote note))
+@(require "main.rkt" "bib.rkt"
+   (only-in scriblib/footnote note)
+   (only-in "pict.rkt"
+     fig:ds-example))
 
 @; THESIS Natural and Transient are the only realistic options
 @;  - more imagined ideas in JFP submission
@@ -52,15 +55,52 @@ dynamic type.
 
 @section{@|sDeep| and @|sShallow| Types}
 
-in the Ben space, lots of variety ... urprising
+Within the design space of sound mixed-typed languages, there is surprising
+disagreement about how types should guide the behavior of a program.
+@; disagreement among whom?!
+These disagreements are important because even small-looking decisions
+can have far-reaching consequences when typed and untyped code interact.
 
-Surpriingly ...?!
+@Figure-ref{fig:ds-example} presents a three-module program to illustrate
+the different policies.
+The untyped module on the left contains a stub definition for a function
+@tt{text-icon} that accepts two arguments.
+This module is a greatly simplified picture of Racket's @tt{images/icons/symbol}
+module, which depends on a few thousand lines of rendering and raytracing code.
+The typed module in the middle is an interface for the untyped function;
+The types correctly state that @tt{text-icon} expects a string and a font
+object and computes a bitmap object.
+Finally, the untyped module on the right attempts to call @tt{text-icon}
+with bad input; specifically, a string and a symbol.
+
+@figure*[
+  "fig:ds-example"
+  @elem{Untyped library, typed interface, and untyped client}
+  fig:ds-example]
+
+The question raised by this example is whether static types can catch mistakes
+in untyped code.
+The literature presents two answers, which we characterize as @emph{@|sdeep|}
+and @emph{@|sshallow|} types:
+@itemlist[
+@item{
+  @|sDeep| types enforce the interface with run-time obligations for both
+  the client and the library.
+  In this case, the client triggers a run-time error because the symbol
+  @tt{'modern} is not a font object.
+}
+@item{
+  @|sShallow| types ensure the local integrity of typedd code, but nothing more.
+  Untyped clients may send any input to the untyped @tt{text-icon} function;
+  the result of running @figure-ref{fig:ds-example} depends on how the library
+  function reacts to the symbol.
+}]
+
+Formally, @|sdeep| and @|sshallow| types are characterized by type soundness
+and complete monitoring theorems.
 
 
-  disagreement among sound systems on programs both can express, wow
 
-gotta example, whats difference, explain then generalize
-simple dyn - stat - dyn example, nothing fancy
 
 TODO
 - sec model

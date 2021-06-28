@@ -10,6 +10,7 @@
   fig:any-wrap
   fig:no-wrap
   fig:index-of
+  fig:ds-example
 
 @; fig:shallow-cannot-express
 @; fig:check-performance
@@ -795,7 +796,28 @@ eos
       #:go (at-find-pict 'other-shim rc-find 'lc #:abs-x (* 1 shim-sep))
       r-pict)))
 
-
+(define fig:ds-example
+  (let* ((untyped
+          ;; images/icons/symbol = 300 lines
+          ;; images/icons/style = 200 lines
+          ;; images/private = 3470 lines (includes flomap, raytrace code)
+          (untyped-codeblock '(
+            "(define (text-icon str font)"
+            "  ; render text as a bitmap"
+            "  ....)")))
+         (interface
+           (typed-codeblock '(
+            "(require/typed/provide"
+            "  \"icon.rkt\""
+            "  (text-icon"
+            "    (-> String"
+            "        (Instance Font%)"
+            "        (Instance Bitmap%))))")))
+         (main
+           (untyped-codeblock '(
+            "(text-icon \"cat\" 'modern)")))
+         (right-arrow (vl-append 6 (blank) (colorize (arrowhead 12 0) black))))
+    (ht-append 8 untyped right-arrow interface right-arrow main)))
 
 ;; -----------------------------------------------------------------------------
 
@@ -804,7 +826,8 @@ eos
   (define raco-pict
     (add-rectangle-background #:color "white" #:x-margin 40 #:y-margin 40
       (apply vl-append 10
-        fig:model-interaction
+        ;;fig:model-interaction
+        fig:ds-example
         '()
     )))
 )
