@@ -25,6 +25,45 @@ MF outline:
 > work with Shriram. 
 
 
+### 2021-06-27 talk idea
+
+- you've heard of GT / MT / .... cottage industry
+  - simple idea, mixed-typed
+  - disagree on details
+  - my ground rules = migratory, non-dyn (general baseline)
+- among systems that meet ground rules, lots of variety,
+  particular about _extent_ of types, for lack of better word
+  - example program, Deep vs Shallow, keep it simple
+  - shallow types = sound. And soundless says nothing in untyped code.
+  - deep types = type obligations interpose all behaviors. Characterized by CM.
+    ... closer to my intuition
+- why two styles? complementary strengths
+  - stay vague: S, good mix ; D, good typed
+- esp. when comes to implementation, Natural vs Transient
+  - Natural = contract at boundary
+  - Transient = first-order everywhere
+
+- in this paper, show htat D + SN can interoperate and implement it
+  - key idea D--S--U triangle,
+    slowly label the edges,
+    maybe begin with 6 edges, then simplify?
+    notation for sketch / imagine vs. finalize edge
+  - properties (on same finalize slide)
+    1 2 3 soundness
+    monitoring property, deep single-owner
+
+- implemented by extending TR compiler
+  - some excitement at DS interface, see paper (? save to end)
+- benefits, from dissertation = guarantees + expr + perf ... or perf + expr
+  - maybe reuse the heavy CM example
+  - show 3way numbers
+
+- in conclusion, analogy to GT
+  - got started on this road by putting T/U knob in programmers hands
+    turns out tradeoffs from types call for another knob
+  - survey, recall "worst of both"
+  - the end ... if recorded try to stop sooner don't worry about questions
+
 
 ### 2021-02-10 outline + intro
 

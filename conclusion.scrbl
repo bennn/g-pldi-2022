@@ -8,7 +8,7 @@
 @title[#:tag "sec:conclusion"]{Conclusion and Future Work}
 
 Gradual typing began with the observation that static and dynamic typing have
-complementary strengths@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,kf-toplas-2010}.
+complementary strengths@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
 By combining both styles into a mixed-typed language, researchers gave
 programmers control over the static/dynamic tradeoff.
 But at the same time, the implementation of mixed-typed languages revealed

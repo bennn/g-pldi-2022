@@ -39,7 +39,7 @@ benefits over either one alone:
 @item{
   Switching from @|sshallow| to @|sdeep| strengthens the formal guarantees
   for a block of code.
-  A one-line change to the @tt{#lang line} improves types from local spot-checks
+  A one-line change to the @tt{#lang} line improves types from local spot-checks
   to claims that hold throughout the program, including in untyped modules.
 }
 @item{

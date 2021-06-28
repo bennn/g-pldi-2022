@@ -71,7 +71,7 @@ The evidence for these claims has three parts.
 @item{
   A model language with proofs of type soundness and complete monitoring (@secref{sec:model}).
   The language supports Deep-typed code, Shallow-typed code, and untyped code.
-  The proofs establish the integrity of the different-strength types.
+  The proofs establish the integrity of types.
 }
 @item{
   An implementation that combines standard Deep Typed Racket@~cite{tfffgksst-snapl-2017} with a Shallow-typed variant@~cite{glfd-draft-2021} (@secref{sec:implementation}).
