@@ -802,20 +802,19 @@ eos
           ;; images/icons/style = 200 lines
           ;; images/private = 3470 lines (includes flomap, raytrace code)
           (untyped-codeblock '(
-            "(define (text-icon str font)"
-            "  ; render text as a bitmap"
+            "(define (text s f)"
+            "  ; render string s as"
+            "  ; text with font f"
             "  ....)")))
          (interface
            (typed-codeblock '(
             "(require/typed/provide"
-            "  \"icon.rkt\""
-            "  (text-icon"
-            "    (-> String"
-            "        (Instance Font%)"
-            "        (Instance Bitmap%))))")))
+            " (text"
+            "  (-> String Font"
+            "      Bitmap)))")))
          (main
            (untyped-codeblock '(
-            "(text-icon \"cat\" 'modern)")))
+            "(text \"cat\" 'roman)")))
          (right-arrow (vl-append 6 (blank) (colorize (arrowhead 12 0) black))))
     (ht-append 8 untyped right-arrow interface right-arrow main)))
 
