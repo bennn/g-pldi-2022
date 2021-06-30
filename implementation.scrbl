@@ -80,7 +80,7 @@ The second pass generates contracts for module exports.
 The final pass is a type-directed optimizer@~cite{stff-padl-2012} that generates
 efficient untyped code for the compiler backend to further optimize.
 
-@|sShallow| Racket is implemented as a second mode of the Typed Racket compiler@~cite{g-dissertation-2020,glfd-draft-2021}.
+@|sShallow| Racket is implemented as a second mode of the Typed Racket compiler@~cite{g-thesis-2020,glfd-draft-2021}.
 It too injects three passes between the macro expander and compiler backend,
 but with changes for the @|sshallow| semantics.
 The first pass, the type checker, remains unchanged.

@@ -51,14 +51,12 @@ can ensure safe, three-dimensional interactions.
 \begin{langarray}
   \ssurface & \slangeq &
     \svar \mid \sint \mid \epair{\ssurface}{\ssurface} \mid
-  \\ & &
     \efun{\svar}{\ssurface}
     \mid \efun{\tann{\svar}{\stype}}{\ssurface}
     \mid \efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface} \mid
   \\ & &
     \eunop{\ssurface} \mid \ebinop{\ssurface}{\ssurface} \mid
     \eappu{\ssurface}{\ssurface} \mid
-  \\ & &
     \emod{\slang}{\ssurface}
   \\
   \slang & \slangeq &
@@ -120,7 +118,7 @@ expression @${\ssurface_0} via a module boundary.
 The full expression @${\ssurface_0} satisfies the typing judgment if the
 @|sdeep| parts are well-typed and the @|suntyped| parts are well-formed.
 
-@Figureref{fig:model:extra-type} defines a subtyping judgment (@${\ssubt}
+@Figureref{fig:model:extra-type} defines a subtyping judgment (@${\ssubt})
 and a type-assignment for primitive operations (@${\sDelta}).
 These are both standard.
 Subtyping says that natural numbers are valid integers, and is covariant
@@ -406,7 +404,7 @@ integers.
 \end{mathpar}}
 \end{minipage}%
 \begin{minipage}[t]{0.5\columnwidth}
-\lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\stype}}{\stype}$}}{
+\lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\,\stype}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\sfst, \tpair{\stype_0}{\stype_1}) & \feq & \stype_0
   \\
@@ -414,7 +412,7 @@ integers.
   \end{langarray}
 }
 
-\lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop\,}{\tpair{\stype}{\stype}}}{\stype}$}}{
+\lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop\,}{\tpair{\,\stype\,}{\,\stype}}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\ssum, \tnat, \tnat) & \feq & \tnat
   \\
@@ -451,9 +449,9 @@ A value is either an integer, a pair, a function, or a guard wrapper.
 A guard @${(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})} is a restricted
 function; it provides access to the function @${\svalue_0} subject to run-time
 checks based on the @${(\tfun{\stype_0}{\stype_1})} type.
-Note also that @|sshallow|-typed functions have a shape annotation in
-the evaluation syntax (@${\efun{\tann{\svar}{\sshape}}{\sexpr}}) rather
-than an underlined type annotation (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}}).
+@|sShallow|-typed functions have a shape annotation in
+the evaluation syntax and a @${\sscan} tag (@${\esfun{\svar}{\sshape}{\sexpr}})
+to suggest that such functions must validate the shape of their input at run-time.
 An error may arise from either a failed check at @|swrap| boundary (@${\swraperror}),
 a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 (@${\sdivzeroerror}), or a malformed untyped expression (@${\stagerror}).
@@ -482,7 +480,7 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
     \sint \mid \epair{\svalue}{\svalue}
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
-    \mid \efun{\tann{\svar}{\sshape}}{\sexpr}
+    \mid \esfun{\svar}{\sshape}{\sexpr}
     \mid \emon{(\tfun{\stype}{\stype})}{\svalue}
   \\
   \sshape & \slangeq &
@@ -669,7 +667,7 @@ check the expected shape.
   \inferrule*{
     \fcons{\tann{\svar_0}{\sshape_0}}{\stypeenv} \sWTS \sexpr_0 : \sshape_1
   }{
-    \stypeenv \sWTS \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0} : \kfun
+    \stypeenv \sWTS \esfun{\svar_0}{\sshape_0}{\sexpr_0} : \kfun
   }
 
   \inferrule*{
@@ -817,7 +815,7 @@ check the expected shape.
   \inferrule*{
     \fcons{\tann{\svar_0}{\sshape_0}}{\stypeenv} \sWTS \sexpr_0 : \sshape_1
   }{
-    \stypeenv \sWTU \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0} : \tdyn
+    \stypeenv \sWTU \esfun{\svar_0}{\sshape_0}{\sexpr_0} : \tdyn
   }
 
   \inferrule*{
@@ -962,7 +960,7 @@ check the expected shape.
     \\
     \fshape{\stype_0} = \sshape_0
   }{
-    \stypeenv \sST \efun{\tann{\svar_0}{\tfloor{\stype_0}}}{\sexpr_0} : \tfloor{\tfun{\stype_0}{\stype_1}} \scompile \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_1}
+    \stypeenv \sST \efun{\tann{\svar_0}{\tfloor{\stype_0}}}{\sexpr_0} : \tfloor{\tfun{\stype_0}{\stype_1}} \scompile \esfun{\svar_0}{\sshape_0}{\sexpr_1}
   }
 
   \inferrule*{
@@ -999,7 +997,7 @@ check the expected shape.
   @elem{Completion rules for module boundaries (@figure-ref{fig:model:base-interaction})}
 
 @exact|{
-\begin{tabular}{l@{\qquad}l}
+\begin{tabular}{l@{\quad}l@{~}l}
 \(\left[
   \inferrule*[width=4cm]{
     \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
@@ -1009,15 +1007,20 @@ check the expected shape.
 \right]\) &
 \(\begin{array}{llll}
   \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
+  \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \\
+  \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
+  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
+  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \\[1ex]
+  \sU & \tdyn & \tfloor{\stype_0} & \escan{\fshape{\stype_0}}{\sexpr_1}
+\end{array}\)
+&
+\(\begin{array}{llll}
+  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
   \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
   \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \\
   \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
   \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1} \\[1ex]
-  \sU & \tdyn & \tfloor{\stype_0} & \escan{\sexpr_1} \\[1ex]
-  \sD & \stype_0 & \tdyn & \ewrap{\sexpr_1} \\
-  \sU & \tdyn & \stype_0 & \ewrap{\sexpr_1} \\
-  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\sexpr_1} \\
-  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\sexpr_1}
+  \vphantom{\sU} & \vphantom{\tdyn} & \vphantom{\tfloor{\stype_0}} & \vphantom{\escan{\stype_0}{\sexpr_1}}
 \end{array}\)
 \end{tabular}
 
@@ -1075,23 +1078,12 @@ the completion of its subexpressions.
 In @|sshallow|-typed code, this elimination form requires a @|sscan| check to
 validate the result.
 Pairs and pair elimination forms follow a similar pattern.
-The completion rules for other expressions simply transform their subexpressions
-and are deferred to an appendix.
-
-@; TODO sounds like a great improvement!!!
-@; what about 2 kinds of shallow function? (\(x:o) ...) (\(scan x:o)[check] ...) ?
-@bold{Note}: The completion of a @|sshallow| function is very simple---to the point of
-being misleading---because the evaluation syntax has no way to represent domain
-checks.
-In a realistic language, @|sshallow| functions must translate to an un-annotated
-function that first @|sscan|s the shape of its input and then proceeds with the
-body expression.
-The model does not show the domain check, and instead expects the underlying
-semantics to always @${\sscan} the inputs of @|sshallow| functions (@sectionref{sec:model:model:reduction}).
-Although this baked-in design simplifies the model and proof details regarding
-substitution, the lack of an explicit domain check means that the model cannot
-support a pass that eliminates redundant checks.
-
+The completion of a @|sshallow| function has a @${\sscan} tag in its domain
+to indicate the need for a run-time check.
+A static analysis might remove these tags if the @|sshallow| function never
+escapes to an untyped context.
+For other expressions, the completion rules simply transform subexpressions;
+these rules appear in the appendix.
 
 
 @figure*[
@@ -1118,7 +1110,7 @@ support a pass that eliminates redundant checks.
   \\[1.0ex]
   \eappu{\svalue_0}{\svalue_1} & \snr &
   \stagerror
-  \\\sidecond{if $\svalue_0 \not\in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \efun{\tann{\svar}{\sshape}}{\sexpr} \cup \emon{\stype}{\svalue}$}
+  \\\sidecond{if $\svalue_0 \not\in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
   \\[1.0ex]
   \eappu{(\efun{\svar_0}{\sexpr_0})}{\svalue_0} & \snr
   & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
@@ -1126,11 +1118,11 @@ support a pass that eliminates redundant checks.
   \eappu{(\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0})}{\svalue_0} & \snr
   & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
   \\[1.0ex]
-  \eappu{(\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0})}{\svalue_0} & \snr
+  \eappu{(\esfun{\svar_0}{\sshape_0}{\sexpr_0})}{\svalue_0} & \snr
   & \sscanerror
   \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
-  \eappu{(\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0})}{\svalue_0} & \snr
+  \eappu{(\esfun{\svar_0}{\sshape_0}{\sexpr_0})}{\svalue_0} & \snr
   & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
   \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
@@ -1199,7 +1191,7 @@ support a pass that eliminates redundant checks.
   \obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1}
   & \snr
   & \obars{\stagerror}{\sowner_1}
-  \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \efun{\tann{\svar}{\sshape}}{\sexpr} \cup \emon{\stype}{\svalue}$}
+  \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
   \\[1.0ex]
   \obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
   & \snr
@@ -1209,12 +1201,12 @@ support a pass that eliminates redundant checks.
   & \snr
   & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\[1.0ex]
-  \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+  \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
   & \snr
   & \obars{\sscanerror}{\sowner_1}
   \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
-  \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+  \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
   & \snr
   & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
@@ -1266,7 +1258,7 @@ support a pass that eliminates redundant checks.
 
 @exact|{
 \begin{minipage}[t]{0.5\columnwidth}
-\lbl{\fbox{$\sdelta : \ffun{\tpair{\sunop}{\svalue}}{\svalue}$}}{
+\lbl{\fbox{$\sdelta : \ffun{\tpair{\sunop\,}{\,\svalue}}{\svalue}$}}{
   \begin{langarray}
     \sdelta(\sfst, \epair{\svalue_0}{\svalue_1}) & \feq & \svalue_0
     \\
@@ -1275,7 +1267,7 @@ support a pass that eliminates redundant checks.
 }
 
 \end{minipage}\begin{minipage}[t]{0.5\columnwidth}
-\lbl{\fbox{$\sdelta : \ffun{\tpair{\sbinop}{\tpair{\svalue}{\svalue}}}{\svalue}$}}{
+\lbl{\fbox{$\sdelta : \ffun{\tpair{\sbinop\,}{\tpair{\,\svalue\,}{\,\svalue}}}{\svalue}$}}{
   \begin{langarray}
     \sdelta(\ssum, \sint_0, \sint_1) & \feq & \sint_0 + \sint_1
     \\
@@ -1286,15 +1278,18 @@ support a pass that eliminates redundant checks.
 }
 \end{minipage}
 
-\lbl{\fbox{$\sshapematch : \ffun{\tpair{\sshape}{\svalue}}{\fbool}$}}{
+\lbl{\fbox{$\sshapematch : \ffun{\tpair{\sshape\,}{\,\svalue}}{\fbool}$}}{
+\begin{tabular}[t]{l@{\quad}l}
   \begin{langarray}
    \fshapematch{\kfun}{\svalue_0} & \feq & \ftrue
-   \\\sidecond{if $\svalue_0 \in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \efun{\tann{\svar}{\sshape}}{\sexpr} \cup \emon{\stype}{\svalue}$}
+   \\\sidecond{if $\svalue_0 \in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
    \\[0.8ex]
    \fshapematch{\kpair}{\epair{\svalue_0}{\svalue_1}} & \feq & \ftrue
    \\[0.8ex]
    \fshapematch{\kint}{\sint_0} & \feq & \ftrue
-   \\[0.8ex]
+\end{langarray}
+&
+\begin{langarray}
    \fshapematch{\knat}{\snat_0} & \feq & \ftrue
    \\[0.8ex]
    \fshapematch{\kany}{\svalue_0} & \feq & \ftrue
@@ -1302,6 +1297,7 @@ support a pass that eliminates redundant checks.
    \fshapematch{\sshape_0}{\svalue_0} & \feq & \ffalse
    \\\sidecond{otherwise}
   \end{langarray}
+\end{tabular}
 }
 }|]
 
@@ -1413,7 +1409,7 @@ the appendix presents the guidelines that the authors followed to create
     \sint \mid \epair{\svalue}{\svalue}
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
-    \mid \efun{\tann{\svar}{\sshape}}{\sexpr}
+    \mid \esfun{\svar}{\sshape}{\sexpr}
     \mid \emon{\stype}{\obars{\svalue}{\sowner}}
     \mid \obars{\svalue}{\sowner}
   \\
@@ -1433,6 +1429,7 @@ the appendix presents the guidelines that the authors followed to create
   \sownerenv & \slangeq &
     \cdot \mid \fcons{\tann{\svar}{\sowner}}{\sownerenv}
 \end{langarray}
+\medskip
 }|
 @centered{Abbreviation: @$|{\obars{\cdots\obars{\sexpr_0}{\sowner_0}\cdots}{\sowner_n} = \obbars{\sexpr_0}{\fcons{\sowner_0}{\fcons{\cdots}{\sowner_n}}}}|}
 ]]
@@ -1519,7 +1516,7 @@ checks for.
   \inferrule*{
     \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
   }{
-    \sowner_0; \sownerenv_0 \sWL \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}
+    \sowner_0; \sownerenv_0 \sWL \esfun{\svar_0}{\sshape_0}{\sexpr_0}
   }
 
   \inferrule*{
@@ -1770,12 +1767,12 @@ Both @${\sexpr_0} and @${\sexpr_1} refer to labeled expressions.
     similar to the previous case
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obars{\sscanerror}{\sowner_1}\)
+    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obars{\sscanerror}{\sowner_1}\)
   \item[]
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
     similar to the other substitution cases
 

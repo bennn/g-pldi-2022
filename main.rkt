@@ -88,7 +88,7 @@
 (define appendixref
   (if TECHRPT
     (lambda (str) (secref str))
-    (lambda (str) "supplementary material")))
+    (lambda (str) "appendix")))
 
 (define SR "Shallow Racket")
 

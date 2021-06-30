@@ -196,7 +196,7 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
 
 @figure*[
   "fig:evaluation:index-of"
-  @elem{@|sDeep| polymorphic contracts can change the behavior of untyped code}
+  @elem{@|sDeep| contracts can change the behavior of code}
   fig:index-of]
 
 @|sShallow| Racket avoids all such changes in behavior,

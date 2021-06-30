@@ -52,6 +52,9 @@
 (define code-x-sep 12)
 (define code-y-sep 10)
 
+(define caption-shim 8)
+(define hshim 8)
+
 (struct code-arrow [src-tag src-find tgt-tag tgt-find start-angle end-angle start-pull end-pull style] #:transparent)
 
 (define (hex-triplet->color% x)
@@ -67,12 +70,18 @@
 (define success-color "Forest Green")
 (define error-color "Firebrick")
 
+(define (code-arrowhead angle)
+  (cellophane (colorize (arrowhead 12 angle) black) 0.7))
+
+(define right-arrow
+  (vl-append 6 (blank) (code-arrowhead 0)))
+
 (define code-text-style (cons "Inconsolata" 'modern))
 (define code-text-size 11)
 
 (define (code-text str [extra-style #f] #:size [size code-text-size])
   (define style (if extra-style (cons extra-style code-text-style) code-text-style))
-  (text str style code-text-size))
+  (text str style size))
 
 (define (label-text str)
   (text str '() code-text-size))
@@ -84,10 +93,13 @@
         (apply vl-append (* 1/4 ex-height) (map code-text str*)))))
 
 (define (success-text str)
-  (colorize (code-text str 'bold) success-color))
+  (colorize (plain-text str) success-color))
 
 (define (error-text str)
-  (colorize (code-text str 'bold) error-color))
+  (colorize (plain-text str) error-color))
+
+(define (plain-text str)
+  (code-text str 'bold))
 
 (define (add-code-arrow pp arrow
                         #:arrow-size [pre-arrow-size #f]
@@ -171,35 +183,13 @@
 (define output-x 30)
 (define output-y 12)
 
-(define (make-example-atom-pict t-str* u-str* ok? r-str* #:extra-x [extra-x #f])
+(define (make-example-atom-pict t-str* u-str* s-str* d-str*)
   (define t-pict (typed-codeblock t-str*))
   (define u-pict (untyped-codeblock u-str*))
-  (define r-pict (if r-str* (if ok? (success-text r-str*) (error-text r-str*)) (blank)))
-  (define tu-pict
-    (let* ((t/sep
-             (vl-append t-pict (tag-pict (blank shim-sep shim-sep) 't-shim)))
-           (u/sep
-             (vl-append (tag-pict (blank shim-sep shim-sep) 'u-shim) u-pict))
-           (u/right
-             (hc-append shim-sep u/sep (tag-pict (blank output-x 0) 'u-out-0)))
-           (u/full
-             (vr-append (tag-pict (blank 0 output-y) 'u-out-1) u/right)))
-      (add-code-arrow
-        (vl-append t/sep (blank 0 shim-sep) u/full)
-        (code-arrow 't-shim rb-find 'u-shim rt-find (* 3/4 turn) (* 3/4 turn) 0 0 'solid))))
-  (define r-out-arrow (code-arrow 'u-out-0 lb-find 'u-out-0 rb-find 0 0 0 0 'dot))
-  (define tu/arrow
-    (if ok?
-      (add-code-arrow
-        (add-code-arrow
-          #:arrow-size 0
-          tu-pict r-out-arrow)
-        (code-arrow 'u-out-0 rb-find 'u-out-1 rt-find (* 1/4 turn) (* 1/4 turn) 0 0 'dot))
-      (add-code-arrow tu-pict r-out-arrow)))
-  (ppict-do
-    (if extra-x (ht-append extra-x tu/arrow (blank)) tu/arrow)
-    #:go (at-find-pict 'u-out-0 rc-find 'lc #:abs-x (* 2 shim-sep))
-    r-pict))
+  (define s-pict (code-text (string-append "Shallow: " s-str*)))
+  (define d-pict (hc-append (code-text "Deep: ") (error-text d-str*)))
+  (define ur-pict (vc-append caption-shim u-pict (vc-append (* 1/2 caption-shim) s-pict d-pict)))
+  (ht-append hshim t-pict right-arrow ur-pict))
 
 (define (make-example-pair-pict u-str* t-str* r-str*)
   (define u-pict (untyped-codeblock u-str*))
@@ -330,7 +320,7 @@
 
 (define *my-grid-y* (make-parameter #f))
 
-(define (sc-text str #:size [size #f])
+(define (sc-text str #:size [size code-text-size])
   ;; TODO actually sc, match the latex?
   (code-text str #:size size))
 
@@ -683,7 +673,7 @@ eos
 
 (define fig:model-interaction
   (ppict-do
-    (blank 300 130)
+    (blank 360 100)
     #:go (coord 0 10/100 'lt #:abs-x 10)
     (add-hubs (te-mode-text "Deep") 'D)
     #:go (coord 1 10/100 'rt #:abs-x -10)
@@ -694,18 +684,18 @@ eos
     (let* ((pp ppict-do-state)
            (lbl+arr*
              (list
-               (list "wrap" -18 0 (code-arrow 'D-S rb-find 'U-W lt-find (* 75/100 turn) (* 95/100 turn)  40/100 40/100 'solid))
-               (list "wrap" -15 52 (code-arrow 'U-W lb-find 'D-S lb-find (* 54/100 turn) (* 20/100 turn)  60/100 60/100 'solid))
+               (list "wrap" 0 -9 (code-arrow 'D-E rt-find 'S-W lt-find (* 2/100 turn) (* 98/100 turn)  1/4 1/4 'solid))
+               (list "wrap" 0  19 (code-arrow 'S-W lb-find 'D-E rb-find (* 52/100 turn) (* 48/100 turn)  1/4 1/4 'solid))
                ;;
-               (list "wrap" 0 -16 (code-arrow 'D-E rt-find 'S-W lt-find (* 6/100 turn) (* 94/100 turn)  1/4 1/4 'solid))
-               (list "wrap" 0  26 (code-arrow 'S-W lb-find 'D-E rb-find (* 56/100 turn) (* 44/100 turn)  1/4 1/4 'solid))
+               (list "wrap" 8 9 (code-arrow 'D-S rb-find 'U-W lt-find (* 75/100 turn) (* 97/100 turn)  40/100 40/100 'solid))
+               (list "wrap" -65 30 (code-arrow 'U-W lb-find 'D-S lb-find (* 53/100 turn) (* 22/100 turn)  60/100 36/100 'solid))
                ;;
-               (list "noop" 13 0 (code-arrow 'S-S lb-find 'U-E rt-find (* 75/100 turn) (* 55/100 turn)  40/100 40/100 'solid))
-               (list "scan" 10 52 (code-arrow 'U-E rb-find 'S-S rb-find (* 96/100 turn) (* 30/100 turn)  60/100 60/100 'solid))
+               (list "noop" -8 9 (code-arrow 'S-S lb-find 'U-E rt-find (* 75/100 turn) (* 53/100 turn)  40/100 40/100 'solid))
+               (list "scan" 59 30 (code-arrow 'U-E rb-find 'S-S rb-find (* 97/100 turn) (* 28/100 turn)  60/100 36/100 'solid))
                )))
       (for/fold ((pp pp))
                 ((l+a (in-list lbl+arr*)))
-        (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a) #:size (+ 4 title-text-size)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a))))))
+        (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a) #:size (+ 1 title-text-size)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a))))))
 
 (define fig:opt0
   ;; only D <-> S, weaken
@@ -760,9 +750,8 @@ eos
       ""
       "(define any : Any b)")
     '("(set-box! any 'qq)")
-    #false
-    "Deep: cannot set Any-wrapped box"
-    #:extra-x 215))
+    "(void)"
+    "cannot write to box"))
 
 (define fig:no-wrap
   (make-example-atom-pict
@@ -770,12 +759,14 @@ eos
       "(define (add-mpair mp)"
       "  (+ (mcar mp) (mcdr mp)))")
     '("(add-mpair (mcons 2 4))")
-    #false
-    "Deep: no contract for type"
-    #:extra-x 90))
+    "6"
+    "no contract for type"))
 
 (define fig:index-of
-  (let* ((pp
+  (let* ((uu
+          (untyped-codeblock '(
+            "(index-of '(a b) 'a)")))
+         (tt
           (typed-codeblock '(
             "(require/typed racket/list"
             "  [index-of"
@@ -784,17 +775,13 @@ eos
             "        (U #f Natural)))])"
             ""
             "(index-of '(a b) 'a)")))
-         (pp (vl-append pp (tag-pict (blank shim-sep shim-sep) 't-shim)))
-         (pp (vl-append 14 pp (hb-append 32 (tag-pict (blank shim-sep shim-sep) 'u-shim) (tag-pict (blank shim-sep shim-sep) 'other-shim))))
-         (down-arr (code-arrow 't-shim rb-find 'u-shim rb-find (* 3/4 turn) (* 3/4 turn) 0 0 'dot))
-         (pp (add-code-line pp down-arr))
-         (right-arr (code-arrow 'u-shim rb-find 'other-shim rb-find 0 0 0 0 'dot))
-         (pp (add-code-arrow pp right-arr))
-         (r-pict (error-text "#f")))
-    (ppict-do
-      pp
-      #:go (at-find-pict 'other-shim rc-find 'lc #:abs-x (* 1 shim-sep))
-      r-pict)))
+         (uu (vc-append caption-shim uu (code-text "Untyped: 0")))
+         (tt (vc-append caption-shim
+                        tt
+                        (vc-append (* 1/2 caption-shim)
+                          (code-text "Shallow: 0")
+                          (code-text "Deep: #f")))))
+    (ht-append (* 8 hshim) uu tt)))
 
 (define fig:ds-example
   (let* ((untyped
@@ -814,9 +801,8 @@ eos
             "      Bitmap)))")))
          (main
            (untyped-codeblock '(
-            "(text \"cat\" 'roman)")))
-         (right-arrow (vl-append 6 (blank) (colorize (arrowhead 12 0) black))))
-    (ht-append 8 untyped right-arrow interface right-arrow main)))
+            "(text \"cat\" 'roman)"))))
+    (ht-append hshim untyped right-arrow interface right-arrow main)))
 
 ;; -----------------------------------------------------------------------------
 
@@ -825,8 +811,8 @@ eos
   (define raco-pict
     (add-rectangle-background #:color "white" #:x-margin 40 #:y-margin 40
       (apply vl-append 10
-        ;;fig:model-interaction
-        fig:ds-example
+        ;; fig:model-interaction
+        fig:any-wrap
         '()
     )))
 )
