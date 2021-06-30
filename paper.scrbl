@@ -40,24 +40,29 @@
 @; -----------------------------------------------------------------------------
 
 @abstract{
-Research on sound gradual typing has identified several compelling strategies
-for mixing typed and untyped code.
-These strategies have complementary strengths.
-Two extremes are the natural and transient strategies, which offer deep
-and shallow type guarantees.
-Natural has strong types but depends on higher-order contracts.
-Transient promises only weak types, but does so with rudimentary first-order checks.
+Research on sound gradual typing has identified several techniques for mixing
+typed and untyped code.
+These strategies have complementary strengths in terms of type system guarantees
+and performance.
+Two extremes are the natural and transient strategies.
+Natural offers strong @emph{deep} types but depends on higher-order contracts.
+Transient promises weaker @emph{shallow} types, but can be implemented with
+unobtrusive first-order checks.
+Regrettably, there is no known strategy that provides guarantees and performance
+without placing serious restrictions on untyped code.
 
-Programmers would benefit from the ability to mix and match different
-type-enforcement strategies within the same program.
-To this end, we present a language design that supports both deep and shallow
-types by integrating the natural and transient strategies.
-The design is validated by both a theoretical analysis and an implementation
-for Typed Racket.
-Shallow types can express more programs, deep types provide stronger
-type guarantees and debugging help, and the combination of
-deep and shallow frequently out-performs either one alone on the GTP
-benchmark suite.
+@; Programmers would benefit from the ability to mix and match different
+@; type-enforcement strategies within the same program.
+
+This paper presents a language design that supports both deep and shallow
+types by combining the natural and transient strategies.
+In the mixed language, deep types satisfy a strong complete monitoring guarantee
+and shallow types satisfy a first-order notion of type soundness.
+The design serves as the blueprint for a Typed Racket implementation
+in which programmers can easily switch between deep and shallow types
+to leverage their strengths.
+On programs from the GTP benchmark suite, 40% of all configurations run fastest
+with a mix of deep and shallow types.
 }
 
 @; -----------------------------------------------------------------------------
