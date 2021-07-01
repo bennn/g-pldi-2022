@@ -90,6 +90,8 @@ a gradual language.
 @;After the release, I look forward to studying programmers' experience with
 @; the multi-faceted system.
 
+@; acks
+@; Greenman received support from NSF grant 2030859 to the CRA for the \href{https://cifellows2020.org}{CIFellows} project.
 
 
 @exact|{\bibliography{bg}}|
