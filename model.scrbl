@@ -9,35 +9,33 @@
 
 @title[#:tag "sec:model"]{Model and Metatheory}
 
-A typical mixed-typed language allows for two kinds of code, typed and untyped,
-and employs run-time checks to protect the claims made by static types.
-The model of this section goes further by allowing three variants:
+A typical mixed-typed language allows for two styles of code, typed and untyped,
+and uses run-time checks to enforce the claims made by static types.
+The model here allows three styles:
 @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
 Both the @|sdeep| and @|sshallow| code must satisfy a type checker that
 validates typical well-formedness properties.
 The @|suntyped| code has fewer constraints, but is nevertheless free to
 communicate with @|sdeep| and @|sshallow| chunks of code.
-All three syntaxes compile to an evaluation language that uses run-time
-checks to mediate any interactions.
 
 Overall, the primary goal of the model is to test whether @|sdeep|, @|sshallow|,
 and @|suntyped| code can safely interoperate.
 The @|sdeep| types must satisfy type soundness and complete monitoring properties,
 and the @|sshallow| types must satisfy only a weak type soundness.
 A secondary goal of the model is to serve as the outline for an implementation.
-For this reason, the three syntaxes compile to @emph{one} kernel language
-that uses standard run-time-checking concepts.
+For this reason, the three syntaxes compile to one kernel language
+that employs standard run-time-checking concepts.
 A @emph[swrap] term corresponds to a higher-order contract,
 a @emph[sscan] performs a first-order check,
 and a @emph[snoop] does nothing.
-@Sectionref{sec:model:model:theorems} proves the main result of this section;
+@Sectionref{sec:model:model:theorems} proves the main result;
 namely, that a careful use of these checks
 can ensure safe, three-dimensional interactions.
 
 
 @figure*[
   "fig:model:base-interaction"
-  @elem{@|sDeep|, @|sShallow|, and @|suntyped| interactions.}
+  @elem{Outline for @|sdeep|, @|sshallow|, and @|suntyped| interactions}
   fig:model-interaction]
 
 
@@ -72,7 +70,7 @@ can ensure safe, three-dimensional interactions.
 
 The surface syntax (@figure-ref{fig:model:surface}) equips a basic expression
 language with optional type annotations and module boundaries.
-Expressions @${\ssurface} consist of function applications (@${\eappu{\ssurface}{\ssurface}}),
+Surface expressions @${\ssurface} consist of function applications (@${\eappu{\ssurface}{\ssurface}}),
  primitive operation applications (@${\eunop{\ssurface}}, @${\ebinop{\ssurface}{\ssurface}}),
  variables @${\svar},
  integers @${\sint},
@@ -84,16 +82,16 @@ An @|suntyped| function has no annotation (@${\efun{\svar}{\ssurface}}),
 The underline is simply a notational device; it is meant to suggest that only
 the top-level shape of this type is guaranteed at run-time.
 Types @${\stype} express natural numbers (@${\tnat}),
- integers @${\tint},
- pairs @${\tpair{\stype}{\stype}},
+ integers (@${\tint}),
+ pairs (@${\tpair{\stype}{\stype}}),
  and functions (@${\tfun{\stype}{\stype}}).
 Modules associate a label with an expression (@${\emod{\slang}{\ssurface}}).
 The label @${\slang} is either @${\sD} for @|sdeep|-typed code,
  @${\sS} for @|sshallow|-typed code, or @${\sU} for @|suntyped| code.
 For example, the term @${(\emod{\sD}{\ssurface_0})} says that @${\ssurface_0}
 is a @|sdeep|-typed expression.
-Any module expressions within @${\ssurface_0} can
-be @|sdeep|-typed, @|sshallow|-typed, or @|suntyped|.
+Any module expressions within @${\ssurface_0} are free to use either the same
+typing style or a different one.
 
 
 @section[#:tag "sec:model:model:types"]{Three-way Surface Typing}
@@ -114,15 +112,16 @@ functional language.
 Note that the subsumption rule means the judgment is not syntax-directed.
 The rules for modules allow one kind of expression to appear within another.
 For instance, an @|suntyped| expression may appear within a @|sdeep|
-expression @${\ssurface_0} via a module boundary.
-The full expression @${\ssurface_0} satisfies the typing judgment if the
+expression @${\ssurface_0} via a module boundary;
+if so, the full expression @${\ssurface_0} satisfies the typing judgment if the
 @|sdeep| parts are well-typed and the @|suntyped| parts are well-formed.
 
-@Figureref{fig:model:extra-type} defines a subtyping judgment (@${\ssubt})
+@Figureref{fig:model:extra-type} defines the subtyping judgment (@${\ssubt})
 and a type-assignment for primitive operations (@${\sDelta}).
 These are both standard.
-Subtyping says that natural numbers are valid integers, and is covariant
-for pairs and contravariant for functions.
+Subtyping declares that the natural numbers are a subset of the integers
+and extends this decree covariantly to pairs and contra/co-variantly to
+function domains/codomains.
 The primitive operations are overloaded to combine natural numbers or
 integers.
 
@@ -433,12 +432,12 @@ By contrast to the declarative surface syntax, the purpose of the evaluation
 syntax is to present a core set of expressions that can support three-way
 interactions.
 The syntax removes surface terms that merely express an intent and adds
-terms for run-time checks.
+terms that directly map to run-time checks.
 
 Evaluation expressions @${\sexpr} consist of variables, values, primitive
 applications, function applications, errors, and boundary terms.
 The module boundaries from the surface syntax are gone.
-Instead, three @emph{boundary terms} directly suggest run-time checks.
+Instead, three @emph{boundary terms} describe run-time checks.
 A @|swrap| boundary asks for the full enforcement of a type, either with a comprehensive first-order
 check or a higher-order wrapper;
 a @|sscan| boundary asks for a first-order type-shape (@${\sshape}) check;
@@ -446,11 +445,11 @@ and a @|snoop| boundary asks for no check.
 
 Together, values and errors represent the possible results of an evaluation.
 A value is either an integer, a pair, a function, or a guard wrapper.
-A guard @${(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})} is a restricted
-function; it provides access to the function @${\svalue_0} subject to run-time
-checks based on the @${(\tfun{\stype_0}{\stype_1})} type.
-@|sShallow|-typed functions have a shape annotation in
-the evaluation syntax and a @${\sscan} tag (@${\esfun{\svar}{\sshape}{\sexpr}})
+A guard @${(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})} is a wrapped
+function; more precisely, it provides access to the function @${\svalue_0}
+subject to type-directed checks.
+@|sShallow|-typed functions have a shape annotation and a @{\sscan} tag in
+the evaluation syntax (@${\esfun{\svar}{\sshape}{\sexpr}})
 to suggest that such functions must validate the shape of their input at run-time.
 An error may arise from either a failed check at @|swrap| boundary (@${\swraperror}),
 a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
@@ -504,14 +503,14 @@ The evaluation syntax comes with three typing judgments that describe the
 run-time invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
 The @|sdeep| typing judgment (@${\sWTD}) validates full types.
 The @|sshallow| judgment (@${\sWTS}) checks top-level type shapes.
-Lastly, the @|suntyped| judgment (@${\sWTU}) checks that all variables
+And the @|suntyped| judgment (@${\sWTU}) checks that all variables
 have proper bindings.
 
 Both the @|sdeep| and @|suntyped| rules are similar to the corresponding
 surface-language rules because they support equally-strong conclusions
 (full types and the unitype).
 The @|sshallow| judgment is rather different because it validates type
-shapes instead of full (underlined) types.
+shapes instead of full (underlined @${\tfloor{\stype}}) types.
 When inspecting a pair, for example, the judgment concludes with the @${\kpair}
 shape no matter what shapes the elements have.
 Consequently, a pair elimination form such as @${(\efstu{\svar_0})} has the
@@ -519,7 +518,7 @@ Consequently, a pair elimination form such as @${(\efstu{\svar_0})} has the
 Similar comments apply to functions and applications.
 Thus, if a program expects a particular shape from the element of a pair or the
 range of a function, then the program must use a @${\sscan} assertion to
-check the expected shape.
+confirm this expectation.
 
 @figure*[
   "fig:model:deep-type"
@@ -1030,11 +1029,11 @@ check the expected shape.
 @section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
 
 The surface syntax has no semantics of its own.
-Instead, a compilation pass maps surface terms to simpler evaluation-language
-terms which state exactly which run-time checks to perform.
+Instead, a compilation pass maps surface terms to evaluation-language
+terms with run-time checks.
 Most checks appear at boundaries; indeed, the main task of compilation is
 to replace surface module boundaries with check boundaries.
-Additional checks appear is @|sshallow|-typed code to support its type
+Additional checks appear in @|sshallow|-typed code to support its type
 soundness property.
 
 Because compilation inserts run-time checks and little more, it is more
@@ -1043,8 +1042,8 @@ than a typical compiler.
 Henceforth, this paper uses the term @emph{completion} instead of compilation.
 
 The overall goal of completion-inserted checks is to map all well-typed surface
-expressions to well-typed evaluation expressions
-(@exact{\lemmaref{lemma:model:completion}}).
+expressions to well-typed evaluation expressions (refer to the appendix
+for a formal specification).
 @itemlist[
 @item{
  In @|sdeep|-typed code, completion inserts @|swrap| expressions at the
@@ -1052,13 +1051,13 @@ expressions to well-typed evaluation expressions
  Other @|sdeep| expressions have no checks.
 }
 @item{
- In @|sshallow| code, completion scans incoming untyped code and the result
-  of every elimination form.
+ In @|sshallow| code, completion scans incoming untyped values at boundaries
+ and scan the result of every elimination form.
 }
 @item{
  In untyped code, completion adds no run-time checks.
  At the boundaries to @|sdeep| and @|sshallow| code, however, the above
-  strategies call for a @|swrap| or @|sscan| check.
+ strategy calls for a @|swrap| check.
 }
 ]
 @|noindent|The rules shown in @figureref["fig:model:completion2" "fig:model:completion1"]
@@ -1066,10 +1065,10 @@ say exactly how to insert the checks.
 @Figure-ref{fig:model:completion2} presents the rules for module boundaries
 using a tabular notation.
 The parameterized judgment at the left of the figure summarizes the rules for
-boundaries, and the table at the right shows the specific parameters for the
+boundaries, and the tables at the right show the specific parameters for the
 nine possible combinations.
 These nine rules correspond to the six edges in
-@figure-ref{fig:model:base-interaction} plus three self-edges.
+@figure-ref{fig:model:base-interaction} plus three @${\snoop} self-edges.
 
 @Figureref{fig:model:completion1} illustrates the completion rules for
 functions.
