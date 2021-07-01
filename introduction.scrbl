@@ -31,7 +31,7 @@ interactions with untyped code.
 Some of these strategies place restrictions on untyped code.
 For example, the Concrete strategy uses a tagging protocol that puts
 untyped and typed values on unequal footing@~cite{wnlov-popl-2010,sfrbcsb-popl-2014,rzv-ecoop-2015,mt-oopsla-2017}.
-Other strategies erase types and provide no run-time support@~cite{bat-eccop-2014}.
+Other strategies erase types and provide no run-time support@~cite{bat-ecoop-2014}.
 The focus of this paper is on strategies that are compatible with an untyped
 host language and provide a basic type soundness guarantee.
 

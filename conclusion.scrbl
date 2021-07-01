@@ -30,6 +30,9 @@ An implementation of this design in Typed Racket suggests that the combination
 is better than either @|sdeep| or @|sshallow| alone in terms of guarantees,
 performance, and expressiveness.
 
+@; Knowing now that these extreme designs can interoperate paves the way for
+@; other combinations; say between two wrapping semantics.
+
 @; expressiveness is NOT surprising, it's the same argument from POPL 2017
 
 One drawback apparent in the model is that @|sdeep| and @|sshallow| cannot

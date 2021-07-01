@@ -55,7 +55,7 @@ without placing serious restrictions on untyped code.
 @; type-enforcement strategies within the same program.
 
 This paper presents a language design that supports both deep and shallow
-types by combining the natural and transient strategies.
+types by combining natural and transient.
 In the mixed language, deep types satisfy a strong complete monitoring guarantee
 and shallow types satisfy a first-order notion of type soundness.
 The design serves as the blueprint for a Typed Racket implementation
