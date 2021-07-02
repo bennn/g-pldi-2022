@@ -7,7 +7,7 @@
 
 @title[#:tag "sec:appendix"]{Appendix}
 
-@section[#:tag "appendix:rules"]{xxx}
+@section[#:tag "appendix:rules"]{Surface Typing Judgment, Completion Judgment}
 
 surface language types
 
