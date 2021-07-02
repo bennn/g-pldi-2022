@@ -37,15 +37,15 @@ The integration of @|sDeep| and @|sShallow| Typed Racket offers substantial
 benefits over either one alone:
 @itemlist[
 @item{
-  Switching from @|sshallow| to @|sdeep| strengthens the formal guarantees
+  Switching from @|sShallow| to @|sDeep| strengthens the formal guarantees
   for a block of code.
   A one-line change to the @tt{#lang} line improves types from local spot-checks
   to claims that hold throughout the program, including in untyped modules.
 }
 @item{
-  @|sShallow| types can express more programs than @|sdeep| because they
+  @|sShallow| types can express more programs because they
   enforce weaker guarantees.
-  The added flexibility enables a surprising number of desirable Typed Racket
+  The added flexibility enables a number of desirable Typed Racket
   programs (@sectionref{sec:evaluation:expressiveness}).
 }
 @item{
@@ -53,8 +53,8 @@ benefits over either one alone:
   overhead of mixing typed and untyped code (@sectionref{sec:evaluation:performance}).
   In fully-typed programs, @|sdeep| types add no cost and often run faster
   than untyped code because of the type-directed optimizer.
-  In mixed-typed programs, @|sshallow| avoids the high overheads that
-  can arise from @|sdeep| contracts.
+  In mixed-typed programs, @|sshallow| types avoid the high overheads that
+  can arise from contracts.
 }
 ]
 
@@ -62,14 +62,14 @@ benefits over either one alone:
 @section[#:tag "sec:evaluation:guarantees"]{Guarantees by @|sDeep|}
 
 By design, @|sdeep| types enforce stronger guarantees than @|sshallow|.
-A @|sdeep| type is a valid claim about run-time behavior, plain and simple.
+A @|sdeep| type is a claim about run-time behavior that is substantiated
+by comprehensive run-time checks.
 No matter where a @|sdeep|-typed value ends up, the type constrains its behavior.
 A @|sshallow| type is valid only in a limited scope.
 If a value escapes to untyped or less-precisely typed (perhaps via @${\ssubt}) code,
 then its @|sshallow| type gets forgotten.
 Refer to the example in @section-ref{sec:background} to see how the weak
-@|sshallow| constraints can let an erroneous program silently compute a
-wrong result.
+@|sshallow| constraints can have no impact on the behavior of a program.
 
 Although the @|sshallow| semantics is new to Typed Racket, prior work
 suggests that its use will occasionally lead to confusing situations.
@@ -77,10 +77,10 @@ suggests that its use will occasionally lead to confusing situations.
 Typed Racket and found that @|sShallow| blame errors are more likely to
 reach a dead end than @|sDeep| blame errors.
 @citet{tgpk-dls-2018} conducted a survey using a hypothetical gradual language
-and reported that participants found the @|sshallow| semantics ``unexpected''
-more often than the @|sdeep| semantics.
+and reported that participants found the @|sshallow| @|stransient| semantics ``unexpected''
+more often than the @|sdeep| @|snatural| semantics.
 If such confusing situations arise in practice, the ability to change from
-@|sshallow| to @|sdeep| types may prove useful for understanding the issue.
+@|sshallow| to @|sdeep| types may prove useful for comprehending the root issue.
 
 
 @section[#:tag "sec:evaluation:expressiveness"]{Expressiveness by @|sShallow|}
@@ -92,7 +92,7 @@ If such confusing situations arise in practice, the ability to change from
 
 @|sShallow| Racket can express useful programs that @|sDeep| Racket
 halts with a run-time error.
-At first glance, the existence of such programs is a surprise because
+At first glance, the existence of such programs is surprising because
 the theory (@section-ref{sec:model}) suggests that the @|sdeep| semantics
 is more ``correct'' than @|sshallow|.
 It turns out that the @|sdeep| semantics for certain types is very restrictive,
@@ -110,8 +110,7 @@ The @|sDeep| Racket type named @tt{Any} is a normal top type at compile-time,
 but has a strict semantics at run-time.
 For compile-time type checking, @tt{Any} is a supertype of every other type.
 At run-time, the @tt{Any} type is enforced with an opaque wrapper that
-prohibits a client from making observations that could distinguish two
-values with this type@~cite{fb-tr-2006}.
+prohibits a client from inspecting the underlying value@~cite{fb-tr-2006}.
 
 @figure*[
   "fig:evaluation:any-wrap"
@@ -124,18 +123,18 @@ This program defines a mutable box of symbols in typed code,
  assigns the @tt{Any} type to the box,
  and sends it to untyped code.
 The untyped module writes a symbol to the box.
-@|sDeep| Racket rejects this harmless write, but @|sShallow| allows it.
+@|sDeep| Racket rejects this harmless write, but @|sShallow| Racket allows it.
 
 Other top types for higher-order values can lead to similar programs.
 For example, @|sShallow| can import a function at the general @tt{Procedure} type,
 cast it to a more specific type, and try an application.
 The application may succeed if the specific type is correct.
-A @|sDeep| cast simply adds a second wrapper to such functions, which are
-sealed under the restrictive wrapper for the @tt{Procedure} type.@note{Because
+A @|sDeep| cast simply adds a second wrapper on top of the
+restrictive wrapper for the @tt{Procedure} type.@note{Because
 @|sdeep| program can do so little with a @tt{Procedure} value, library authors
 must use clever types to define generic utility functions for procedures.
 Until recently, the @tt{object-name} function had a useless type
-(@github-commit["racket" "typed-racket" "47a5ab3e2f335e6956aea4b98700d22a359ad6b2"]).}.
+(@github-commit["racket" "typed-racket" "47a5ab3e2f335e6956aea4b98700d22a359ad6b2"]).}
 
 
 @subsection[#:tag "sec:evaluation:expr:wrap"]{No Missing Wrappers}
@@ -183,7 +182,7 @@ without otherwise changing the behavior of program, wrappers can cause some
 programs to run differently.
 One obvious case is code that explicitly looks for wrappers; the answers to
 low-level observations such as @tt{has-contract?} may depend on the type
-boundaries in a @|sdeep| program.
+boundaries in a @|sDeep| Racket program.
 @Figure-ref{fig:evaluation:index-of} presents a second, more subtle case.
 This typed module imports an untyped function, @tt{index-of}, with a precise
  polymorphic type.
@@ -192,7 +191,7 @@ The wrapper that enforces this type
  polymorphism@~cite{gmfk-dls-2007}.
 Unfortunately, these input wrappers change the behavior of @tt{index-of};
  it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
- a ``not found'' result (@tt{#f}) instead of the correct position.
+ a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
 
 @figure*[
   "fig:evaluation:index-of"
@@ -217,9 +216,9 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
 The three-way mix of @|sdeep| and @|sshallow| types improves performance
 across the board.
 On the GTP benchmark suite,@note{GTP Benchmarks version 6.0, @|gtp-url|}
-simply toggling between @|sdeep| and @|sshallow| avoids the
+toggling between @|sdeep| and @|sshallow| avoids the
 pathological cases in each.
-Mixed @|sdeep| and @|sshallow| modules can further improve performance
+Mixing @|sdeep| and @|sshallow| modules can further improve performance
 in many programs.
 
 The data that this section reports was collected on a single-user Linux box
@@ -246,38 +245,36 @@ that extends Typed Racket v1.12.
 @elem{
 The literature on gradual typing reports bottlenecks for both @|sdeep|
 and @|sshallow| implementations.
-With @|sdeep| types, frequent boundary-crossings can result in a huge cost
-because the semantics creates wrappers for higher-order data and eagerly
-traverses first-order data@~cite{htf-hosc-2010,tfgnvf-popl-2016,gtnffvf-jfp-2019}.
-With @|sshallow| types, every line of typed code may add a small cost because
-of the defensive @|stransient| shape checks@~cite{vss-popl-2017,gm-pepm-2018}.
+With @|sdeep| types, frequent boundary-crossings can result in a huge
+cost@~cite{htf-hosc-2010,tfgnvf-popl-2016,gtnffvf-jfp-2019}.
+With @|sshallow| / @|stransient|, every line of typed code may add a small cost
+due to shape checks@~cite{vss-popl-2017,gm-pepm-2018}.
 These bottlenecks are indeed present and problematic in Typed Racket.
 
 Fortunately for the combined language, the bottlenecks of @|sdeep| and
 @|sshallow| types are often complementary.
 Consider a program with @${N} modules.
 @|sDeep| suffers in program configurations that mix typed and untyped code,
-but typically runs quickly once all @${N} modules have types.
-@|sShallow| is pay-as-you go, meaning that the configuration with only typed
-modules is most likely the slowest.
+but can run faster than untyped when all @${N} modules have types.
+@|sShallow| performance typically degrades as the number of typed modules
+increases.
 Toggling between @|sDeep| and @|sShallow| Racket is therefore an easy way
-to avoid the worst cases.
+to avoid the worst cases of each.
 
 @Figure-ref{fig:evaluation:mixed-worst-table} quantifies the benefits of
-switching between @|sdeep| and @|sshallow| types on the GTP benchmarks.
-The first column shows that, as expected, @|sDeep| Racket can lead to
+switching between @|sDeep| and @|sShallow| Racket on the GTP benchmarks.
+The first column shows that, as expected, @|sDeep| can lead to
 enormous run-time costs.
 The second column shows that the bottlenecks for @|sShallow| Racket are
-less severe; indeed, @|sShallow| typically improves performance across
-the board@~cite{glfd-draft-2021}.
-The third column shows, however, that a simple combined implementation
-that toggles between @|sDeep| and @|sShallow| (instead of mixing both
+far less severe.
+The third column shows, however, that
+toggling between @|sDeep| and @|sShallow| (instead of mixing both
 in one program) can do even better.
 Numbers in this third column are typeset in bold if they provide evidence
 of complementary strengths; that is, if the third column reports a lower
 overhead than the first and second columns.
 Although some benchmarks have overlapping bottlenecks,
-most benefit from @|sDeep| in some configurations and @|sShallow| in others.
+most benefit from @|sDeep| in certain configurations and @|sShallow| in others.
 The @tt{zombie} benchmark is a notable failure; @|sShallow| pays a high
 cost because one module contains a large number of elimination forms,
 and the @|sDeep| boundaries are even more costly.
@@ -320,10 +317,9 @@ The @tt{sieve} and @tt{tetris} benchmarks are the best successes.
   @render-mixed-path-table[PT]
 ]
 @elem{
-The complementary aspects of @|sDeep| and @|sShallow| Racket can help
+The complementary strengths of @|sDeep| and @|sShallow| Racket can help
 programmers quickly migrate an untyped codebase toward a more-typed configuration.
-The reason is simple: switching between @|sdeep| and @|sshallow| often avoids
-performance bottlenecks.
+The reason is because switching between the two often performance bottlenecks.
 
 For a fixed program with @${N} modules, a migration path is a sequence of
 @${N\!+\!1} configurations.
@@ -337,10 +333,10 @@ paths out of all @${N!} migration paths in a subset of the GTP benchmarks.
 Larger benchmarks are omitted.
 The first column counts paths in @|sDeep| Racket,
 the second column counts paths in @|sShallow| Racket, and
-the third column counts paths by @|sDeep| or @|sShallow| at each point.
-With @|sdeep| types alone, all paths in @integer->word[(length deep-dead*)]
+the third column counts paths using @|sDeep| or @|sShallow| at each point.
+With @|sDeep| alone, all paths in @integer->word[(length deep-dead*)]
 benchmarks reach a bottleneck that exceeds the @~a[D]x limit.
-With @|sshallow| types alone, all paths in @integer->word[(length shallow-dead*)] benchmarks
+With @|sShallow| alone, all paths in @integer->word[(length shallow-dead*)] benchmarks
  exceed the limit as well---typically near the end of the migration path.
 With the either-or mix, only @integer->word[(length mix-dead*)] benchmark (@bm[(car mix-dead*)])
  has zero @ddeliverable[D] paths.
@@ -350,7 +346,8 @@ configurations are allowed to use a combination of @|sdeep| and @|sshallow|
 modules.
 All paths in @oxfordize[path-3d] are @ddeliverable[path-3d-D]
 with fine-grained mixtures.
-That said, the authors found these mixtures through a brute-force search.
+That said, the authors found these mixtures through a brute-force search
+of @${3^N} configurations.
 It remains to be seen whether a heuristic can lead programmers to useful
 combinations in practice.
 }])
@@ -377,23 +374,22 @@ Mixing @|sdeep| and @|sshallow| types within one program can improve its
 performance.
 @|sDeep| types are best among a tightly-connected group of modules that
 rarely interact with untyped or @|sshallow|-typed code.
-@|sShallow| types run fastest in modules that communicate frequently
-with untyped code but do little computation on their own.
+@|sShallow| types run fastest in modules that act as a bridge to
+untyped code and do little computation on their own.
 When a program contains typed modules that fill each kind of role, a combination
 of @|sdeep| and @|sshallow| runs better that either alone.
 
-Such programs arise surprisingly often in the GTP benchmarks (@figure-ref{fig:both:3way}).
+Such programs arise often in the GTP benchmarks (@figure-ref{fig:both:3way}).
 Out of the @${2^N} configurations in @integer->word[num-DDD] of the smaller
 benchmarks, a median of @$[@~a[DDD-median] "\\%"] run fastest with a mix of
-@|sdeep| and @|sshallow| types.
+@|sDeep| and @|sShallow|.
 These results are especially encouraging because @${N\!+\!1} configurations in
-each benchmark cannot mix @|sdeep| and @|sshallow| because they contain @${<2}
-typed modules.
+each benchmark cannot mix @|sdeep| and @|sshallow| because they contain fewer
+than @${2} typed modules.
 In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
-@Integer->word[fsm-non-mixed] of these are out of the running.
+@Integer->word[fsm-non-mixed] of these have at most one typed module.
 Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a
 combination of @|sdeep| and @|sshallow| types.
-Thus the data suggests that other programs can benefit from three-way mixtures.
 
 The challenge, however, lies in finding which typed modules ought to be @|sdeep|
 and which ought to be @|sshallow|.
@@ -401,15 +397,14 @@ and which ought to be @|sshallow|.
 @${3^N} lattice.
 In practice, developers may not be willing to run a search to find the best
 combinations.
-We conjecture that further experience with @|sdeep| and @|sshallow| types will
+Further experience with @|sdeep| and @|sshallow| types may
 reveal best practices for finding an efficient mix.
-For now, as a first step, we offer three example programs in which we quickly
-found a fast-running mix.
+As a first step, the following three case studies report on manual searches.
 }
 @figure*[
   "fig:both:3way"
   @elem{
-    Percent of configurations that run fastest with a mix of @|sdeep| and @|sshallow| modules.
+    Percent of configurations that run fastest with a mix of @|sDeep| and @|sShallow| modules.
   }
   (render-3d-table DDD)]
 ])
@@ -437,34 +432,35 @@ found a fast-running mix.
                          (mean (hash-ref synth-data 's-lib-d-client))))))
   @elem{
 The GTP benchmark named @bm{synth} is based on @hyperlink[synth-url]{an untyped program}
-that interacts with at typed math library to synthesize music.@note{@shorturl[synth-url "github.com/stamourv/synth"]}
-When the math library uses @|sdeep| types, the original client runs with
-high overhead; compared to a @|sdeep|-typed client program, the untyped client
+that interacts with a typed math library to synthesize music.@note{@shorturl[synth-url "github.com/stamourv/synth"]}
+When the math library uses @|sDeep| Racket, the original client runs with
+high overhead.
+Compared to a @|sDeep| client program, the untyped client
 suffers a @~a[deep-delta]x slowdown.
 
-@exact{\subitem}Changing the library to use @|sshallow| types improves the gap between an
-untyped and @|sdeep|-typed client to @~a[shallow-delta]x.
+@exact{\subitem}Changing the library to use @|sShallow| Racket improves the gap between an
+untyped and @|sDeep| client to @~a[shallow-delta]x.
 This fast untyped configuration is roughly @~a[ds-fast]x slower than the fast
-@|sdeep|-@|sdeep| configuration, but the worst-case is @~a[ds-slow]x
+@|sDeep|-@|sDeep| configuration, but the worst-case is @~a[ds-slow]x
 faster (@~a[ds-slow-sec] seconds) than before.
-Overall, a @|sshallow| version of the math library is a better tradeoff for @bm{synth}.
+Overall, a @|sShallow| version of the math library is a better tradeoff for @bm{synth}.
 })}
 
 @item{@emph{MsgPack}@|~|@|~|
 @hyperlink["http://msgpack.org/"]{MessagePack} is a serialization format.
 @hyperlink["https://gitlab.com/HiPhish/MsgPack.rkt"]{MsgPack} is a Typed Racket
- library that maps Racket values to binary data according to the format.@note{@shorturl["https://gitlab.com/HiPhish/MsgPack.rkt" "gitlab.com/HiPhish/MsgPack.rkt"]}
+ library that maps Racket values to binary data.@note{@shorturl["https://gitlab.com/HiPhish/MsgPack.rkt" "gitlab.com/HiPhish/MsgPack.rkt"]}
 The author of this library
  @hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]{reported a performance hit}
  after narrowing some types from @tt{Any} to a more-precise union type for serializable inputs.@note{@shorturl["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ" "groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]}
 Tests that formerly passed on the package server timed out after the change.
 
-@exact{\subitem}After changing the types in one bridge module from @|sdeep| to @|sshallow|
+@exact{\subitem}After changing one bridge module from @|sDeep| to @|sShallow|
 (a one-line change),
 the time needed to run all tests improved from @${320} seconds to @${204} seconds.
-Migrating the rest of the library from @|sdeep| to @|sshallow| types adds only a slight
- improvement (down to 202 seconds), which suggests that a mix of @|sdeep| and
- @|sshallow| is best for MsgPack.
+Migrating the rest of the library to @|sShallow| Racket adds only a slight
+improvement (down to 202 seconds), which suggests that a mix
+is best for MsgPack.
 
 @; can do even better after changing the code:
 @;  Deep, no pack casts = 117 seconds
@@ -473,30 +469,28 @@ Migrating the rest of the library from @|sdeep| to @|sshallow| types adds only a
 }
 
 @item{@emph{External Data, JSON}@|~|@|~|
-Typed code that deals with data from an external source is often better off
- with @|sshallow| types because they lazily validate data as it is accessed.
-By contrast, Typed Racket's implementation of @|sdeep| types eagerly
- traverses a data structure as soon as it reaches a type boundary.
-If the boundary types allow mutable values, then the traversal is even more
- expensive because it creates wrappers as it copies the dataset.
-
-@exact{\subitem}@(let* ((script_name "QA/transient-expressive/json/custom.rkt")
+@(let* ((script_name "QA/transient-expressive/json/custom.rkt")
         (s* '(169 157 162 159 162))
         (t* '(3007 2991 2920 3096 3308))
         (t/s (/ (mean t*) (mean s*)))
         (slowdown (if (< 10 t/s) "over 10x" (format "~ax" (rnd t/s)))))
   @elem{
+Typed code that deals with data from an external source is often better off
+ in @|sShallow| Racket because it validates data lazily.
+By contrast, @|sDeep| Racket eagerly traverses a data structure as soon as it
+reaches a type boundary.
+If the boundary types allow mutable values, then the traversal is even more
+ expensive because it creates wrappers as it copies the dataset.
 To illustrate the pitfall, the first author wrote a typed script that reads a large dataset of
  apartment data using on off-the-shelf JSON parser and accesses one field
  from each object in the dataset.
-@|sDeep| types make the script run @|slowdown| slower than @|sshallow| types.
+@|sDeep| Racket runs the script @|slowdown| slower than @|sShallow| Racket.
 })
 
-In principle, @|sdeep| code can avoid the slowdown with a custom parser
+@exact{\subitem}In principle, @|sDeep| can avoid the slowdown with a custom parser
  that validates data as it reads it.
 Indeed, Phil Nguyen has written a @hyperlink["https://github.com/philnguyen/json-type-provider"]{library}
  for JSON that mitigates the overhead of @|sdeep| types.
 Such libraries are ideal, but until we have them for the next data exchange
- format (CSV, XML, YAML, ...) @|sshallow| types get the job done with the parsers
- that are available today.
+ format (CSV, XML, YAML, ...) @|sShallow| offers a pragmatic solution.
 }]

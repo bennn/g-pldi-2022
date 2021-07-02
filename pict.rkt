@@ -684,8 +684,8 @@ eos
     (let* ((pp ppict-do-state)
            (lbl+arr*
              (list
-               (list "wrap" 0 -9 (code-arrow 'D-E rt-find 'S-W lt-find (* 2/100 turn) (* 98/100 turn)  1/4 1/4 'solid))
-               (list "wrap" 0  19 (code-arrow 'S-W lb-find 'D-E rb-find (* 52/100 turn) (* 48/100 turn)  1/4 1/4 'solid))
+               (list "wrap" 8 -9 (code-arrow 'D-E rt-find 'S-W lt-find (* 2/100 turn) (* 98/100 turn)  1/4 1/4 'solid))
+               (list "wrap" 8  19 (code-arrow 'S-W lb-find 'D-E rb-find (* 52/100 turn) (* 48/100 turn)  1/4 1/4 'solid))
                ;;
                (list "wrap" 8 9 (code-arrow 'D-S rb-find 'U-W lt-find (* 75/100 turn) (* 97/100 turn)  40/100 40/100 'solid))
                (list "wrap" -65 30 (code-arrow 'U-W lb-find 'D-S lb-find (* 53/100 turn) (* 22/100 turn)  60/100 36/100 'solid))

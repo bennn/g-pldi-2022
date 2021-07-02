@@ -10,7 +10,7 @@ which allows two interpretations of one static type, the following introduce
 new types to allow for additional interpretations.
 @itemlist[
 @item{
-Thorn combines concrete types and erased types (@emph{like types}) according
+Thorn combines concrete types and erased types, called @emph{like types}, according
 to programmer-supplied annotations@~cite{wzlov-popl-2010}.
 If a like type annotation is present, then Thorn does not enforce the type
 at run-time.
@@ -21,7 +21,7 @@ and thereby offers a similar combination to like types in which programmers may 
 run-time checking@~cite{rzv-ecoop-2015}.
 }
 @item{
-Pyret employs @|sdeep| checks for fixed-size data and @|sshallow| checks for
+Pyret uses @|sdeep| checks for fixed-size data and @|sshallow| checks for
 everything else.@note{Personal communication. @shorturl["https://www.pyret.org" "pyret.org"]}
 For example, pair types get a @|sdeep| check and function types get a
 @|sshallow| check.
@@ -29,16 +29,15 @@ For example, pair types get a @|sdeep| check and function types get a
 @item{
 Static Python combines @|sshallow| and concrete checks.@note{Personal communication. @shorturl["https://github.com/facebookincubator/cinder" "github.com/facebookincubator/cinder"]}
 @|sShallow| checks are the default.
-Programmers can opt in to concrete by using one of several data structures
-that the language provides.
+Programmers can switch to concrete by using a different built-in data structure.
 }
 ]
 
 The model in @section-ref{sec:model} builds on the semantic framework
-of @citet{gf-icfp-2018}, which is in turn inspired by the multi-language
-semantics of @citet{mf-toplas-2009}.
-The model is also inspired by the @exact{\kafka} framework, in that it employs
-three compilers to transform a declarative surface syntax to an evaluation
+of @citet{gf-icfp-2018}, which is in turn inspired by
+@citet{mf-toplas-2009}.
+The model is also inspired by the @exact{\kafka} framework, which introduces
+four compilers to transform a declarative surface syntax to an evaluation
 syntax that makes run-time checks manifest@~cite{clzv-ecoop-2018}.
 
 @; similar acks for implementation (Sam, TR) and evaluation (Takikawa) ?

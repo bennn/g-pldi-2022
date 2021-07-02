@@ -29,6 +29,7 @@ types against untyped code and, as needed, against one another.
 An implementation of this design in Typed Racket suggests that the combination
 is better than either @|sdeep| or @|sshallow| alone in terms of guarantees,
 performance, and expressiveness.
+Once again, giving more control to programmers helps resolve an impasse.
 
 @; Knowing now that these extreme designs can interoperate paves the way for
 @; other combinations; say between two wrapping semantics.
@@ -49,19 +50,19 @@ never escape to untyped, then @|sdeep| and @|sshallow| can freely share these
 values.
 These are all potential directions for future work.
 
-A second line of future work is to incorporate a dynamic type
-that satisfies the graduality properties@~cite{svcb-snapl-2015}.
-For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
-can be achieved by adding a new wrapper for dynamic-typed values and nothing
-more.
-Implementing the dynamic type may pose new challenges, especially when it
-comes to blame and especially if the implementation targets an existing
-static language@~cite{g-snapl-2019}.
-@; HO HUM ... cut this paragraph?
+@;A second line of future work is to incorporate a dynamic type
+@;that satisfies the graduality properties@~cite{svcb-snapl-2015}.
+@;For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
+@;can be achieved by adding a new wrapper for dynamic-typed values and nothing
+@;more.
+@;Implementing the dynamic type may pose new challenges, especially when it
+@;comes to blame and especially if the implementation targets an existing
+@;static language@~cite{g-snapl-2019}.
+@;@; HO HUM ... cut this paragraph?
 
-A third direction for future work is to identify best practices for coding in
+A second direction for future work is to identify best practices for coding in
 a three-way language.
-Anecdotal experience suggests that mixing @|sdeep| and @|sshallow| is
+Anecdotal experience suggests that mixing @|sdeep| and @|sshallow| provides
 a better way to add types to an untyped codebase:
 @itemlist[#:style 'ordered
 @item{
@@ -78,8 +79,8 @@ a better way to add types to an untyped codebase:
 }
 ]
 @|noindent|The challenge is to rigorously test the effectiveness of this
-migration story, and of other intuitions about how to program well in
-a gradual language.
+migration story and to seek out other ways to leverage the spectrum of
+type enforcement.
 
 
 
