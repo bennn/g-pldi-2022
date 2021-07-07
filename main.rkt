@@ -207,7 +207,7 @@
 (define snoop "noop")
 
 (define gtp-url
-  @format-url{https://docs.racket-lang.org/gtp-benchmarks/index.html})
+  @format-url{https://docs.racket-lang.org/gtp-benchmarks})
 
 (struct lib [name url] #:prefab)
 

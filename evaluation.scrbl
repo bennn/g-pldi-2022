@@ -44,7 +44,7 @@ benefits over either one alone:
 }
 @item{
   @|sShallow| types can express more programs because they
-  enforce weaker guarantees.
+  enforce fewer constraints.
   The added flexibility enables a number of desirable Typed Racket
   programs (@sectionref{sec:evaluation:expressiveness}).
 }

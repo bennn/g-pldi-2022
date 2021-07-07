@@ -30,8 +30,7 @@ A @emph[swrap] term corresponds to a higher-order contract,
 a @emph[sscan] performs a first-order check,
 and a @emph[snoop] does nothing.
 @Sectionref{sec:model:model:theorems} proves the main result;
-namely, that a careful use of these checks
-can ensure safe, three-dimensional interactions.
+namely, that a careful use of these checks can enforce the safety properties.
 
 
 @figure*[

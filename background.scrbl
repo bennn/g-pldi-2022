@@ -15,11 +15,11 @@
 
 @section{Gradual Typing, Migratory Typing, Mixed-Typed Code}
 
-For the past two decades, a growing cadre of researchers have been investigating methods to combine
+For the past two decades, researchers have been investigating methods to combine
 static and dynamic typing@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
-Their ultimate goal is a mixed-typed (or gradual@note{Following @citet{svcb-snapl-2015},
+The ultimate goal of these efforts is a mixed-typed (or gradual@note{Following @citet{svcb-snapl-2015},
 we prefer to reserve the name @emph{gradual} for mixed-typed languages with
-a dynamic type that satisfies the graduality properties.})
+a dynamic type that satisfies the gradual guarantees / graduality@~cite{nla-popl-2019}.})
 language that supports two styles of code in a convenient manner.
 Untyped code is free to perform any computation that the language can express.
 Typed code is restricted to a subset of well-typed computations, but comes
@@ -38,18 +38,17 @@ general setting.
 Consequently, the formal development adheres to two ground rules:
 @itemlist[#:style 'ordered
 @item{
-  Use conventional, ahead-of-time techniques to enforce types at run-time.
+  Use ahead-of-time techniques to enforce types at run-time.
 }
 @item{
-  Focus on the interactions between standard types and untyped code.
+  Focus on the interactions between conventional types and untyped code.
 }
 ]
 @|noindent|These rules ensure a widely-applicable baseline.
 Specializations are a promising subject for future work.
 Researchers that are building new languages may be able to further improve
-run-time performance with advanced mechanisms for checking types.
-Researchers studying gradual languages may extend the theory with a
-dynamic type.
+run-time performance with advanced mechanisms for checking types@~cite{kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,bbst-oopsla-2017,rmhn-ecoop-2019}.
+Researchers studying gradual languages may extend the theory with a dynamic type.
 
 
 @section{@|sDeep| and @|sShallow| Types}
@@ -58,6 +57,7 @@ dynamic type.
 
 Within the design space of sound mixed-typed languages, researchers
 disagree on how types should guide the behavior of a program.
+Two leading alternatives are @|sdeep| and @|sshallow| types.
 Roughly speaking, @|sdeep| types try to be equally strong as conventional
 static types while @|sshallow| types strike a balance between guarantees and
 pragmatic benefits.
