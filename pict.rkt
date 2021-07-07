@@ -66,7 +66,7 @@
 
 (define black (hex-triplet->color% #x222222))
 (define untyped-color (hex-triplet->color% #xffffff))
-(define typed-color (hex-triplet->color% #xf0f0f0))
+(define typed-color (hex-triplet->color% #xf3f3f3))
 (define success-color "Forest Green")
 (define error-color "Firebrick")
 
