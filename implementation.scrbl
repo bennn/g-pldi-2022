@@ -18,23 +18,26 @@
 @title[#:tag "sec:implementation"]{Theory to Practice: Typed Racket}
 @; 2021-04-29 do we really need to discuss typed/untyped API? could point to dissertation for details
 
-Using the three-way model as a guide, the authors have extended Typed Racket to
-support interactions among @|sdeep|, @|sshallow|, and @|suntyped| code.
-Thanks to the standard @|sdeep| semantics of Typed Racket@~cite{tf-popl-2008}
-and a recent implementation of the @|stransient| semantics@~cite{glfd-draft-2021},
-the implementation was largely a matter of gluing code together.
-In particular, the run-time tools for @${\swrap} and @${\sscan} checks were
-readily available.
-The gluing process brought unexpected challenges, however, because
-Typed Racket includes a small API to customize @|sdeep|--@|suntyped| boundaries.
+According to the model, a mixed-typed language can support three-way
+interactions by compiling types to contracts at @|sdeep|-typed boundaries
+and to checks throughout @|sshallow|-typed code.
+The model, however, is an abstraction that ignores practical issues.
+To show that a realistic language can also support @|sdeep| and @|sshallow|
+types, the authors have extended Typed Racket to combine its standard
+@|snatural| semantics@~cite{tf-popl-2008} with a @|stransient| one@~cite{glfd-draft-2021}.
+The two semantics coexist as modes of one compiler codebase and rely on the
+same static type checker.
+Unexpected challenges arose regarding the use of type definitions across
+@|sdeep| and @|sshallow| modules and the adaptation of an API that customizes
+@|sdeep|--@|suntyped| boundaries.
 
 
 @section[#:tag "sec:implementation:overview"]{User-Facing API}
 
 All Racket modules begin with a @tt{#lang} declaration.
-@|sDeep| Typed Racket and @|sShallow| Typed Racket are no different,
-thus the combined language gives programmers three basic choices
-for writing a new module:
+The combined language introduces two concepts,
+@|sDeep| Typed Racket and @|sShallow| Typed Racket,
+and thus offers three basic module languages:
 @itemlist[
 @item{
   @tt{#lang typed/racket/deep} provides the @|sdeep| @|snatural| semantics, which
