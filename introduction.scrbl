@@ -43,8 +43,8 @@ The @|sTransient| strategy uses first-order checks to enforce @|sshallow| aspect
 of types in type-annotated code.
 Unsurprisingly, these radically different methods of enforcing types come with
 benefits and drawbacks.
-Contracts in @|sNatural| lead to the strong guarantees of type soundness
-and complete monitoring@~cite{gfd-oopsla-2019},
+Contracts in @|sNatural| enable strong type soundness
+and complete monitoring guarantees@~cite{gfd-oopsla-2019},
 but can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
 First-order checks in @|sTransient| offer only a weak type soundness guarantee,
 but are far less likely to dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
@@ -72,10 +72,10 @@ The evidence for these claims has three parts:
   Indeed, every @|sdeep|-typed program can be expressed in @|sShallow| Racket.
 }
 @item{
-  An evaluation that addresses the guarantees, expressiveness, and performance
+  An evaluation of the guarantees, expressiveness, and performance
   of the Typed Racket implementation (@secref{sec:evaluation}).
   The performance study uses the GTP benchmark suite.@note{@|gtp-url|}
-  The expressiveness findings are inspired by questions posted to Typed Racket
+  The expressiveness findings are driven by questions posted to the Typed Racket
   mailing list.
 }
 ]

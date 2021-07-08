@@ -34,8 +34,8 @@
 
 @; -----------------------------------------------------------------------------
 
-@keywords{gradual typing, migratory typing}
-@; any more?
+@keywords{gradual typing, migratory typing, complete monitoring}
+@; TODO is there really no new vocabulary that we earned along the way???!
 
 @; -----------------------------------------------------------------------------
 
@@ -55,12 +55,12 @@ without placing serious restrictions on untyped code.
 @; type-enforcement strategies within the same program.
 
 This paper presents a language design that supports both deep and shallow
-types by combining natural and transient.
+types.
 In the mixed language, deep types satisfy a strong complete monitoring guarantee
 and shallow types satisfy a first-order notion of type soundness.
 The design serves as the blueprint for a Typed Racket implementation
 in which programmers can easily switch between deep and shallow types
-to leverage their strengths.
+to leverage their distinct advantages.
 On programs from the GTP benchmark suite, 40% of all configurations run fastest
 with a mix of deep and shallow types.
 }
