@@ -46,7 +46,7 @@ benefits and drawbacks.
 Contracts in @|sNatural| enable strong type soundness
 and complete monitoring guarantees@~cite{gfd-oopsla-2019},
 but can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
-First-order checks in @|sTransient| offer only a weak type soundness guarantee,
+First-order checks in @|sTransient| enable only a weak soundness guarantee,
 but are far less likely to dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
 The question thus arises as to whether the @|sNatural| and @|sTransient|

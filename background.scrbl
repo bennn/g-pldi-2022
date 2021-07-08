@@ -71,8 +71,8 @@ module, which incorporates thousands of lines of rendering and raytracing code.
 The typed module in the middle is an interface for the untyped function.
 The types correctly state that @|untyped-fn| expects a string and a font
 object and computes a bitmap object.
-Finally, the untyped client module on the right attempts to call @|untyped-fn|
-with one good and one bad input: a string and a symbol.
+Finally, the untyped client module on the right mistakenly calls @|untyped-fn|
+with two strings instead of one string and one font object.
 
 @figure*[
   "fig:ds-example"
@@ -86,15 +86,16 @@ in the untyped client.
 @item{
   @|sDeep| types enforce the interface with run-time obligations for both
   the client and the library.
-  In this case, the client triggers a run-time error because the type calls for
+  In this case, the client triggers a run-time error because the type asks for
   a font object.
 }
 @item{
   @|sShallow| types ensure the local integrity of typed code, but nothing more.
-  The untyped client is allowed to send any input to the untyped @|untyped-fn| function.
+  The untyped client is allowed to send any input to the untyped @|untyped-fn|
+  function, including two strings.
 }]
 
-@; ... one way to formalize
+@; TODO be clearer about strong vs weak soundness? May help with understanding
 From a theoretical perspective, @|sshallow| types satisfy a type soundness
 property and nothing more@~cite{vss-popl-2017,gf-icfp-2018}.
 Soundness states that the type of an expression predicts the kinds of values

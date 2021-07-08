@@ -46,10 +46,10 @@ These strategies have complementary strengths in terms of type system guarantees
 and performance.
 Two extremes are the natural and transient strategies.
 Natural offers strong @emph{deep} types but depends on higher-order contracts.
-Transient promises weaker @emph{shallow} types, but can be implemented with
+Transient offers weak @emph{shallow} types, but can be implemented with
 unobtrusive first-order checks.
-Regrettably, there is no known strategy that provides guarantees and performance
-without placing serious restrictions on untyped code.
+There is no known strategy that provides guarantees and performance
+without placing restrictions on untyped code.
 
 @; Programmers would benefit from the ability to mix and match different
 @; type-enforcement strategies within the same program.

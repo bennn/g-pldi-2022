@@ -801,7 +801,7 @@ eos
             "      Bitmap)))")))
          (main
            (untyped-codeblock '(
-            "(text \"cat\" 'roman)"))))
+            "(text \"cat\" \"roman\")"))))
     (ht-append hshim untyped right-arrow interface right-arrow main)))
 
 ;; -----------------------------------------------------------------------------

@@ -254,8 +254,8 @@ Helper functions check that values with the integer type do not actually
   "   (-> (U (Vectorof Natural) (Vectorof Integer))"
   "       (Vectorof Natural)))")]
 
-@|noindent|@|sDeep| Racket contracts cannot express the type for the checking
- function because they lack support for true unions.
+@|noindent|Racket contracts cannot express the @|sDeep| Racket type of the checking
+ function because they lack support for higher-order unions.
 The work around is to impose a supertype on untyped clients:
 
 @exact{\smallskip}
