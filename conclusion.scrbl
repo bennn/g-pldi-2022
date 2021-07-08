@@ -5,17 +5,17 @@
 
 @; ps Greenberg is a 2nd impasse, stat-first vs dyn-first ... worth mentioning?
 
-@title[#:tag "sec:conclusion"]{Conclusion and Future Work}
+@title[#:tag "sec:conclusion"]{Let Programmers Choose}
 
-Gradual typing began with the observation that static and dynamic typing have
-complementary strengths@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
-By combining both styles, researchers gave programmers control over the
-static/dynamic tradeoff.
-But at the same time, the implementation of mixed-typed languages revealed
-a conflict among three dimensions:
-the guarantees that types provide,
-the run-time cost of enforcing guarantees against untyped code,
-and the expressiveness of the mixed-typed language.
+Gradual typing resolves the impasse between static and dynamic languages by
+bringing both styles under one roof and letting programmer choose.
+In the same way, combining @|sdeep| and @|sshallow| types resolves an
+impasse among mixed-typed languages.
+The problem is that every sound method of typed--untyped interoperability must
+balance three dimensions: the guarantees that types provide, the expressiveness
+of type boundaries, and the cost of run-time checks.
+Different balances offer distinct strengths and weaknesses, but no existing
+language lets programmers combine type-enforcement strategies.
 
 This paper contributes the first language design that gives programmers the
 ability to choose between two forms of sound gradual typing.
@@ -25,64 +25,14 @@ semantics.
 At run-time, the language ensures the integrity of @|sdeep| and @|sshallow|
 types against untyped code and, as needed, against one another.
 An implementation of this design in Typed Racket suggests that the combination
-is better than either @|sdeep| or @|sshallow| alone in terms of guarantees,
-performance, and expressiveness.
-Yet again, internalizing a concept helps to resolve an impasse.
+is better than either @|sdeep| or @|sshallow| alone on all three fronts.
 
-@; Yet again, the solution to an impasse is to internalize a concept and give
-@; more control to programmers.
-
-@; Knowing now that these extreme designs can interoperate paves the way for
-@; other combinations; say between two wrapping semantics.
-
-@; expressiveness is NOT surprising, it's the same argument from POPL 2017
-
-One drawback apparent in the model is that @|sdeep| and @|sshallow| cannot
-trust one another.
-@|sDeep| code must wrap inputs from @|sshallow| code because they may have
-originated in untyped code.
-@citet{g-thesis-2020} sketches two ideas for removing checks from
-@|sdeep|--@|sshallow| boundaries.
-One requires an escape analysis and the other asks @|sshallow| code to
-create wrappers.
-A third approach is to adapt confined gradual typing@~cite{afgt-oopsla-2014}.
-If the type system can prove that confined values originate in typed code and
-never escape to untyped, then @|sdeep| and @|sshallow| can freely share these
-values.
-These are all potential directions for future work.
-
-@;A second line of future work is to incorporate a dynamic type
-@;that satisfies the graduality properties@~cite{svcb-snapl-2015}.
-@;For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
-@;can be achieved by adding a new wrapper for dynamic-typed values and nothing
-@;more.
-@;Implementing the dynamic type may pose new challenges, especially when it
-@;comes to blame and especially if the implementation targets an existing
-@;static language@~cite{g-snapl-2019}.
-@;@; HO HUM ... cut this paragraph?
-
-A second direction for future work is to identify best practices for coding in
-a three-way language.
-Anecdotal experience suggests that mixing @|sdeep| and @|sshallow| provides
-a better way to add types to an untyped codebase:
-@itemlist[#:style 'ordered
-@item{
-  Start by adding @|sdeep| types, because their strong guarantees may help
-  identify logical errors.
-}
-@item{
-  If performance becomes an issue, switch to @|sshallow| types and continue
-  adding @|sshallow| annotations to the next modules.
-}
-@item{
-  Once the codebase is predominantly typed, or once all high-traffic boundaries
-  are typed, switch back to @|sdeep| maximize performance.
-}
-]
-@|noindent|The challenge is to rigorously test the effectiveness of this
-migration story and to seek out other ways to leverage the spectrum of
-type enforcement.
-
+As a whole, the work reveals insights about the extent to which two typed
+languages can cooperate in the presence of untyped code.
+The integration of @|snatural| and @|stransient| demonstrates that extreme
+combinations are possible.
+Further systematic efforts are needed to find optimal points in this complex
+design space.
 
 
 @;@section[#:tag "sec:evaluation:perf:release"]{Release Information}

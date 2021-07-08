@@ -73,7 +73,7 @@ with a mix of deep and shallow types.
 @include-section{implementation.scrbl}
 @include-section{evaluation.scrbl}
 @include-section{related.scrbl}
-@; @include-section{future.scrbl}
+@include-section{future.scrbl}
 @include-section{conclusion.scrbl}
 
 @if-techrpt[

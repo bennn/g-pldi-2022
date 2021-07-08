@@ -3,35 +3,18 @@
 
 @title[#:tag "sec:related"]{Related Work}
 
-Four other gradual languages employ a combination of type enforcement
-strategies.
-By contrast to the multi-language approach of @|sDeep| and @|sShallow| Racket,
-which allows two interpretations of one static type, the following introduce
-new types to allow for additional interpretations.
-@itemlist[
-@item{
-Thorn combines concrete types and erased types, called @emph{like types}, according
-to programmer-supplied annotations@~cite{wzlov-popl-2010}.
-If a like type annotation is present, then Thorn does not enforce the type
-at run-time.
-}
-@item{
-StrongScript extends TypeScript@~cite{bat-ecoop-2014} with concrete types,
-and thereby offers a similar combination to like types in which programmers may opt in to
-run-time checking@~cite{rzv-ecoop-2015}.
-}
-@item{
+Thorn@~cite{wzlov-popl-2010} and StrongScript@~cite{rzv-ecoop-2015} support
+a combination of sound concrete types and erased @emph{like} types.
+Thorn is a scalable scripting language that compiles to the JVM@~cite{bfnorsvw-oopsla-2009}.
+StrongScript extends TypeScript@~cite{bat-ecoop-2014} with concrete types.
+Both languages are supported by formal models with proofs of type soundness.
+
 Pyret uses @|sdeep| checks for fixed-size data and @|sshallow| checks for
-everything else.@note{Personal communication. @shorturl["https://www.pyret.org" "pyret.org"]}
+other data.@note{Personal communication. @shorturl["https://www.pyret.org" "pyret.org"]}
 For example, pair types get a @|sdeep| check and function types get a
 @|sshallow| check.
-}
-@item{
 Static Python combines @|sshallow| and concrete checks.@note{Personal communication. @shorturl["https://github.com/facebookincubator/cinder" "github.com/facebookincubator/cinder"]}
-@|sShallow| checks are the default.
-Programmers can switch to concrete by using a different built-in data structure.
-}
-]
+@|sShallow| checks are the default; concrete data structures are available.
 
 The model in @section-ref{sec:model} builds on the semantic framework
 of @citet{gf-icfp-2018}, which is in turn inspired by
