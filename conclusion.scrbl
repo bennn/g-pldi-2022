@@ -9,15 +9,13 @@
 
 Gradual typing began with the observation that static and dynamic typing have
 complementary strengths@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
-By combining both styles into a mixed-typed language, researchers gave
-programmers control over the static/dynamic tradeoff.
+By combining both styles, researchers gave programmers control over the
+static/dynamic tradeoff.
 But at the same time, the implementation of mixed-typed languages revealed
-new tradeoffs along three axis:
+a conflict among three dimensions:
 the guarantees that types provide,
 the run-time cost of enforcing guarantees against untyped code,
 and the expressiveness of the mixed-typed language.
-A promising solution to these tradeoffs is to give programmers control over the
-strength of types.
 
 This paper contributes the first language design that gives programmers the
 ability to choose between two forms of sound gradual typing.
@@ -29,7 +27,10 @@ types against untyped code and, as needed, against one another.
 An implementation of this design in Typed Racket suggests that the combination
 is better than either @|sdeep| or @|sshallow| alone in terms of guarantees,
 performance, and expressiveness.
-Once again, giving more control to programmers helps resolve an impasse.
+Yet again, internalizing a concept helps to resolve an impasse.
+
+@; Yet again, the solution to an impasse is to internalize a concept and give
+@; more control to programmers.
 
 @; Knowing now that these extreme designs can interoperate paves the way for
 @; other combinations; say between two wrapping semantics.
