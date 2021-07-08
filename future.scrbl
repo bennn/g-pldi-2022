@@ -17,20 +17,20 @@ never escape to untyped, then @|sdeep| and @|sshallow| can freely share these
 values.
 These are all potential directions for future work.
 
-@;A second line of future work is to incorporate a dynamic type
-@;that satisfies the graduality properties@~cite{svcb-snapl-2015}.
-@;For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
-@;can be achieved by adding a new wrapper for dynamic-typed values and nothing
-@;more.
-@;Implementing the dynamic type may pose new challenges, especially when it
-@;comes to blame and especially if the implementation targets an existing
-@;static language@~cite{g-snapl-2019}.
-@;@; HO HUM ... cut this paragraph?
+A second line of future work is to incorporate a dynamic type
+that satisfies the graduality properties@~cite{svcb-snapl-2015}.
+For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
+can be achieved by adding a new wrapper for dynamic-typed values and nothing
+more.
+Implementing the dynamic type may pose new challenges, especially when it
+comes to blame and if the implementation targets an existing
+static language@~cite{g-snapl-2019}.
+@; HO HUM ... cut this paragraph?
 
-A second direction for future work is to identify best practices for coding in
+A third direction is to identify best practices for coding in
 a three-way language.
 Anecdotal experience suggests that mixing @|sdeep| and @|sshallow| provides
-a better way to add types to an untyped codebase:
+a better way to type a codebase:
 @itemlist[#:style 'ordered
 @item{
   Start by adding @|sdeep| types, because their strong guarantees may help
