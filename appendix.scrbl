@@ -9,11 +9,15 @@
 
 @section[#:tag "appendix:rules"]{Surface Typing Judgment, Completion Judgment}
 
-surface language types
+@Figure-ref{fig:appendix:surface-types} presents the full typing judgment
+for the surface language.
+@Figure-ref{fig:appendix:surface-completion} presents the completion rules
+for all expressions except for module expressions, which are covered in
+full by @figure-ref{fig:model:completion2}.
 
 @figure[
 "fig:appendix:surface-types"
-@elem{Surface Typing}
+@elem{Surface typing judgment}
 
 @exact|{
 \begin{mathpar}
@@ -250,7 +254,7 @@ surface language types
 
 @figure[
   "fig:appendix:surface-completion"
-  @elem{Surface to Evaluation Completion}
+  @elem{Surface-to-evaluation completion}
 
 @exact|{
 \begin{mathpar}
@@ -363,9 +367,9 @@ surface language types
 @; --- begin CUT???
 Complete monitoring tests whether a mixed-typed semantics has control over
  every interaction between typed and untyped code.
-If the property holds, then a programmer can rely on the language to run
- checks at the proper points, for example, between the library and client
- demonstrated in @figureref{fig:tr-example}.
+If the property holds, then a programmer can rely on the language to insert
+ checks at the right places, for example, between the library and client
+ demonstrated in @figureref{fig:ds-example}.
 Concretely, if a value passes through the type @${(\tfun{\tint}{\tint})}
  then complete monitoring guarantees that the language has control over
  every input to the function and every result that the function computes,
@@ -376,7 +380,7 @@ Because all such interactions originate at the boundaries
  a simplistic way to formalize complete monitoring is to ask whether each
  boundary comes with a full run-time check when possible and an error otherwise.
 A language that meets this strict requirement certainly has full control.
-However, other good designs fail.
+Other good designs fail, however.
 Suppose typed code expects a pair of integers and a semantics initially
  admits any pair at the boundary but eventually checks that the pair contains integers.
 Despite the incomplete check at the boundary, this delayed-checking semantics eventually
@@ -550,7 +554,7 @@ When reading an example, accept the transitions
 }|
 
 @|noindent|Note: @exact{\lawref{law:neg}} talks about functions, but generalizes to
- reference cells and other values that accept input.
+ reference cells and other higher-order values that accept input.
 
 Although the design of a lifted reduction relation is a challenge
  for every language,
@@ -559,7 +563,7 @@ Although the design of a lifted reduction relation is a challenge
  and may help guide future work.
 
 
-@section[#:tag "sec:model:model:lemmas"]{Lemmas for Model}
+@section[#:tag "sec:model:model:lemmas"]{Lemmas for the Model}
 
 @exact|{
 \begin{lemma}[completion]\label{lemma:model:completion}
@@ -577,29 +581,29 @@ Although the design of a lifted reduction relation is a challenge
 \end{lemma}
 }|
 
-@;@exact|{
-@;\begin{lemma}[decomposition]
-@;  For all\ $\sexpr_0$
-@;  there exists unique\ $\sexpr_1, \sctx_0$
-@;  such that\ $\sexpr_0 \sexpreq \finhole{\sctx_0}[\sexpr_1]$
-@;\end{lemma}
-@;}|
-@;
-@;@exact|{
-@;\begin{lemma}[type progress]
-@;  If\ $~\sST \sexpr_0 : \stspec$
-@;  then either\ $\sexpr_0 \in \svalue \cup \serror$
-@;  or\ $\sexpr_0 \scc \sexpr_1$
-@;\end{lemma}
-@;}|
-@;
-@;@exact|{
-@;\begin{lemma}[type preservation]
-@;  If\ $~\sST \sexpr_0 : \stspec$
-@;  and\ $\sexpr_0 \scc \sexpr_1$
-@;  then\ $\sST \sexpr_1 : \stspec$
-@;\end{lemma}
-@;}|
+@exact|{
+\begin{lemma}[type progress]
+  If\ $~\sST \sexpr_0 : \stspec$
+  then either\ $\sexpr_0 \in \svalue \cup \serror$
+  or\ $\sexpr_0 \scc \sexpr_1$
+\end{lemma}
+}|
+
+@exact|{
+\begin{lemma}[type preservation]
+  If\ $~\sST \sexpr_0 : \stspec$
+  and\ $\sexpr_0 \scc \sexpr_1$
+  then\ $\sST \sexpr_1 : \stspec$
+\end{lemma}
+}|
+
+@exact|{
+\begin{lemma}[decomposition]
+  For all\ $\sexpr_0$
+  there exists unique\ $\sexpr_1, \sctx_0$
+  such that\ $\sexpr_0 \sexpreq \finhole{\sctx_0}{\sexpr_1}$
+\end{lemma}
+}|
 
 @exact|{
 \begin{lemma}[$\sdelta, \sDelta$ agreement]\label{lemma:model:delta}\leavevmode
@@ -683,25 +687,25 @@ Although the design of a lifted reduction relation is a challenge
 \end{lemma}
 \begin{proof}
   By definition.
-  The key rules are for shape-annotated functions.
+  Note the untyped rules for shape-annotated functions.
 \end{proof}
 }|
 
-@;@exact|{
-@;\begin{lemma}[type in-hole]
-@;  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
-@;  then\ $\fexistsone{\stspec_1} \vdash \sexpr_0 : \stspec_1$
-@;\end{lemma}
-@;}|
+@exact|{
+\begin{lemma}[type in-hole]
+  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
+  then\ $\fexistsone{\stspec_1} \vdash \sexpr_0 : \stspec_1$
+\end{lemma}
+}|
 
-@;@exact|{
-@;\begin{lemma}[type replace]
-@;  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
-@;  and\ $~\vdash \sexpr_0 : \stspec_1$
-@;  and\ $~\vdash \sexpr_1 : \stspec_1$
-@;  then\ $~\vdash \finhole{\sctx_0}{\sexpr_1} : \stspec_0$
-@;\end{lemma}
-@;}|
+@exact|{
+\begin{lemma}[type replace]
+  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
+  and\ $~\vdash \sexpr_0 : \stspec_1$
+  and\ $~\vdash \sexpr_1 : \stspec_1$
+  then\ $~\vdash \finhole{\sctx_0}{\sexpr_1} : \stspec_0$
+\end{lemma}
+}|
 
 @exact|{
 \begin{lemma}[boundary-crossing]\label{lemma:model:boundary}\leavevmode
@@ -722,32 +726,32 @@ Although the design of a lifted reduction relation is a challenge
 \end{lemma}
 }|
 
-@;@exact|{
-@;\begin{lemma}[owner preservation]
-@;  If\ $~\vdash \sexpr_0 : \stspec$
-@;  and\ $\sowner_0 \Vdash \sexpr_0$
-@;  and\ $\sexpr_0 \snr \sexpr_1$
-@;  then\ $\sowner_0 \Vdash \sexpr_1$
-@;\end{lemma}
-@;}|
-@;
-@;@exact|{
-@;\begin{lemma}[label in-hole]
-@;  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
-@;  then\ $\fexistsone{\sowner_1} \sowner_1 \Vdash \sexpr_0$
-@;\end{lemma}
-@;}|
-@;
-@;@exact|{
-@;\begin{lemma}[label replace]
-@;  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
-@;  and\ $\sowner_1 \Vdash \sexpr_0$
-@;  and\ $\sowner_1 \Vdash \sexpr_1$
-@;  then\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_1}$
-@;\end{lemma}
-@;}|
+@exact|{
+\begin{lemma}[owner preservation]
+  If\ $~\vdash \sexpr_0 : \stspec$
+  and\ $\sowner_0 \Vdash \sexpr_0$
+  and\ $\sexpr_0 \snr \sexpr_1$
+  then\ $\sowner_0 \Vdash \sexpr_1$
+\end{lemma}
+}|
 
-@section[#:tag "sec:racket-users"]{User Inspiration}
+@exact|{
+\begin{lemma}[label in-hole]
+  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
+  then\ $\fexistsone{\sowner_1} \sowner_1 \Vdash \sexpr_0$
+\end{lemma}
+}|
+
+@exact|{
+\begin{lemma}[label replace]
+  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
+  and\ $\sowner_1 \Vdash \sexpr_0$
+  and\ $\sowner_1 \Vdash \sexpr_1$
+  then\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_1}$
+\end{lemma}
+}|
+
+@section[#:tag "sec:racket-users"]{Mailing List Questions}
 
 
 @user-inspiration["sec:evaluation:expr:any" '(

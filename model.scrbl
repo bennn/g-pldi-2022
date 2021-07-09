@@ -1427,7 +1427,7 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \suowner_0 \mid \suowner_1 \mid \ldots
   \\
   \sownerlist & \slangeq &
-    \mbox{sequence of ownership labels ($\sowner$)}
+    \mbox{sequence of labels ($\sowner$)}
   \\
   \sownerenv & \slangeq &
     \cdot \mid \fcons{\tann{\svar}{\sowner}}{\sownerenv}
