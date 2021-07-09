@@ -138,7 +138,7 @@ available type.
 Such types allow static type checks to succeed, and at run-time the wrapper
 keeps @|sDeep| code safe.
 
-A notable consequence of the final protocol is that a @|sShallow| module must
+Consequently, a @|sShallow| module must
 be prepared to create wrappers for its exports.
 The wrapper-making code is generated during compilation, at the end of
 type checking, but it does not run until needed by a @|sDeep| client.

@@ -81,7 +81,7 @@ The evidence for these claims has three parts:
 }
 ]
 
-In general, this paper is the first to combine two type-sound gradual
+In general, this paper is the first to combine type-sound gradual
 typing strategies in a way that gives programmers control over the
 protection/performance tradeoff in their code.
 The combination is coarse and the two typed semantics cannot cooperate as

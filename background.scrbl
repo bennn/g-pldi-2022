@@ -90,7 +90,7 @@ in the untyped client.
   a font object.
 }
 @item{
-  @|sShallow| types ensure the local integrity of typed code, but nothing more.
+  @|sShallow| types guarantee the local integrity of typed code, but nothing more.
   The untyped client is allowed to send any input to the untyped @|untyped-fn|
   function, including two strings.
 }]
