@@ -1615,7 +1615,7 @@ checks for.
 
 @section[#:tag "sec:model:model:theorems"]{Properties}
 
-The time has come to test the model's claim that it allows safe interactions
+The time has come to validate the model's claim that it allows safe interactions
 among @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
 Cleary the surface language defines three kinds of code and
 the evaluation language lets differently-typed code interact,
@@ -1630,7 +1630,7 @@ complete monitoring.
 @;Complete monitoring asks whether single-owner consistency is an invariant;
 @; if so, then programmers can trust @|sdeep| types as behavioral guarantees.
 
-In general, type soundness predicts the possible outcomes of a well-typed expression.
+Type soundness predicts the possible outcomes of a well-typed expression.
 Because the surface language allows three kinds of typed expression
 (@|sdeep|, @|sshallow|, and @|suntyped|), the following statement of type
 soundness is parameterized over both a language kind @${\slang} and a characterization

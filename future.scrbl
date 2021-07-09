@@ -1,7 +1,7 @@
 #lang scribble/acmart @acmsmall @10pt @screen
 @(require "main.rkt" "bib.rkt" (only-in "pict.rkt" fig:opt0 fig:opt1))
 
-@title[#:tag "sec:conclusion"]{Future Work}
+@title[#:tag "sec:future"]{Future Work}
 
 One drawback apparent in the model is that @|sdeep| and @|sshallow| cannot
 trust one another.

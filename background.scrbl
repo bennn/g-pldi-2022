@@ -15,6 +15,7 @@
 
 @section{Gradual Typing, Migratory Typing, Mixed-Typed Code}
 
+@; TODO focus on research, not people
 For the past two decades, researchers have been investigating methods to combine
 static and dynamic typing@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
 The ultimate goal of these efforts is a mixed-typed (or gradual@note{Following @citet{svcb-snapl-2015},
@@ -25,13 +26,13 @@ Untyped code is free to perform any computation that the language can express.
 Typed code is restricted to a subset of well-typed computations, but comes
 with a guarantee that static types are meaningful predictions about run-time
 behaviors.
-Debates arise over what makes for a convenient mix.
-Proponents of gradual typing call for a universal @tt{Dynamic} type that
+Distinctions arise over what makes for a convenient mix.
+Gradually-typed languages include a universal @tt{Dynamic} type that
 helps to blur the distinction between typed and untyped code@~cite{svcb-snapl-2015}.
-Proponents of migratory typing argue that a mixed-typed language should add
+Migratory typing systems add
 idiomatic types to an existing language@~cite{tfffgksst-snapl-2017} 
-Other researchers have invented new mixed-typed languages that enforce types
-in novel ways@~cite{wnlov-popl-2010,mt-oopsla-2017}.
+Other methods include the development of novel languages@~cite{wnlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
+and/or compilers@~cite{rat-oopsla-2017,bbst-oopsla-2017}.
 
 The goal of this paper is to advance the state of mixed-typed languages in a
 general setting.
@@ -46,18 +47,17 @@ Consequently, the formal development adheres to two ground rules:
 ]
 @|noindent|These rules ensure a widely-applicable baseline.
 Specializations are a promising subject for future work.
-Researchers that are building new languages may be able to further improve
-run-time performance with advanced mechanisms for checking types@~cite{kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,bbst-oopsla-2017,rmhn-ecoop-2019}.
-Researchers studying gradual languages may extend the theory with a dynamic type.
+Advanced mechanisms for checking types may yield better performance@~cite{kas-pldi-2019,vsc-dls-2019,bbst-oopsla-2017,rmhn-ecoop-2019}.
+Gradual languages can motivate the addition of a dynamic type.
 
 
 @section{@|sDeep| and @|sShallow| Types}
 
 @(define untyped-fn @tt{text})
 
-Within the design space of sound mixed-typed languages, researchers
-disagree on how types should guide the behavior of a program.
-Two leading alternatives are @|sdeep| and @|sshallow| types.
+Within the realm of sound mixed-typed languages, designs
+do not agree on how types should guide the behavior of a program.
+Two leading alternative for run-time properties are @|sdeep| and @|sshallow| types.
 Roughly speaking, @|sdeep| types try to be equally strong as conventional
 static types while @|sshallow| types strike a balance between guarantees and
 pragmatic benefits.

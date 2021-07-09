@@ -5,7 +5,7 @@
 
 @; ps Greenberg is a 2nd impasse, stat-first vs dyn-first ... worth mentioning?
 
-@title[#:tag "sec:conclusion"]{Let Programmers Choose}
+@title[#:tag "sec:conclusion"]{Let The Programmer Choose}
 
 Gradual typing resolves the impasse between static and dynamic languages by
 bringing both styles under one roof and letting programmer choose.
@@ -31,8 +31,8 @@ As a whole, the work reveals insights about the extent to which two typed
 languages can cooperate in the presence of untyped code.
 The integration of @|snatural| and @|stransient| demonstrates that extreme
 combinations are possible.
-Further systematic efforts are needed to find optimal points in this complex
-design space.
+Further systematic efforts are needed to find optimal points in this
+multi-faceted design space.
 
 
 @;@section[#:tag "sec:evaluation:perf:release"]{Release Information}

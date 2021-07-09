@@ -27,15 +27,17 @@
         #:orcid "0000-0001-7078-9287"
         #:affiliation NEU]
 
-@author["Matthias Felleisen"
-        #:email "matthias@ccs.neu.edu"
-        #:affiliation NEU]
+@; @author["Matthias Felleisen"
+@;         #:email "matthias@ccs.neu.edu"
+@;         #:affiliation NEU]
 
 
 @; -----------------------------------------------------------------------------
 
 @keywords{gradual typing, migratory typing, complete monitoring}
 @; TODO is there really no new vocabulary that we earned along the way???!
+
+@; TODO CCSXML
 
 @; -----------------------------------------------------------------------------
 

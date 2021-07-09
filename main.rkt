@@ -77,7 +77,7 @@
 (define-syntax-rule (def2 k v)
   (begin (define k v) (define-for-syntax k v)))
 
-(def2 TECHRPT #true)
+(def2 TECHRPT #false)
 
 (define-syntax if-techrpt
   (if TECHRPT

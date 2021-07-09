@@ -23,25 +23,27 @@
 @; ... question is benefits and synergy ... more to do later
 
 
+@; Some of these strategies place restrictions on untyped code.
+@; For example, the Concrete strategy uses a tagging protocol that puts
+@; untyped and typed values on unequal footing@~cite{wnlov-popl-2010,sfrbcsb-popl-2014,rzv-ecoop-2015,mt-oopsla-2017}.
+@; Other strategies erase types and provide no run-time support@~cite{bat-ecoop-2014}.
+@; The focus of this paper is on strategies that are compatible with an untyped
+@; host language and provide a basic type soundness guarantee.
+
 @title[#:tag "sec:introduction"]{A Spectrum of Type Enforcement}
 
 Taken broadly, the research area of gradual typing presents several
 @emph{type-enforcement strategies} that enforce static types against run-time
 interactions with untyped code.
-Some of these strategies place restrictions on untyped code.
-For example, the Concrete strategy uses a tagging protocol that puts
-untyped and typed values on unequal footing@~cite{wnlov-popl-2010,sfrbcsb-popl-2014,rzv-ecoop-2015,mt-oopsla-2017}.
-Other strategies erase types and provide no run-time support@~cite{bat-ecoop-2014}.
-The focus of this paper is on strategies that are compatible with an untyped
-host language and provide a basic type soundness guarantee.
-
-Two such strategies are @|sNatural|@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006}
+Among strategies that are compatible with an untyped
+host language and provide a basic type soundness guarantee, two promising
+alternatives are @|sNatural|@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006}
 and @|sTransient|@~cite{vss-popl-2017}.
 The @|sNatural| strategy uses higher-order contracts to enforce the @|sdeep|
 behavioral claims implied by higher-order types.
 The @|sTransient| strategy uses first-order checks to enforce @|sshallow| aspects
 of types in type-annotated code.
-Unsurprisingly, these radically different methods of enforcing types come with
+Unsurprisingly, these different methods of enforcing types come with
 benefits and drawbacks.
 Contracts in @|sNatural| enable strong type soundness
 and complete monitoring guarantees@~cite{gfd-oopsla-2019},
@@ -49,10 +51,9 @@ but can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
 First-order checks in @|sTransient| enable only a weak soundness guarantee,
 but are far less likely to dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
-The question thus arises as to whether the @|sNatural| and @|sTransient|
-type-enforcement strategies can interoperate, and thereby give programmers
-the ability to use @|sdeep| types when guarantees matter and @|sshallow| types
-to avoid performance bottlenecks.
+The question thus arises as to whether two type-enforcement strategies can
+interoperate, and thereby give programmers the ability to use @|sdeep| types
+when guarantees matter and @|sshallow| types to avoid performance bottlenecks.
 This paper provides an affirmative answer: 
 @|sdeep| and @|sshallow| types can interoperate without sacrificing
 their formal properties.
@@ -80,5 +81,12 @@ The evidence for these claims has three parts:
 }
 ]
 
+In general, this paper is the first to combine two type-sound gradual
+typing strategies in a way that gives programmers control over the
+protection/performance tradeoff in their code.
+The combination is coarse and the two typed semantics cannot cooperate as
+well as two wrapping semantics might (@section-ref{sec:future}), but
+the evaluation suggests that interoperability is a promising way to address
+tradeoffs without restricting the source language or replacing the compiler.
 
 

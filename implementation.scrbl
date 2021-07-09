@@ -151,9 +151,8 @@ expressiveness limits of wrappers.
 One limitation is that @|sShallow| code cannot use macros from @|sDeep| Racket modules.
 Re-use is desirable to avoid copying code, but it requires a static analysis
  to enforce soundness.
-
-To appreciate the problem, consider the following simple macro.
-This macro applies a typed function @tt{f} to an input, and is consequently
+Consider the following simple macro.
+It applies a typed function @tt{f} to an input, and is consequently
  unsafe to send from @|sDeep| to @|sShallow| code:
 
 @typed-codeblock['("(define-syntax-rule (call-f x) (f x))")]
