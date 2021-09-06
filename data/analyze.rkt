@@ -157,6 +157,14 @@
                  new
                  (substring str (add1 i) (string-length str))))
 
+(define (2d-mask str)
+  (apply
+    string
+    (for/list ((c (in-string str)))
+      (if (eq? c #\0)
+        c
+        #\1))))
+
 (define (find-lowest-3dpath-D bm-name)
   (string->number (rnd
   (parameterize ([*current-cache-directory* cache-dir]
@@ -269,8 +277,14 @@
     (for/fold ((acc 0))
               ((s-cfg (in-configurations pi-shallow))
                (d-cfg (in-configurations pi-deep)))
-      (unless (equal? (configuration-info->id s-cfg) (configuration-info->id s-cfg))
-        (raise-argument-error 'make-mixed-worst-row "out-of-sync configurations" "shallow" s-cfg "deep" d-cfg "s-pi" pi-shallow "d-pi" pi-deep))
+      (unless (equal? (configuration-info->id s-cfg)
+                      (configuration-info->id d-cfg))
+        (raise-argument-error 'make-mixed-worst-row
+                              "out-of-sync configurations"
+                              "shallow" s-cfg
+                              "deep" d-cfg
+                              "s-pi" pi-shallow
+                              "d-pi" pi-deep))
       (max acc
            (min (overhead pi-shallow (configuration-info->mean-runtime s-cfg))
                 (overhead pi-deep (configuration-info->mean-runtime d-cfg))))))
@@ -492,7 +506,43 @@
       (substring str 0 (sub1 L))
       str)))
 
+(define (biggest-3d-gap* bm*)
+  (for ((bm-name (in-list bm*)))
+    (define gap
+      (biggest-3d-gap (benchmark-name->performance-info bm-name stransient)
+                      (benchmark-name->performance-info bm-name default-rkt-version)
+                      (benchmark-name->performance-info3d bm-name)))
+    (printf "~a : ~a~n" bm-name (map (lambda (x) (if (real? x) (rnd x) x)) gap))
+    (void)))
+
+(define (biggest-3d-gap pi-shallow pi-deep pi-3d)
+  (for/fold ((acc #f))
+            ((c-shallow (in-configurations pi-shallow))
+             (c-deep (in-configurations pi-deep))
+             (c-3d (in-configurations pi-3d)))
+    (unless (string=?
+              (configuration-info->id c-shallow)
+              (configuration-info->id c-deep)
+              (2d-mask (configuration-info->id c-3d)))
+      (raise-argument-error 'biggest-3d-gap
+                            "out-of-sync configurations"
+                            "shallow" c-shallow
+                            "deep" c-deep
+                            "3d" c-3d))
+    (define o-shallow (overhead pi-shallow (configuration-info->mean-runtime c-shallow)))
+    (define o-deep (overhead pi-deep (configuration-info->mean-runtime c-deep)))
+    (define o-3d (overhead pi-3d (configuration-info->mean-runtime c-3d)))
+    (define best-2d (min o-shallow o-deep))
+    (define gap (- best-2d o-3d))
+    (if (or (not acc) (> gap (car acc)))
+      (list gap '3d o-3d '2d best-2d)
+      acc)))
+
 ;; -----------------------------------------------------------------------------
 
 (module+ main
-  (quick-table (glob (build-path "nsa-2020-12-30" "*.out"))))
+  #;(quick-table (glob (build-path "nsa-2020-12-30" "*.out")))
+  (biggest-3d-gap* '(forth fsm fsmoo mbta morsecode zombie dungeon
+                     jpeg zordoz lnm suffixtree kcfa snake take5
+                     acquire tetris ))
+  (void))
