@@ -1,5 +1,5 @@
-The submitted paper clearly does not say enough about the novelty and
-significance of this work:
+The submitted paper clearly does not bring across the novelty and significance
+of this work effectively:
 
 * The basic research question --- can we mix enforcement modes? --- is novel.
   Researchers built these modes without realizing that the modes led to
