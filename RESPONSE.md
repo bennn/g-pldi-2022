@@ -1,25 +1,25 @@
-The submitted paper clearly does not bring across the novelty and significance
-of this work effectively:
+#### General Remark
 
-* The basic research question --- can we mix enforcement modes? --- is novel.
-  Researchers built these modes without realizing that the modes led to
-  fundamentally different kinds of sound gradual typing. Even the recent effort
-  to formally characterize gradual typing with _gradual guarantees_ [Siek et al.
-  SNAPL 2015] is oblivious to changes in mode!
+Note that the idea of mixing type enforcement strategies is a **novel** idea
+for gradually-typed languages. 
 
-* Mixing modes is complementary to prior work on optimizing gradual typing.
-  In a few years, programmers might use mixed modes to **express** boundaries
-  and **then** use tools/systems like SCV-CR [Moy et al. POPL 2021], set-based
-  analysis [Vitousek et al. DLS 2019], and Pycket [Bauman et al. OOPSLA 2017]
-  to deliver a fast program.
+- Until recently, researchers hardly acknowledged that strategies with complementary
+  strengths existed.
+  + Papers that introduced strategies focused on soundness as the main formal
+    criteria, and therefore lacked a firm comparison to other sound strategies.
+    E.g., [Vitousek et al. POPL 2017, Castagna et al. ICFP 2017].
+  + Even the effort to precisely characterize gradual typing with _gradual 
+    guarantees_ was oblivious to changes in strategy [Siek et al. SNAPL 2015].
+    Natural, Transient, and others (e.g. [Muehlboeck et al. OOPSLA 2017])
+    satisfy all the guarantees.
 
-* Despite research on sound gradual languages, industry continues to use the
-  unsound "optional typing" mode (e.g. TypeScript, Flow, mypy). By adding
-  mixtures to the language design toolbox, this paper gives unsound languages a
-  way to incorporate soundness where needed.
+- Consequently, there were only two research questions in this space:
+  1. Can we develop a "better" strategy than all the rest? (intentionally vague)
+  2. Can we improve an existing strategy?
 
+This paper opens a third, orthogonal question (Can we combine existing
+strategies?) and demonstrates one useful combination.
 
-- - -
 
 #### Review #439A
 
@@ -54,7 +54,7 @@ Yes, the performance section needs to give more details:
   include fully-untyped and fully-typed versions of the program.
 
 - Overheads are relative to the fully-untyped configuration because it
-  avoids the gradual typing parts of the language.
+  avoids the costs of gradual typing.
 
 
 > The discussion on interactions with Racket specifics is interesting
@@ -75,8 +75,8 @@ side channels.
 
 Moy et al's approach comes with a caveat about benchmark selection. They do
 extremely well on the GTP benchmarks because all the untyped code is written
-in a well-typed way. But, less-disciplined untyped code can defeat the static
-analysis. See their section 7 for a discussion.
+in a well-typed manner. Less-disciplined untyped code can easily thwart the
+the verifier. See their section 7 for a discussion.
 
 
 > - How much tinkering was necessary to achieve the best-case mixing of shallow
@@ -90,12 +90,12 @@ the fully-shallow or the fully-deep program should run well.
 For the revision, we can report the gap between these _either-or_ mixes and
 the _best-possible_ mixes that figure 22 (l.1128) refers to. The gaps are
 small. The biggest is in zombie, which goes from 31x fully-shallow to 29x
-in one mixed configuration. The second-biggest is in fsm and goes from
-1.9x to 0.6x.
+in one mixed shallow/deep configuration. The second-biggest is in fsm and goes
+from 1.9x to 0.6x.
 
 In the case studies (section 5.3.3), we found good mixes by studying the
 organization of the codebase. The most important detail to learn is whether
-a type describes higher-order data.
+a type describes higher-order data. A newcomer could learn this detail.
 
 
 #### Review #439C
