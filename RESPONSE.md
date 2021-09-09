@@ -1,14 +1,14 @@
 #### General Remark
 
 Note that the idea of mixing type enforcement strategies is a **novel** idea
-for gradually-typed languages. 
+for gradually-typed languages.
 
 - Until recently, researchers hardly acknowledged that strategies with complementary
   strengths existed.
   + Papers that introduced strategies focused on soundness as the main formal
     criteria, and therefore lacked a firm comparison to other sound strategies.
     E.g., [Vitousek et al. POPL 2017, Castagna et al. ICFP 2017].
-  + Even the effort to precisely characterize gradual typing with _gradual 
+  + Even the effort to precisely characterize gradual typing with _gradual
     guarantees_ was oblivious to changes in strategy [Siek et al. SNAPL 2015].
     Natural, Transient, and others (e.g. [Muehlboeck et al. OOPSLA 2017])
     satisfy all the guarantees.
@@ -18,7 +18,7 @@ for gradually-typed languages.
   2. Can we improve an existing strategy?
 
 This paper opens a third, orthogonal question (Can we combine existing
-strategies?) and demonstrates one useful combination.
+strategies?) and kicks off the search with one useful combination.
 
 
 #### Review #439A
@@ -74,9 +74,10 @@ side channels.
 > preserve soundness guarantees while improving efficiency.
 
 Moy et al's approach comes with a caveat about benchmark selection. They do
-extremely well on the GTP benchmarks because all the untyped code is written
-in a well-typed manner. Less-disciplined untyped code can easily thwart the
-the verifier. See their section 7 for a discussion.
+extremely well on many of the GTP benchmarks because all the untyped code is
+written in a well-typed manner and uses little state. Less-disciplined untyped
+code can easily thwart the the verifier. Object-oriented code is too complex
+for the verifier at this time. See their sections 5.1 and 7 for a discussion.
 
 
 > - How much tinkering was necessary to achieve the best-case mixing of shallow
