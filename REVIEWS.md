@@ -104,6 +104,17 @@ L1064: "switching between the two often performance bottlenecks" misses a verb?
 
 L1298: There are two bib entries for Wrigstand et al. 2010.
 
+# Post-rebuttal comments
+
+More about Theorem 3.2:  IIRC, in Greenman et al. [OOPSLA 2019], there are two
+kinds of applications in the evaluation language, which indicate whether the
+application is typed or not in the surface program. Also, there are two kinds
+of TagErr, which indicate which kind of application failed. In this way, they
+could ensure that the typed application never fails at run-time (due to an
+application of a non-functional value). In the present paper, both typed and
+untyped function applications are translated in the same way, forgetting
+whether the application is typed (Fig. 10). As a result, the type soundness
+here seems slightly weaker than what I'd expect.
 
 
 Review #439B
