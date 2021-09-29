@@ -1,0 +1,614 @@
+
+\overfullrule=1mm
+
+\mathchardef\mhyphen="2D
+
+\DeclareFontFamily{OT1}{pzc}{}
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.1] pzcmi7t}{}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\newcommand{\substat}[1]{#1_{s}}
+\newcommand{\subdyn}[1]{#1_{d}}
+\newcommand{\fakebf}[1]{\ooalign{{$#1$}\cr\hidewidth\makebox[4pt][l]{$#1$}\cr}}
+\newcommand{\lowersym}[1]{\raisebox{-0.7ex}{$#1$}}
+
+\makeatletter
+\newcommand{\thickbar}{\mathpalette\@thickbar}
+\newcommand{\@thickbar}[2]{{#1\mkern1.5mu\vbox{ % kern = left margin of new character
+  \sbox\z@{$#1\mkern-2mu#2\mkern1.4mu$}% kern = left and right bounds of the rule
+  \sbox\tw@{$#1\overline{#2}$}%
+  \dimen@=\dimexpr\ht\tw@-\ht\z@-1.6\p@\relax % height of rule over base
+  \hrule\@height1\p@ % height/thickness of rule
+  \vskip\dimen@
+  \box\z@}\mkern-1.6mu} % kern = right margin of new character
+}
+\newcommand{\thickrrbar}{\mathpalette\@thickrrbar}
+\newcommand{\@thickrrbar}[2]{{#1\mkern2.0mu\vbox{ % kern = left margin of new character
+  \sbox\z@{$#1\mkern0mu#2\mkern0mu$}% kern = ???
+  \sbox\tw@{$#1\overline{#2}$}%
+  \dimen@=\dimexpr\ht\tw@-\ht\z@-0.6\p@\relax % height of rule over base
+  \hrule\@height1\p@ % height/thickness of rule
+  \vskip\dimen@
+  \box\z@}\mkern-1.5mu} % kern = right margin of new character
+}
+\newcommand{\thickjbar}{\mathpalette\@thickjbar}
+\newcommand{\@thickjbar}[2]{{#1\mkern1.0mu\vbox{ % kern = left margin of new character
+  \sbox\z@{$#1\mkern-0.5mu#2\mkern-1.5mu$}% kern = ???
+  \sbox\tw@{$#1\overline{#2}$}%
+  \dimen@=\dimexpr\ht\tw@-\ht\z@-2.0\p@\relax % height of rule over base
+  \hrule\@height0.8\p@ % height/thickness of rule
+  \vskip\dimen@
+  \box\z@}\mkern0mu} % kern = right margin of new character
+}
+\makeatother
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newenvironment{proofsketch}{\renewcommand{\proofname}{Proof Sketch}\begin{proof}}{\end{proof}}
+
+\newcommand{\lbl}[2]{\noindent\parbox[t]{\columnwidth}{#1\\#2}}
+\newenvironment{rrarray}{\(\begin{array}{l@{\hspace{0.5em}}c@{\hspace{0.5em}}l}}{\end{array}\)}
+\newenvironment{displayrrarray}{\smallskip\(\begin{array}{l@{\hspace{0.5em}}c@{\hspace{0.5em}}l}}{\end{array}\)\smallskip}
+\newenvironment{langarray}{\(\begin{array}[t]{l@{\hspace{0.5em}}c@{\hspace{0.5em}}l}}{\end{array}\)}
+\newcommand{\sidecond}[1]{\multicolumn{3}{l}{\mbox{\quad #1}}}
+\newcommand{\sidestep}[1]{\multicolumn{3}{r}{#1}}
+\newcommand{\wideas}[2]{\makebox[\widthof{$#2$}][l]{$#1$}}
+\newcommand{\mktwoapp}[2]{#1\,#2}
+\newcommand{\mkthreeapp}[3]{#1\,#2\,#3}
+\newcommand{\makebnd}[3]{\mktwoapp{#1}{#2~#3}}
+\newcommand{\addlangs}[3]{{#1}^{#2}_{#3}}
+
+\newcommand{\makerred}[1]{\mathrel{\rrarrow_{_{\!#1}}^{\kern-0.1em*}}}
+\newcommand{\srredX}{\makerred{}}
+
+\newcommand{\rrarrow}{\rightarrow}
+\newcommand{\longrrarrow}{\longrightarrow}
+\newcommand{\compilesto}{\scompile}
+\newcommand{\rrsymb}{\vartriangleright}
+\newcommand{\rastar}{\rrarrow^{*}}
+\newcommand{\rtclosure}[1]{\rastar_{\bigcup\eset{#1}}}
+\newcommand{\samplerrsym}{\textbf{r}}
+\newcommand{\samplerrarrow}{\mathrel{~{\samplerrsym}~}}
+\newcommand{\samplerred}{\makerred{\samplerrsym}}
+
+\newcommand{\sfont}[1]{\mathsf{#1}}
+\newcommand{\typefont}[1]{\mathsf{#1}}
+\newcommand{\mffont}[1]{\textit{#1}}
+\newcommand{\rrfont}[1]{\mathsf{#1}}
+\newcommand{\textstrat}[1]{\textbf{\emph{#1}}}
+\newcommand{\wrapfont}[1]{\mathbb{#1}}
+\newcommand{\propfont}[1]{\mathbf{#1}}
+
+\newcommand{\stheorem}{\textsc{Theorem}}
+\newcommand{\slemma}{\textsc{Lemma}}
+\newcommand{\scorollary}{\textsc{Corollary}}
+\newcommand{\sexample}{\textsc{Example}}
+\newcommand{\sdefinition}{\textsc{Definition}}
+\newcommand{\sproposition}{\textsc{Proposition}}
+\newcommand{\sconjecture}{\textsc{Conjecture}}
+\newcommand{\stopofprogram}{\bullet}
+\newcommand{\sunop}{\textit{unop}}
+\newcommand{\sbinop}{\textit{binop}}
+\newcommand{\ssum}{\sfont{plus}}
+\newcommand{\squotient}{\sfont{quotient}}
+\newcommand{\smod}{\sfont{module}}
+\newcommand{\mkvdash}[1]{\vdash_{#1}}
+\newcommand{\sST}{\mkvdash{\ssurface}}
+\newcommand{\sWTU}{\mkvdash{\sU}}
+\newcommand{\sWTS}{\mkvdash{\sS}}
+\newcommand{\sWTT}{\mkvdash{\sD}}
+\newcommand{\sWTD}{\sWTT}
+\newcommand{\sWTX}{\mkvdash{\sX}}
+\newcommand{\sWTlang}{\mkvdash{\slang}}
+\newcommand{\scompile}{\rightsquigarrow}
+\newcommand{\snr}{\vartriangleright}
+\newcommand{\scc}{\rightarrow}
+\newcommand{\srr}{\scc^{*}}
+\newcommand{\sdyn}{\sfont{dyn}}
+\newcommand{\ssubt}{\mathrel{<:}}
+\newcommand{\sstat}{\sfont{stat}}
+\newcommand{\ssta}{\sstat}
+\newcommand{\Nstawrapper}{\emph{stat-mon}}
+\newcommand{\Ndynwrapper}{\emph{dyn-mon}}
+\newcommand{\Astawrapper}{\emph{stat-wrap}}
+\newcommand{\Adynwrapper}{\emph{dyn-wrap}}
+\newcommand{\sapp}{\sfont{app}}
+\newcommand{\slet}{\sfont{let}}
+\newcommand{\sinkwd}{\sfont{in}}
+\newcommand{\sfst}{\sfont{fst}}
+\newcommand{\ssnd}{\sfont{snd}}
+\newcommand{\sbndfst}{\sfont{fst}}
+\newcommand{\sbndsnd}{\sfont{snd}}
+\newcommand{\sbnddom}{\sfont{dom}}
+\newcommand{\sbndcod}{\sfont{cod}}
+\newcommand{\sincr}{\sfont{add1}}
+\newcommand{\sresult}{r}
+\newcommand{\scheck}{\sfont{check}}
+\newcommand{\scast}{\sfont{cast}}
+\newcommand{\sprevalue}{\sfont{w}}
+\newcommand{\sloc}{\sfont{p}}
+\newcommand{\sdirection}{\sfont{d}}
+\newcommand{\sforwards}{\sfont{\hookrightarrow}}
+\newcommand{\sbackwards}{\sfont{\hookleftarrow}}
+\newcommand{\stag}{s}
+\newcommand{\semptymap}{\emptyset}
+\newcommand{\sdiverge}{\Omega}
+\newcommand{\stagerror}{\sfont{TagErr}}
+\newcommand{\sscanerror}{\sfont{ScanErr}}
+\newcommand{\swraperror}{\sfont{WrapErr}}
+\newcommand{\sdivzeroerror}{\sfont{DivZeroErr}}
+\newcommand{\sshapecheck}{\mffont{shape}}
+\newcommand{\sshapematch}{\mffont{shape-match}}
+\newcommand{\tagerrortxt}[1]{\stagerror\,{#1}}
+\newcommand{\tagerrorD}{\stagerror}
+\newcommand{\redexerror}{\stagerror}
+\newcommand{\invarianterror}{\sfont{InvariantErr}}
+\newcommand{\sinvarianterror}{\invarianterror}
+\newcommand{\tagerrorS}{\invarianterror}
+\newcommand{\policyerror}{\sfont{PolicyErr}}
+\newcommand{\sboundaryerror}{\sfont{BndryErr}}
+\newcommand{\sann}[2]{#1_{\sfont{#2}}}
+\newcommand{\sflip}{\mffont{flip}}
+\newcommand{\sfresh}{\mffont{fresh}}
+\newcommand{\smerge}{\mffont{merge}}
+\newcommand{\sunion}{\cup}
+\newcommand{\sdepth}{\mffont{wraps}}
+\newcommand{\smondepth}{\mffont{guard-depth}}
+\newcommand{\sconcat}{}
+\newcommand{\shasbnd}{\mffont{has-boundary}}
+\newcommand{\slast}{\mffont{last}}
+\newcommand{\sbndeqowners}{\simeq}
+\newcommand{\sbndseteqowners}{\mathrel{\supseteq\joinrel\subseteq}}
+\newcommand{\smember}{\in}
+\newcommand{\snil}{{\cdot}}
+\newcommand{\sremove}{\setminus}
+\newcommand{\srev}{\mffont{rev}} %{\rule[0.4ex]{0.4em}{0.14ex}}
+\newcommand{\snext}{\mffont{next}}
+\newcommand{\sintersect}{\cap}
+\newcommand{\sholeowner}{\mffont{hole\textsf{-}owner}}
+\newcommand{\sholeowneraux}{\mffont{h\textsf{-}own}}
+\newcommand{\smonitor}{\mffont{guard}}
+\newcommand{\sforget}{\mffont{forget}}
+\newcommand{\sD}{\mathpzc{D}}
+\newcommand{\sS}{\mathpzc{S}}
+\newcommand{\sU}{\mathpzc{U}}
+\newcommand{\sX}{\mathpzc{X}}
+\newcommand{\sDH}{\sann{\sD}{H}}
+\newcommand{\sSH}{\sann{\sS}{H}}
+\newcommand{\sDF}{\sann{\sD}{F}}
+\newcommand{\sSF}{\sann{\sS}{F}}
+\newcommand{\sDA}{\sann{\sD}{A}}
+\newcommand{\sSA}{\sann{\sS}{A}}
+\newcommand{\sdynop}{\emph{dynop}}
+\newcommand{\sowner}{\ell}
+\newcommand{\suowner}{\sU}
+\newcommand{\ssowner}{\sS}
+\newcommand{\stowner}{\sD}
+\newcommand{\sdowner}{\stowner}
+\newcommand{\sowners}{\sowner^{*}}
+\newcommand{\sownerset}{\sowners}
+\newcommand{\sownerlist}{\thickbar{\sowner}}
+\newcommand{\sownerpos}{\sowner_{\mathbf{+}}}
+\newcommand{\sownerneg}{\sowner_{\mathbf{-}}}
+\newcommand{\sobligation}{k}
+\newcommand{\sobligations}{K}
+\newcommand{\sguard}{\wrapfont{G}}
+\newcommand{\smon}{\sguard}
+\newcommand{\sdivzero}{\sfont{DivisionByZero}}
+\newcommand{\sblame}{b}
+\newcommand{\sbnd}{\sblame}
+\newcommand{\sbndcomma}{\raisebox{0.2ex}{$\scriptscriptstyle\blacktriangleleft$}}
+\newcommand{\sklist}{\stag^{*}}
+\newcommand{\stlist}{\stype^{*}}
+\newcommand{\sblist}{\thickbar{\sbnd}}
+\newcommand{\sbset}{\sbnd^{*}}
+\newcommand{\sblisteq}{=}
+\newcommand{\sexpr}{e}
+\newcommand{\sexprstat}{\substat{\sexpr}}
+\newcommand{\sexprdyn}{\subdyn{\sexpr}}
+\newcommand{\ssurface}{s}
+\newcommand{\svalue}{v}
+\newcommand{\svaluestat}{\substat{\svalue}}
+\newcommand{\svaluedyn}{\subdyn{\svalue}}
+\newcommand{\sprehist}{\sfont{trace}} % TODO pre-trace?
+\newcommand{\shistory}{\wrapfont{T}}
+\newcommand{\strace}{\shistory}
+\newcommand{\stype}{\tau}
+\newcommand{\sshape}{\sigma}
+\newcommand{\svar}{x}
+\newcommand{\snat}{n}
+\newcommand{\sint}{i}
+\newcommand{\slang}{L}
+\newcommand{\stypeenv}{\Gamma}
+\newcommand{\sownerenv}{\mathpzc{L}}
+\newcommand{\stypemap}{\sfont{F}}
+\newcommand{\stypemapzero}{\propfont{0}}
+\newcommand{\stypemapshape}{\propfont{shape}}
+\newcommand{\stypemapone}{\propfont{1}}
+\newcommand{\sctxhole}{\bullet}
+\newcommand{\sdynproj}{\mathbf{0}}
+\newcommand{\sidproj}{\mathbf{1}}
+\newcommand{\stagproj}{\mathbf{\stag}}
+\newcommand{\sXproj}{F}
+\newcommand{\sWT}{\vdash}
+\newcommand{\sWTO}{\mathrel{\thickjbar{\sWT}}}
+\newcommand{\sWTfull}{\sWT_{\sidproj}}
+\newcommand{\sWTtag}{\sWT_{\stagproj}}
+\newcommand{\sWTnone}{\sWT_{\sdynproj}}
+\newcommand{\sWS}{\sWT}
+\newcommand{\sWD}{\sWT}
+\newcommand{\sWL}{\Vdash}
+\newcommand{\sWLsingle}{\sWL}
+\newcommand{\sWLpath}{\sWL_{p}}
+\newcommand{\sWLheap}{\sWL_{h}}
+\newcommand{\srexpr}{\lesssim}
+\newcommand{\srctx}{\srexpr}
+\newcommand{\srvalue}{\srexpr}
+\newcommand{\satrexpr}{\eqsim}
+\newcommand{\satrctx}{\satrexpr}
+\newcommand{\sbehaviorle}{\srexpr}
+\newcommand{\sbehaviorge}{\gtrsim}
+\newcommand{\sbehavioreq}{\satrexpr}
+\newcommand{\sdelta}{\delta}
+\newcommand{\sDelta}{\Delta}
+\newcommand{\sdeltaH}{\delta_{\hsym}}
+\newcommand{\sdeltaA}{\delta_{\asym}}
+\newcommand{\saddoblig}{\mffont{add\textsf{-}oblig}}
+\newcommand{\saddobligs}{\mffont{add\textsf{-}obligs}}
+\newcommand{\saddtrace}{\mffont{add\textsf{-}trace}}
+\newcommand{\sgettrace}{\mffont{get\textsf{-}trace}}
+\newcommand{\sremtrace}{\mffont{rem\textsf{-}trace}}
+\newcommand{\stypefst}{\mffont{fst}}
+\newcommand{\stypesnd}{\mffont{snd}}
+\newcommand{\stypedom}{\mffont{dom}}
+\newcommand{\stypecod}{\mffont{cod}}
+\newcommand{\sctx}{E}
+\newcommand{\sblistowners}{\mffont{labels}}
+\newcommand{\sblistsenders}{\mffont{senders}}
+\newcommand{\sbsetsenders}{\sblistsenders}
+\newcommand{\svalueowners}{\mffont{owners}}
+\newcommand{\stypeobligations}{\sfont{obligations}}
+\newcommand{\soutermost}{\sfont{first}}
+\newcommand{\spolicy}{\mathbf{p}}
+\newcommand{\szeropolicy}{\fakebf{\scriptstyle 0}}
+\newcommand{\sownerpolicy}{\fakebf{\scriptstyle\sowner}}
+\newcommand{\sownerspolicy}{\fakebf{\scriptstyle\sownerlist}}
+\newcommand{\sload}{\sfont{load}}
+\newcommand{\sloadH}{\sload_{\hsym}}
+\newcommand{\sloadN}{\sloadH}
+\newcommand{\sloadT}{\sload_{\tsym}}
+\newcommand{\sloadA}{\sload_{\asym}}
+\newcommand{\sloadX}{\sload_{\xsym}}
+\newcommand{\seval}{\sfont{eval}}
+\newcommand{\sevalH}{\seval_{\hsym}}
+\newcommand{\sevalHann}{\sevalH^{\sownerpolicy}}
+\newcommand{\sevalHanns}{\sevalH^{\sownerspolicy}}
+\newcommand{\sevalN}{\sevalH}
+\newcommand{\sevalNunl}{\sevalN}
+\newcommand{\sevalNann}{\sevalHann}
+\newcommand{\sevalNanns}{\sevalHanns}
+\newcommand{\sevalT}{\seval_{\tsym}}
+\newcommand{\sevalTunl}{\sevalT}
+\newcommand{\sevalTann}{\sevalT^{\sownerpolicy}}
+\newcommand{\sevalTanns}{\sevalT^{\sownerspolicy}}
+\newcommand{\sevalA}{\seval_{\asym}}
+\newcommand{\sevalAunl}{\sevalA}
+\newcommand{\sevalAann}{\sevalA^{\sownerpolicy}}
+\newcommand{\sevalAanns}{\sevalA^{\sownerspolicy}}
+\newcommand{\sevalX}{\seval_{\xsym}}
+\newcommand{\sevalXunl}{\sevalX}
+\newcommand{\sevalXpolicy}[1]{\sevalX^{#1}}
+\newcommand{\sevalXann}{\sevalXpolicy{\sownerpolicy}}
+\newcommand{\sevalXanns}{\sevalXpolicy{\sownerspolicy}}
+\newcommand{\serror}{\sfont{Error}}
+\newcommand{\sT}{T}
+\newcommand{\sdlang}{\sD}
+\newcommand{\sslang}{\sS}
+\newcommand{\sulang}{\sU}
+\newcommand{\snoop}{\sfont{noop}}
+\newcommand{\sscan}{\sfont{scan}}
+\newcommand{\swrap}{\sfont{wrap}}
+\newcommand{\spair}{\times}
+\newcommand{\sfun}{\Rightarrow}
+\newcommand{\smeet}{\sqcap}
+\newcommand{\sjoin}{\sqcup}
+\newcommand{\swellformed}{\mathbf{wf}}
+\newcommand{\swellformedO}{\thickjbar{\swellformed}}
+\newcommand{\ssurfacelang}{Surface Language}
+\newcommand{\sevallang}{Evaluation Language}
+\newcommand{\sopann}{\mffont{type\textsf{-}ann}}
+\newcommand{\scountable}{countable} % 'enumerable' is wider
+\newcommand{\sorigins}{Origins}
+\newcommand{\sbndhole}{\bullet}
+\newcommand{\sclass}{\sfont{class}}
+\newcommand{\spublic}{\sfont{public}}
+\newcommand{\sconstructor}{\sfont{constructor}}
+\newcommand{\sfunkwd}{\sfont{fun}}
+\newcommand{\sstatic}{\sfont{static}}
+\newcommand{\sdynkwd}{\sfont{dyn}}
+\newcommand{\snewkwd}{\sfont{new}}
+\newcommand{\sreturn}{\sfont{return}}
+\newcommand{\sdefine}{\sfont{define}}
+\newcommand{\sdefkwd}{\sfont{def}}
+\newcommand{\sfunction}{\sfont{function}}
+\newcommand{\sflowint}{\sfont{number}}
+\newcommand{\strint}{\sfont{Integer}}
+\newcommand{\syntaxho}{Higher-Order Evaluation Syntax}
+\newcommand{\syntaxfo}{First-Order Evaluation Syntax}
+\newcommand{\syntaxeo}{Erasure Evaluation Syntax}
+\newcommand{\scompilesto}{\scompile}
+\newcommand{\sref}{\sfont{Ref}}
+\newcommand{\slist}{\sfont{List}}
+\newcommand{\sbigcheckmark}{\ding{51}}
+\newcommand{\sbigxmark}{\ding{53}}
+\newcommand{\stblY}{\mbox{\sbigcheckmark}}
+\newcommand{\stblN}{\scalebox{0.8}{\sbigxmark}}
+\newcommand{\sfunshape}{\sfont{Fun}}
+\newcommand{\stspec}{\sT}
+\newcommand{\sdeep}{deep}
+\newcommand{\sshallow}{shallow}
+\newcommand{\suntyped}{untyped}
+\newcommand{\sDeep}{Deep}
+\newcommand{\sShallow}{Shallow}
+\newcommand{\sUntyped}{Untyped}
+\newcommand{\sTS}{\propfont{TS}}
+
+\newcommand{\ownerarrow}{\Uparrow}
+\newcommand{\sownerarrow}{\ownerarrow}
+\newcommand{\blamearrow}{\uparrow}
+\newcommand{\sblamearrow}{\blamearrow}
+\newcommand{\forgetowner}{\Downarrow}
+\newcommand{\ownertop}{\sowner_{\stopofprogram}}
+\newcommand{\sownertop}{\ownertop}
+\newcommand{\ownerdyn}{\sowner_{D}}
+\newcommand{\ownersta}{\sowner_{S}}
+\newcommand{\ownersd}{\sowner_{\tdyn}}
+\newcommand{\ownedby}[2]{{#1}^{#2}}
+
+\newcommand{\BNFeq}{=}
+\newcommand{\eeq}{=}
+\newcommand{\feq}{=}
+\newcommand{\sassign}{=}
+\newcommand{\sabbreveq}{\iff}
+\newcommand{\slangeq}{=}
+\newcommand{\sexpreq}{=}
+\newcommand{\sdefeq}{\stackrel{\footnotesize def}{=}}
+
+\newcommand{\Xigureref}[2]{{#1}igure~\ref{#2}}
+\newcommand{\Xectionref}[2]{{#1}ection~\ref{#2}}
+\newcommand{\Xableref}[2]{{#1}able~\ref{#2}}
+\newcommand{\Xheoremref}[2]{{#1}heorem~\ref{#2}}
+\newcommand{\Xemarkref}[2]{{#1}emark~\ref{#2}}
+\newcommand{\Xefinitionref}[2]{{#1}efinition~\ref{#2}}
+\newcommand{\Xemmaref}[2]{{#1}emma~\ref{#2}}
+\newcommand{\Xlauseref}[2]{{#1}lause~\ref{#2}}
+\newcommand{\Xawref}[2]{{#1}aw~\ref{#2}}
+\newcommand{\Xrogramref}[2]{{#1}rogram~(\ref{#2})}
+
+\newcommand{\figureref}[1]{\Xigureref{f}{#1}}
+\newcommand{\sectionref}[1]{\Xectionref{s}{#1}}
+\newcommand{\tableref}[1]{\Xableref{t}{#1}}
+\newcommand{\figref}[1]{\figureref{#1}}
+\newcommand{\secref}[1]{\sectionref{#1}}
+\newcommand{\thmref}[1]{\Xheoremref{t}{#1}}
+\newcommand{\theoremref}[1]{\thmref{#1}}
+\newcommand{\remarkref}[1]{\Xemarkref{r}{#1}}
+\newcommand{\definitionref}[1]{\Xefinitionref{d}{#1}}
+\newcommand{\lemmaref}[1]{\Xemmaref{l}{#1}}
+\newcommand{\clauseref}[1]{\Xlauseref{c}{#1}}
+\newcommand{\lawref}[1]{\Xawref{l}{#1}}
+\newcommand{\programref}[1]{\Xrogramref{p}{#1}}
+
+\newcommand{\Figureref}[1]{\Xigureref{F}{#1}}
+\newcommand{\Sectionref}[1]{\Xectionref{S}{#1}}
+\newcommand{\Tableref}[1]{\Xableref{T}{#1}}
+\newcommand{\Secref}[1]{\Sectionref{#1}}
+\newcommand{\Figref}[1]{\Figureref{#1}}
+\newcommand{\Thmref}[1]{\Xheoremref{T}{#1}}
+\newcommand{\Theoremref}[1]{\Thmref{#1}}
+\newcommand{\Definitionref}[1]{\Xefinitionref{D}{#1}}
+\newcommand{\Lemmaref}[1]{\Xemmaref{L}{#1}}
+\newcommand{\Clauseref}[1]{\Xlauseref{C}{#1}}
+\newcommand{\Lawref}[1]{\Xawref{L}{#1}}
+\newcommand{\Programref}[1]{\Xrogramref{P}{#1}}
+
+\newcommand{\knat}{\tnat}
+\newcommand{\kint}{\tint}
+\newcommand{\kpair}{\typefont{Pair}}
+\newcommand{\kfun}{\typefont{Fun}}
+\newcommand{\kany}{\typefont{Any}}
+
+\newcommand{\tdyn}{{\mathpzc U}}
+\newcommand{\tfloor}[1]{\lowersym{\llcorner}\!\!#1\!\!\lowersym{\lrcorner}}
+\newcommand{\tnat}{\typefont{Nat}}
+\newcommand{\tann}[2]{(#1\!:\!#2)}
+\newcommand{\tenv}{\stypeenv}
+\newcommand{\toptional}{\mbox{\raisebox{0.7ex}{\scalebox{0.9}{\(\stype\)}}\(\!/\!\)\raisebox{-0.4ex}{\scalebox{0.8}{\(\tdyn\)}}}}
+\newcommand{\stoptional}{\toptional}
+\newcommand{\tint}{\sfont{Int}}
+\newcommand{\tpair}[2]{#1\!\spair\!#2}
+\newcommand{\tref}[1]{\sref\,#1}
+\newcommand{\tlist}[1]{\slist\,(#1)}
+\newcommand{\tfun}[2]{#1\!\sfun\!#2}
+\newcommand{\tforall}[2]{\forall\,#1.~#2}
+\newcommand{\tinst}[2]{#1{\{#2\}}}
+
+\newcommand{\echeckone}[2]{\tinst{\scheck}{#1}\,{#2}}
+\newcommand{\ecastone}[2]{\tinst{\scast}{#1}\,{#2}}
+
+\newcommand{\efun}[2]{\lambda #1.\, #2}
+\newcommand{\esfun}[3]{\lambda \tann{#1}{\sscan\,#2}.\, #3}
+\newcommand{\epair}[2]{\langle #1,#2 \rangle}
+\newcommand{\eapp}[3]{\tinst{\sapp}{#1}\,#2~#3}
+\newcommand{\eappu}[2]{\mkthreeapp{\sapp}{#1}{#2}}
+\newcommand{\eletdecl}[2]{\slet~#1=#2~\sinkwd}
+\newcommand{\elet}[3]{\eletdecl{#1}{#2}~#3}
+\newcommand{\eunopt}[2]{\tinst{\sunop}{#1}\,#2}
+\newcommand{\eunop}[1]{\mktwoapp{\sunop}{#1}}
+\newcommand{\eunopfst}[1]{\mktwoapp{\sfst}{#1}}
+\newcommand{\eunopsnd}[1]{\mktwoapp{\ssnd}{#1}}
+\newcommand{\efst}[2]{\tinst{\sfst}{#1}\,#2}
+\newcommand{\esnd}[2]{\tinst{\ssnd}{#1}\,#2}
+\newcommand{\efstu}[1]{\sfst\,#1}
+\newcommand{\esndu}[1]{\ssnd\,#1}
+\newcommand{\eincr}[1]{\sincr\,#1}
+\newcommand{\ebinopt}[3]{\tinst{\sbinop}{#1}\,#2\,#3}
+\newcommand{\ebinop}[2]{\mkthreeapp{\sbinop}{#1}{#2}}
+\newcommand{\esum}[3]{\tinst{\ssum}{#1}\,#2\,#3}
+\newcommand{\equotient}[3]{\tinst{\squotient}{#1}\,#2\,#3}
+\newcommand{\estat}[2]{\esta{#1}{#2}}
+\newcommand{\eerr}{\mathsf{Err}}
+\newcommand{\emod}[2]{\mktwoapp{\smod}{#1~#2}}
+\newcommand{\emodule}[2]{\emod{#1}{#2}}
+\newcommand{\esubst}[3]{#1[#2\!\leftarrow\!#3]}
+\newcommand{\eset}[1]{\{#1\}}
+\newcommand{\ehistory}[3]{\shistory^{#1}\,#2\,#3}
+\newcommand{\ehopt}[2]{\ehistory{?}{#1}{#2}}
+\newcommand{\ehist}[2]{\ehistory{}{#1}{#2}}
+\newcommand{\etrace}[2]{\ehist{#1}{#2}}
+\newcommand{\eprehist}[2]{\sprehist\,#1\,#2}
+\newcommand{\esuffix}[2]{\eprehist{#1}{#2}}
+\newcommand{\ebnd}[4]{#1^{#4}\,#2~#3}
+\newcommand{\edyn}[2]{\ebnd{\sdyn}{#1}{#2}{}}
+\newcommand{\esta}[2]{\ebnd{\ssta}{#1}{#2}{}}
+\newcommand{\edynb}[2]{\ebnd{\sdyn}{#1}{#2}{}}
+\newcommand{\estab}[2]{\ebnd{\ssta}{#1}{#2}{}}
+\newcommand{\enoop}[1]{\makebnd{\snoop}{}{#1}}
+\newcommand{\escan}[2]{\makebnd{\sscan}{#1}{#2}}
+\newcommand{\ewrap}[2]{\makebnd{\swrap}{#1}{#2}}
+\newcommand{\emonsuper}[3]{\ebnd{\smon}{#1}{#2}{#3}}
+\newcommand{\eguard}[2]{\emonsuper{#1}{#2}{}}
+\newcommand{\ebnoop}[3]{\makebnd{\addlangs{\snoop}{#1}{#2}}{}{#3}}
+\newcommand{\ebscan}[4]{\makebnd{\addlangs{\sscan}{#1}{#2}}{#3}{#4}}
+\newcommand{\ebwrap}[4]{\makebnd{\addlangs{\swrap}{#1}{#2}}{#3}{#4}}
+\newcommand{\emon}[2]{\eguard{#1}{#2}}
+\newcommand{\emopt}[2]{\emonsuper{#1}{#2}{?}}
+\newcommand{\emonplus}[2]{\emonsuper{#1}{#2}{+}}
+\newcommand{\emoptplus}[2]{\emonsuper{#1}{#2}{+?}}
+
+\newcommand{\lobar}{(}
+\newcommand{\robar}{)}
+\newcommand{\obars}[2]{\ownedby{\lobar #1 \robar}{#2}}
+\newcommand{\obbars}[2]{\ownedby{\lobar\!\lobar #1\robar\!\robar}{#2}}
+\newcommand{\ocons}[2]{#1\!\cdot{}\!#2}
+\newcommand{\beo}[2]{\sboundaryerror~#1~#2}
+\newcommand{\boundaryerror}[2]{\sboundaryerror\,(#1, #2)}
+\newcommand{\divisionbyzeroerror}{\sfont{DivErr}}
+\newcommand{\obnd}[3]{(#1 \sbndcomma\,#2 \sbndcomma\,#3)}
+
+\newcommand{\fappbase}[3]{#1(#3#2)}
+\newcommand{\fappo}[3]{\fappbase{#1}{#2}{#3,}}
+\newcommand{\fapp}[2]{\fappbase{#1}{#2}{}}
+\newcommand{\ffun}[2]{#1\!\longrightarrow\!#2}
+\newcommand{\fbool}{\mathpzc{B}}
+\newcommand{\ftrue}{\mathsf{True}}
+\newcommand{\ffalse}{\mathsf{False}}
+\newcommand{\fflip}[1]{\sflip\,(#1)}
+\newcommand{\ffresh}[2]{#1\mbox{ fresh in }#2}
+\newcommand{\fmerge}[2]{\smerge\,(#1, #2)}
+\newcommand{\funion}[2]{#1 \sunion #2}
+\newcommand{\fconcat}[2]{#1 \sconcat #2}
+\newcommand{\fdepth}[1]{\sdepth\,(#1)}
+\newcommand{\fmondepth}[1]{\smondepth\,(#1)}
+\newcommand{\fhasbnd}[2]{\shasbnd\,(#1, #2)}
+\newcommand{\fbndfst}[1]{\sbndfst\,(#1)}
+\newcommand{\fbndsnd}[1]{\sbndsnd\,(#1)}
+\newcommand{\fbnddom}[1]{\sbnddom\,(#1)}
+\newcommand{\fbndcod}[1]{\sbndcod\,(#1)}
+\newcommand{\fbndeqowners}[2]{#1 \sbndeqowners #2}
+\newcommand{\fbndseteqowners}[2]{#1 \sbndseteqowners #2}
+\newcommand{\fmember}[2]{#1 \smember #2}
+\newcommand{\fintersect}[2]{#1 \sintersect #2}
+\newcommand{\flast}[1]{\slast\,(#1)}
+\newcommand{\fremove}[2]{#1 \sremove #2}
+\newcommand{\frev}[1]{\srev\,(#1)} %{{#1}^{\kern-0.3em\srev}}
+\newcommand{\fnext}[1]{\snext\,(#1)}
+\newcommand{\fholeowner}[1]{\sholeowner\,(#1)}
+\newcommand{\fholeowneraux}[2]{\sholeowneraux\,(#1,#2)}
+\newcommand{\fmonitor}[1]{\smonitor\,(#1)}
+\newcommand{\fforget}[1]{\sforget\,(#1)}
+\newcommand{\faddobligs}[2]{\saddobligs\,(#1, #2)}
+\newcommand{\faddoblig}[2]{\saddoblig\,(#1, #2)}
+\newcommand{\faddtrace}[2]{\saddtrace\,(#1, #2)}
+\newcommand{\fprehist}[2]{\faddtrace{#1}{#2}}
+\newcommand{\fgettrace}[1]{\sgettrace\,(#1)}
+\newcommand{\fremtrace}[1]{\sremtrace\,(#1)}
+\newcommand{\ftypefst}[1]{\stypefst\,(#1)}
+\newcommand{\ftypesnd}[1]{\stypesnd\,(#1)}
+\newcommand{\ftypedom}[1]{\stypedom\,(#1)}
+\newcommand{\ftypecod}[1]{\stypecod\,(#1)}
+\newcommand{\fcons}[2]{#1,#2}
+\newcommand{\fsubt}[2]{#1 \ssubt #2}
+\newcommand{\fdeclare}[1]{\forall~#1}
+\newcommand{\fshape}[1]{\mktwoapp{\sshapecheck}{(#1)}}
+\newcommand{\ftypemap}[1]{\mktwoapp{\stypemap}{(#1)}}
+\newcommand{\ftypemapshape}[1]{\mktwoapp{\stypemapshape}{(#1)}}
+\newcommand{\fTS}[2]{\mkthreeapp{\sTS}{(#1,}{#2)}}
+\newcommand{\finhole}[2]{#1[#2]}
+\newcommand{\fdefined}[1]{#1 \mbox{ is defined}}
+\newcommand{\fshapematch}[2]{\mktwoapp{\sshapematch}{(#1, #2)}}
+\newcommand{\fexistsone}[1]{\exists\,#1~.~}
+\newcommand{\feval}[1]{\seval(#1)}
+\newcommand{\fevalann}[1]{\seval^{\sownerpolicy}(#1)}
+\newcommand{\fevalHunl}[1]{\sevalH(#1)}
+\newcommand{\fevalNunl}[1]{\sevalN(#1)}
+\newcommand{\fevalHann}[1]{\sevalHann(#1)}
+\newcommand{\fevalNann}[1]{\sevalNann(#1)}
+\newcommand{\fevalNanns}[1]{\sevalNanns(#1)}
+\newcommand{\fevalTunl}[1]{\sevalT(#1)}
+\newcommand{\fevalTann}[1]{\sevalTann(#1)}
+\newcommand{\fevalTanns}[1]{\sevalTanns(#1)}
+\newcommand{\fevalAunl}[1]{\sevalA(#1)}
+\newcommand{\fevalAann}[1]{\sevalAann(#1)}
+\newcommand{\fevalAanns}[1]{\sevalAanns(#1)}
+\newcommand{\fevalXunl}[1]{\sevalX(#1)}
+\newcommand{\fevalXann}[1]{\sevalXann(#1)}
+\newcommand{\fevalXanns}[1]{\sevalXanns(#1)}
+\newcommand{\fevalXpolicy}[2]{\sevalXpolicy{#2}(#1)}
+\newcommand{\fXarrow}[2]{#2\!#1}
+\newcommand{\fblamearrow}[1]{\fXarrow{#1}{\blamearrow}}
+\newcommand{\fownerarrow}[1]{\fXarrow{#1}{\ownerarrow}}
+\newcommand{\fload}[1]{\sload(#1)}
+\newcommand{\floadH}[1]{\sloadH(#1)}
+\newcommand{\floadN}[1]{\sloadN(#1)}
+\newcommand{\floadT}[1]{\sloadT(#1)}
+\newcommand{\floadA}[1]{\sloadA(#1)}
+\newcommand{\floadX}[1]{\sloadX(#1)}
+\newcommand{\floadHann}[1]{\sloadH^{\sownerarrow}(#1)}
+\newcommand{\floadNann}[1]{\sloadN^{\sownerarrow}(#1)}
+\newcommand{\floadTann}[1]{\sloadT^{\sownerarrow}(#1)}
+\newcommand{\floadAann}[1]{\sloadA^{\sownerarrow}(#1)}
+\newcommand{\floadXann}[1]{\sloadX^{\sownerarrow}(#1)}
+\newcommand{\fblistowners}[1]{\sblistowners\,(#1)}
+\newcommand{\fblistsenders}[1]{\sblistsenders\,(#1)}
+\newcommand{\fbsetowners}[1]{\fblistowners{#1}}
+\newcommand{\fbsetsenders}[1]{\fblistsenders{#1}}
+\newcommand{\fvalueowners}[1]{\svalueowners\,(#1)}
+\newcommand{\ftypeobligations}[1]{\stypeobligations\,(#1)}
+\newcommand{\foutermost}[1]{\soutermost\,(#1)}
+\newcommand{\fmeet}[1]{\smeet #1}
+\newcommand{\fjoin}[1]{\sjoin #1}
+\newcommand{\fwellformed}[2]{#1 : #2~\swellformed}
+\newcommand{\fopann}[1]{\sopann\,(#1)}
+\newcommand{\fdiverge}[2]{#1 #2 \mbox{diverges}}
+\newcommand{\fexists}[2]{\exists\,#1.~#2}
+\newcommand{\fforall}[2]{\forall\,#1.~#2}
+\newcommand{\forigins}[1]{\sorigins{} of the {#1} strategy}
+\newcommand{\spropbase}{Semantics, Type Soundness}
+\newcommand{\spropown}{Lifted Semantics, Complete Monitoring, Blame}
+\newcommand{\fpropsim}[1]{Relation to #1}
+\newcommand{\fproperties}[1]{#1{} and its Properties}
+\newcommand{\fdynproj}[1]{\sdynproj(#1)}
+\newcommand{\fidproj}[1]{\sidproj(#1)}
+\newcommand{\ftagproj}[1]{\stagproj(#1)}
+\newcommand{\fXproj}[1]{\sXproj(#1)}
+\newcommand{\floorof}[1]{\lfloor #1 \rfloor}
+\newcommand{\ftagof}[1]{\floorof{#1}}
+
+\newcommand{\turnpage}{\vfill \newpage}
+\newcommand{\kafka}{\(\mathsf{KafKa}\)}
+
