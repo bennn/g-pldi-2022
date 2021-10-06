@@ -7,7 +7,8 @@
   find-lowest-3dpath-D
   find-lowest-3dpath-D*
   get-3d-table
-  render-3d-table
+  render-3d-table-x
+  render-3d-table-y
   get-mixed-worst-table
   render-mixed-worst-table)
 
@@ -424,15 +425,27 @@
 
 (define DDD-TITLE '("Benchmark" "Best with D+S"))
 
-(define (render-3d-table ddd)
+(define (render-3d-table-x ddd)
+  (render-3d-table ddd 'x))
+
+(define (render-3d-table-y ddd)
+  (render-3d-table ddd 'y))
+
+(define (render-3d-table ddd how)
   (centered
-    (tabular
-      #:sep (hspace 8)
-      #:style 'block
-      #:row-properties '(1)
-      #:column-properties '(left)
-      (let-values (((l* r*) (split-at ddd (quotient (length ddd) 2))))
-        (list (list (ddd-table l*) (ddd-table r*)))))))
+    (case how
+      ((x)
+       (tabular
+         #:sep (hspace 8)
+         #:style 'block
+         #:row-properties '(1)
+         #:column-properties '(left)
+         (let-values (((l* r*) (split-at ddd (quotient (length ddd) 2))))
+           (list (list (ddd-table l*) (ddd-table r*))))))
+      ((y)
+       (ddd-table ddd))
+      (else
+        (raise-argument-error 'render-3d-table "(or/c 'x 'y)" 1 ddd how)))))
 
 (define (ddd-table ddd)
   (tabular

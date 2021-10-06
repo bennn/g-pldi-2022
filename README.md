@@ -3,10 +3,11 @@ deep and shallow
 
 Goal: move chapter 6 of Ben G. dissertation to a paper
 
-Target: POPL 2022
-- deadline 2021-07-08
-- cfp <https://popl22.sigplan.org/track/POPL-2022-popl-research-papers#POPL-2022-Call-for-Papers>
-- 25 pages 10pt font
+Target: PLDI 2022
+- deadline 2021-11-19
+- cfp <https://pldi22.sigplan.org/track/pldi-2022-pldi#Call-for-Papers
+- 12 pages 10pt
+- pldi.zip format
 
 
 MF outline:

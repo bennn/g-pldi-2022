@@ -2,7 +2,7 @@
 @(require "main.rkt" "bib.rkt"
    (only-in scriblib/footnote note)
    (only-in "pict.rkt"
-     fig:ds-example))
+     fig:ds-example-y))
 
 @; THESIS Natural and Transient are the only realistic options
 @;  - more imagined ideas in JFP submission
@@ -74,10 +74,11 @@ object and computes a bitmap object.
 Finally, the untyped client module on the right mistakenly calls @|untyped-fn|
 with two strings instead of one string and one font object.
 
-@figure*[
+@figure[
+  @; TODO do more with this figure ... clearer
   "fig:ds-example"
   @elem{Untyped library, typed interface, and untyped client}
-  fig:ds-example]
+  fig:ds-example-y]
 
 The question raised by this example is whether static types can catch the mistake
 in the untyped client.
@@ -112,7 +113,9 @@ on every interaction, thus giving an interface the ability to constrain behavior
 
 @section{@|sNatural| Semantics}
 
-One way to implement @|sdeep| types is the @|sNatural| (aka. guarded)
+One way to implement @|sdeep| types is the @|sNatural|@note{Also known as
+Guarded@~cite{vksb-dls-2014}, Behavioral@~cite{clzv-ecoop-2018}, and
+Deep@~cite{tgpk-dls-2018}.}
 semantics@~cite{tf-dls-2006,mf-toplas-2009,st-sfp-2006} 
 Natural interprets types as contracts in a straightforward manner.@note{
 Researchers are actively seeking improved variants of @|sNatural|@~cite{htf-hosc-2010,g-popl-2015,stw-pldi-2015,gct-popl-2016}

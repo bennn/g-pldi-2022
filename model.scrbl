@@ -1,7 +1,7 @@
 #lang scribble/acmart @acmsmall @10pt @screen
 @(require "main.rkt" "bib.rkt"
    (only-in scriblib/footnote note)
-   (only-in "pict.rkt" fig:model-interaction))
+   (only-in "pict.rkt" fig:model-interaction-y))
 
 @; THESIS Deep and Shallow can interoperate
 @; - don't worry about CM extension, for self-edges and S/U
@@ -34,15 +34,15 @@ at boundaries.
 @; @Sectionref{sec:model:model:theorems} proves the main result;
 @; namely, that a careful use of these checks can enforce the safety properties.
 
-@figure*[
+@figure[
   "fig:model:base-interaction"
   @elem{Outline for @|sdeep|, @|sshallow|, and @|suntyped| interactions}
-  fig:model-interaction]
+  fig:model-interaction-y]
 
 
 @section[#:tag "sec:model:model:syntax"]{Three-way Surface Syntax}
 
-@figure*[
+@figure[
   "fig:model:surface"
   @elem{Surface syntax}
 
@@ -137,7 +137,7 @@ integers.
 
 
 
-@figure*[
+@figure[
   "fig:model:surface-type"
   @elem{Surface typing judgment (selected rules, others in @appendixref{appendix:rules})}
 
@@ -375,12 +375,11 @@ integers.
 \end{mathpar}
 }}|]
 
-@figure*[
+@figure[
   "fig:model:extra-type"
   @elem{Subtyping judgment and types for primitive operations.}
 
   @exact|{
-  \begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
   \inferrule*{
   }{
@@ -403,8 +402,7 @@ integers.
     \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
   }
 \end{mathpar}}
-\end{minipage}%
-\begin{minipage}[t]{0.5\columnwidth}
+
 \lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\,\stype}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\sfst, \tpair{\stype_0}{\stype_1}) & \feq & \stype_0
@@ -424,7 +422,6 @@ integers.
     \sDelta(\squotient, \tint, \tint) & \feq & \tint
   \end{langarray}
 }
-\end{minipage}
 }|]
 
 
@@ -462,7 +459,7 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 @; - example tag error = app 3 4
 
 
-@figure*[
+@figure[
   "fig:model:eval-syntax"
   @elem{Evaluation Syntax}
 
@@ -471,9 +468,10 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
   \sexpr & \slangeq &
     \svar \mid \svalue \mid \epair{\sexpr}{\sexpr}
     \mid \eunop{\sexpr} \mid
-    \ebinop{\sexpr}{\sexpr} \mid \eappu{\sexpr}{\sexpr} \mid \serror \mid
+    \ebinop{\sexpr}{\sexpr} \mid \eappu{\sexpr}{\sexpr} \mid
   \\ & &
-    \ewrap{\stype}{\sexpr}
+    \serror
+    \mid \ewrap{\stype}{\sexpr}
     \mid \escan{\sshape}{\sexpr}
     \mid \enoop{\sexpr}
   \\
@@ -481,8 +479,9 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
     \sint \mid \epair{\svalue}{\svalue}
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
-    \mid \esfun{\svar}{\sshape}{\sexpr}
-    \mid \emon{(\tfun{\stype}{\stype})}{\svalue}
+    \mid \esfun{\svar}{\sshape}{\sexpr} \mid
+  \\ & &
+    \emon{(\tfun{\stype}{\stype})}{\svalue}
   \\
   \sshape & \slangeq &
     \knat \mid \kint \mid \kpair \mid \kfun \mid \kany
@@ -492,9 +491,9 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
   \\
   \sctx & \slangeq &
     \sctxhole \mid \eunop{\sctx} \mid \ebinop{\sctx}{\sexpr} \mid \ebinop{\svalue}{\sctx}
-    \mid \eappu{\sctx}{\sexpr} \mid \eappu{\svalue}{\sctx} \mid
+    \mid \eappu{\sctx}{\sexpr} \mid
   \\ & &
-    \enoop{\sctx} \mid \escan{\sshape}{\sctx} \mid \ewrap{\stype}{\sctx}
+    \eappu{\svalue}{\sctx} \mid \enoop{\sctx} \mid \escan{\sshape}{\sctx} \mid \ewrap{\stype}{\sctx}
 \end{langarray}
 }|]
 
@@ -527,6 +526,7 @@ confirm this expectation.
   @elem{@|sDeep| typing judgment}
 
 @exact|{
+\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTT \sexpr : \stype\)}}{
 \begin{mathpar}
   \inferrule*{
@@ -628,13 +628,16 @@ confirm this expectation.
     \stypeenv \sWTT \serror : \stype_0
   }
 \end{mathpar}
+\end{minipage}
 }}|]
 
 @figure*[
   "fig:model:shallow-type"
   @elem{@|sShallow| typing judgment, subtyping, and type-to-shape metafunction}
 
-@exact|{\lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
+@exact|{
+\begin{minipage}{\textwidth}
+\lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
 \begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\sshape_0} \in \stypeenv
@@ -751,7 +754,6 @@ confirm this expectation.
 \end{mathpar}
 
 \bigskip
-\begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
   \inferrule*{
   }{
@@ -763,8 +765,7 @@ confirm this expectation.
     \fsubt{\sshape_0}{\kany}
   }
 \end{mathpar}}
-\end{minipage}%
-\begin{minipage}[t]{0.5\columnwidth}
+
 \lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
   \begin{langarray}
     \fshape{\tnat} & \feq & \knat
@@ -776,8 +777,9 @@ confirm this expectation.
     \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
   \end{langarray}
 }
+}
 \end{minipage}
-}}|]
+}|]
 
 
 @figure*[
@@ -786,8 +788,7 @@ confirm this expectation.
   @; ... aka dynamic typing, most types checked at runtime
 
 @exact|{
-\bigskip
-\bigskip
+\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTU \sexpr : \tdyn\)}}{\begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\tdyn} \in \stypeenv
@@ -883,6 +884,7 @@ confirm this expectation.
     \stypeenv \sWTU \serror : \tdyn
   }
 \end{mathpar}
+\end{minipage}
 }}|]
 
 @figure*[
@@ -890,6 +892,7 @@ confirm this expectation.
   @elem{Surface-to-evaluation completion (selected rules, others in @appendixref{appendix:rules})}
 
 @exact|{
+\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec \scompile \sexpr\)}}{\begin{mathpar}
   \inferrule*{
   }{
@@ -992,6 +995,7 @@ confirm this expectation.
   }
 
 \end{mathpar}
+\end{minipage}
 }}|]
 
 @figure*[
@@ -1255,12 +1259,11 @@ these rules appear in the appendix.
 }|]
 
 
-@figure*[
+@figure[
   "fig:model:extra-rr"
   @elem{Semantic metafunctions}
 
 @exact|{
-\begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\sdelta : \ffun{\tpair{\sunop\,}{\,\svalue}}{\svalue}$}}{
   \begin{langarray}
     \sdelta(\sfst, \epair{\svalue_0}{\svalue_1}) & \feq & \svalue_0
@@ -1269,7 +1272,6 @@ these rules appear in the appendix.
   \end{langarray}
 }
 
-\end{minipage}\begin{minipage}[t]{0.5\columnwidth}
 \lbl{\fbox{$\sdelta : \ffun{\tpair{\sbinop\,}{\tpair{\,\svalue\,}{\,\svalue}}}{\svalue}$}}{
   \begin{langarray}
     \sdelta(\ssum, \sint_0, \sint_1) & \feq & \sint_0 + \sint_1
@@ -1279,10 +1281,8 @@ these rules appear in the appendix.
     \sdelta(\squotient, \sint_0, \sint_1) & \feq & \floorof{\sint_0 / \sint_1}
   \end{langarray}
 }
-\end{minipage}
 
 \lbl{\fbox{$\sshapematch : \ffun{\tpair{\sshape\,}{\,\svalue}}{\fbool}$}}{
-\begin{tabular}[t]{l@{\quad}l}
   \begin{langarray}
    \fshapematch{\kfun}{\svalue_0} & \feq & \ftrue
    \\\sidecond{if $\svalue_0 \in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
@@ -1290,9 +1290,7 @@ these rules appear in the appendix.
    \fshapematch{\kpair}{\epair{\svalue_0}{\svalue_1}} & \feq & \ftrue
    \\[0.8ex]
    \fshapematch{\kint}{\sint_0} & \feq & \ftrue
-\end{langarray}
-&
-\begin{langarray}
+   \\[0.8ex]
    \fshapematch{\knat}{\snat_0} & \feq & \ftrue
    \\[0.8ex]
    \fshapematch{\kany}{\svalue_0} & \feq & \ftrue
@@ -1300,9 +1298,9 @@ these rules appear in the appendix.
    \fshapematch{\sshape_0}{\svalue_0} & \feq & \ffalse
    \\\sidecond{otherwise}
   \end{langarray}
-\end{tabular}
 }
 }|]
+
 
 @section[#:tag "sec:model:model:reduction"]{Reduction Relation}
 
@@ -1391,7 +1389,7 @@ The way that labels may disappear is after a successful run-time check
 For example, the @${\swrap} rule for base types says that party @${\sowner_1} may
 assume full responsibility of numbers that reach a well-typed boundary.
 
-@figure*[
+@figure[
   "fig:model:label-syntax"
   @elem{Labeled evaluation syntax}
 
@@ -1412,8 +1410,9 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \sint \mid \epair{\svalue}{\svalue}
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
-    \mid \esfun{\svar}{\sshape}{\sexpr}
-    \mid \emon{\stype}{\obars{\svalue}{\sowner}}
+    \mid \esfun{\svar}{\sshape}{\sexpr} \mid
+  \\ & &
+    \emon{\stype}{\obars{\svalue}{\sowner}}
     \mid \obars{\svalue}{\sowner}
   \\
   \sctx & \slangeq &
@@ -1486,9 +1485,11 @@ checks for.
 
 @figure*[
   "fig:model:ownership-consistency"
-  @elem{@|sDeep|-label consistency}
+  @elem{@|sDeep| label consistency}
 
 @exact|{
+\begin{minipage}{\textwidth}
+\lbl{\fbox{\(\sowner; \sownerenv \sWL \sexpr\)}}{
 \begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\sowner_0} \in \sownerenv_0
@@ -1609,6 +1610,8 @@ checks for.
   }
 
 \end{mathpar}
+}
+\end{minipage}
 }|]
 
 
@@ -1749,7 +1752,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
     \begin{enumerate}
     \item\label{step:model:cm:1}
       $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
@@ -1764,7 +1767,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     \end{enumerate}
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
     similar to the previous case
 
@@ -1774,12 +1777,12 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snr \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
     similar to the other substitution cases
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snr
+    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snrbreak
       \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}\)
     \begin{enumerate}
     \item
@@ -1819,7 +1822,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snr
+    \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snrbreak
       \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)
   \item[]
     by the definition of $\sWL$;

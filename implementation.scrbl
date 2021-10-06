@@ -183,10 +183,10 @@ For example, the following macro combines a sequence of expressions into
 
 @typed-codeblock['(
   "(define-syntax (test-case stx)"
-  "  (syntax-parse stx"
-  "    [(_ name expr ...)"
-  "     #'(parameterize ([test-name (ensure-str name)])"
-  "         (test-begin expr ...))]))"
+  " (syntax-parse stx"
+  "  [(_ name expr ...)"
+  "   #'(parameterize ([test-name (ensure-str name)])"
+  "       (test-begin expr ...))]))"
 )]
 
 @|noindent|This macro is safe for @|sShallow| clients, but for complicated reasons.

@@ -50,6 +50,7 @@
 \newtheorem{remark}[theorem]{Remark}
 \newenvironment{proofsketch}{\renewcommand{\proofname}{Proof Sketch}\begin{proof}}{\end{proof}}
 
+%% TODO columnwidth vs textwidth
 \newcommand{\lbl}[2]{\noindent\parbox[t]{\columnwidth}{#1\\#2}}
 \newenvironment{rrarray}{\(\begin{array}{l@{\hspace{0.5em}}c@{\hspace{0.5em}}l}}{\end{array}\)}
 \newenvironment{displayrrarray}{\smallskip\(\begin{array}{l@{\hspace{0.5em}}c@{\hspace{0.5em}}l}}{\end{array}\)\smallskip}
@@ -106,6 +107,7 @@
 \newcommand{\sWTlang}{\mkvdash{\slang}}
 \newcommand{\scompile}{\rightsquigarrow}
 \newcommand{\snr}{\vartriangleright}
+\newcommand{\snrbreak}{\snr\\{}\hfill}
 \newcommand{\scc}{\rightarrow}
 \newcommand{\srr}{\scc^{*}}
 \newcommand{\sdyn}{\sfont{dyn}}

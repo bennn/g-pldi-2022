@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @review @anonymous
+#lang scribble/acmart @sigplan @10pt @review @anonymous
 
 @(require "bib.rkt" (only-in "main.rkt" if-techrpt))
 

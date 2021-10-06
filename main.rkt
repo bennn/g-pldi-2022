@@ -12,6 +12,7 @@
   table-ref
   Figure-ref
   figure-ref
+  figure
   figure*
   example-type-shape
   NSA-num-cores

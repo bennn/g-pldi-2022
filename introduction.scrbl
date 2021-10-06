@@ -51,7 +51,7 @@ but can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
 First-order checks in @|sTransient| enable only a weak soundness guarantee,
 but are far less likely to dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
-The question thus arises as to whether two type-enforcement strategies can
+The question thus arises as to whether two enforcement strategies can
 interoperate, and thereby give programmers the ability to use @|sdeep| types
 when guarantees matter and @|sshallow| types to avoid performance bottlenecks.
 This paper provides an affirmative answer: 
@@ -68,7 +68,7 @@ The evidence for these claims has three parts:
   The proofs establish the integrity of types.
 }
 @item{
-  An implementation that combines standard @|sDeep| Typed Racket@~cite{tfffgksst-snapl-2017} with a @|sshallow|-typed variant@~cite{glfd-draft-2021} (@secref{sec:implementation}).
+  An implementation that combines the original @|sDeep| Typed Racket@~cite{tfffgksst-snapl-2017} with a @|sshallow|-typed variant@~cite{glfd-draft-2021} (@secref{sec:implementation}).
   The @|sdeep| and @|sshallow| halves of the implementation stand on equal footing.
   Indeed, every @|sdeep|-typed program can be expressed in @|sShallow| Racket.
 }

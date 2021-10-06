@@ -4,13 +4,15 @@
   transient-rkt-version
   typed-codeblock
   untyped-codeblock
-  fig:model-interaction
+  fig:model-interaction-x
+  fig:model-interaction-y
   fig:opt0
   fig:opt1
   fig:any-wrap
   fig:no-wrap
   fig:index-of
-  fig:ds-example
+  fig:ds-example-x
+  fig:ds-example-y
 
 @; fig:shallow-cannot-express
 @; fig:check-performance
@@ -54,6 +56,7 @@
 
 (define caption-shim 8)
 (define hshim 8)
+(define vshim 6)
 
 (struct code-arrow [src-tag src-find tgt-tag tgt-find start-angle end-angle start-pull end-pull style] #:transparent)
 
@@ -75,6 +78,9 @@
 
 (define right-arrow
   (vl-append 6 (blank) (code-arrowhead 0)))
+
+(define down-arrow
+  (code-arrowhead (* 3/4 turn)))
 
 (define code-text-style (cons "Inconsolata" 'modern))
 (define code-text-size 11)
@@ -671,31 +677,37 @@ eos
         (format-blame-data bd-wh-wb t-baseline)
         (format-blame-data bd-wh-wbs t-baseline)))
 
-(define fig:model-interaction
-  (ppict-do
-    (blank 360 100)
-    #:go (coord 0 10/100 'lt #:abs-x 10)
-    (add-hubs (te-mode-text "Deep") 'D)
-    #:go (coord 1 10/100 'rt #:abs-x -10)
-    (add-hubs (te-mode-text "Shallow") 'S)
-    #:go (coord 1/2 1 'cb)
-    (add-hubs (te-mode-text "Untyped") 'U)
-    #:set
-    (let* ((pp ppict-do-state)
-           (lbl+arr*
-             (list
-               (list "wrap" 8 -9 (code-arrow 'D-E rt-find 'S-W lt-find (* 2/100 turn) (* 98/100 turn)  1/4 1/4 'solid))
-               (list "wrap" 8  19 (code-arrow 'S-W lb-find 'D-E rb-find (* 52/100 turn) (* 48/100 turn)  1/4 1/4 'solid))
-               ;;
-               (list "wrap" 8 9 (code-arrow 'D-S rb-find 'U-W lt-find (* 75/100 turn) (* 97/100 turn)  40/100 40/100 'solid))
-               (list "wrap" -65 30 (code-arrow 'U-W lb-find 'D-S lb-find (* 53/100 turn) (* 22/100 turn)  60/100 36/100 'solid))
-               ;;
-               (list "noop" -8 9 (code-arrow 'S-S lb-find 'U-E rt-find (* 75/100 turn) (* 53/100 turn)  40/100 40/100 'solid))
-               (list "scan" 59 30 (code-arrow 'U-E rb-find 'S-S rb-find (* 97/100 turn) (* 28/100 turn)  60/100 36/100 'solid))
-               )))
-      (for/fold ((pp pp))
-                ((l+a (in-list lbl+arr*)))
-        (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a) #:size (+ 1 title-text-size)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a))))))
+(define-values [fig:model-interaction-x fig:model-interaction-y]
+  (let* ((D (add-hubs (te-mode-text "Deep") 'D))
+         (S (add-hubs (te-mode-text "Shallow") 'S))
+         (U (add-hubs (te-mode-text "Untyped") 'U)))
+    (values
+      (ppict-do
+        (blank 360 100)
+        #:go (coord 0 10/100 'lt #:abs-x 10) D
+        #:go (coord 1 10/100 'rt #:abs-x -10) S
+        #:go (coord 1/2 1 'cb) U
+        #:set
+        (let* ((pp ppict-do-state)
+               (lbl+arr*
+                 (list
+                   (list "wrap" 8 -9 (code-arrow 'D-E rt-find 'S-W lt-find (* 2/100 turn) (* 98/100 turn)  1/4 1/4 'solid))
+                   (list "wrap" 8  19 (code-arrow 'S-W lb-find 'D-E rb-find (* 52/100 turn) (* 48/100 turn)  1/4 1/4 'solid))
+                   ;;
+                   (list "wrap" 8 9 (code-arrow 'D-S rb-find 'U-W lt-find (* 75/100 turn) (* 97/100 turn)  40/100 40/100 'solid))
+                   (list "wrap" -65 30 (code-arrow 'U-W lb-find 'D-S lb-find (* 53/100 turn) (* 22/100 turn)  60/100 36/100 'solid))
+                   ;;
+                   (list "noop" -8 9 (code-arrow 'S-S lb-find 'U-E rt-find (* 75/100 turn) (* 53/100 turn)  40/100 40/100 'solid))
+                   (list "scan" 59 30 (code-arrow 'U-E rb-find 'S-S rb-find (* 97/100 turn) (* 28/100 turn)  60/100 36/100 'solid))
+                   )))
+          (for/fold ((pp pp))
+                    ((l+a (in-list lbl+arr*)))
+            (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a) #:size (+ 1 title-text-size)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a)))))
+      (ppict-do
+        (blank 260 100)
+        #:go (coord 0 10/100 'lt #:abs-x 10) D
+        #:go (coord 1 10/100 'rt #:abs-x -10) S
+        #:go (coord 1/2 1 'cb) U))))
 
 (define fig:opt0
   ;; only D <-> S, weaken
@@ -783,7 +795,7 @@ eos
                           (code-text "Deep: #f")))))
     (ht-append (* 8 hshim) uu tt)))
 
-(define fig:ds-example
+(define-values [fig:ds-example-x fig:ds-example-y]
   (let* ((untyped
           ;; images/icons/symbol = 300 lines
           ;; images/icons/style = 200 lines
@@ -802,7 +814,9 @@ eos
          (main
            (untyped-codeblock '(
             "(text \"cat\" \"roman\")"))))
-    (ht-append hshim untyped right-arrow interface right-arrow main)))
+    (values
+      (ht-append hshim untyped right-arrow interface right-arrow main)
+      (vc-append vshim untyped down-arrow interface down-arrow main))))
 
 ;; -----------------------------------------------------------------------------
 

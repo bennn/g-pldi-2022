@@ -12,7 +12,7 @@
      find-lowest-3dpath-D
      find-lowest-3dpath-D*
      get-3d-table
-     render-3d-table
+     render-3d-table-y
      get-mixed-path-table
      render-mixed-path-table
      get-mixed-worst-table
@@ -235,7 +235,7 @@ that extends Typed Racket v1.12.
 @(let* ((WT (get-mixed-worst-table SHALLOW-CURRENT-BENCHMARK*))
        )
 @list[
-@figure*[
+@figure[
   "fig:evaluation:mixed-worst-table"
   @elem{
    Worst-case overheads for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
@@ -308,7 +308,7 @@ The @tt{sieve} and @tt{tetris} benchmarks are the best successes.
            (bm (car bmx)))]
         )
 @list[
-@figure*[
+@figure[
   "fig:both:mixed-path"
   ;; TODO barchart? yes yes yes
   @elem{
@@ -401,12 +401,12 @@ Further experience with @|sdeep| and @|sshallow| types may
 reveal best practices for finding an efficient mix.
 As a first step, the following three case studies report on manual searches.
 }
-@figure*[
+@figure[
   "fig:both:3way"
   @elem{
     Percent of configurations that run fastest with a mix of @|sDeep| and @|sShallow| modules.
   }
-  (render-3d-table DDD)]
+  (render-3d-table-y DDD)]
 ])
 
 @itemlist[
