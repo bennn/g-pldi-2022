@@ -13,7 +13,7 @@
 
 @title[#:tag "sec:background"]{Background}
 
-@section{Gradual Typing, Migratory Typing, Mixed-Typed Code}
+@section{Gradual, Migratory, Mixed-Typed}
 
 @; TODO focus on research, not people
 For the past two decades, researchers have been investigating methods to combine

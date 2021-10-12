@@ -1092,10 +1092,9 @@ For other expressions, the completion rules simply transform subexpressions;
 these rules appear in the appendix.
 
 
-@figure*[
+@figure[
   "fig:model:rr"
   @elem{Semantics for the evaluation syntax}
-
 @exact|{
 \begin{rrarray}
 \kern-1em \fbox{\(\sexpr \snr \sexpr\)} \\
@@ -1168,7 +1167,7 @@ these rules appear in the appendix.
 
 }|]
 
-@figure*[
+@figure[
   "fig:model:rrlbl"
   @elem{Labeled semantics for the evaluation language}
 
