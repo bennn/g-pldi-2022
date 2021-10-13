@@ -311,6 +311,7 @@ The @tt{sieve} and @tt{tetris} benchmarks are the best successes.
 @figure[
   "fig:both:mixed-path"
   ;; TODO barchart? yes yes yes
+  ;; TODO if table, highlight rows where D||S wins
   @elem{
     Percent of @ddeliverable[D] paths for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
   }
@@ -403,6 +404,7 @@ As a first step, the following three case studies report on manual searches.
 }
 @figure[
   "fig:both:3way"
+  ;; TODO nicer symbol than + for the mix? ... || is great for either-or ... \cup vs \uplus ???
   @elem{
     Percent of configurations that run fastest with a mix of @|sDeep| and @|sShallow| modules.
   }

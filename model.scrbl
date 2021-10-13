@@ -164,7 +164,7 @@ integers.
 
   \inferrule*{
   }{
-    \stypeenv \sST \sint_0 : \tdyn
+    \stypeenv \sST \snat_0 : \tdyn
   }
 
   \inferrule*{
@@ -177,16 +177,16 @@ integers.
     \stypeenv \sST \snat_0 : \tfloor{\tnat}
   }
 
-  \inferrule*{
-  }{
-    \stypeenv \sST \sint_0 : \tint
-  }
-
-  \inferrule*{
-  }{
-    \stypeenv \sST \sint_0 : \tfloor{\tint}
-  }
-
+%  \inferrule*{
+%  }{
+%    \stypeenv \sST \sint_0 : \tint
+%  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sST \sint_0 : \tfloor{\tint}
+%  }
+%
 %  \inferrule*{
 %    \stypeenv \sST \ssurface_0 : \tdyn
 %    \\
@@ -297,7 +297,7 @@ integers.
 %
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\tfun{\stype_0}{\stype_1}}
-    \\
+    \\\\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_0}
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tfloor{\stype_1}
@@ -313,96 +313,115 @@ integers.
 %
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-    \\
+    \\\\
     \fsubt{\stype_0}{\stype_1}
   }{
     \stypeenv \sST \sexpr_0 : \tfloor{\stype_1}
   }
 
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0
-  }{
-    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \stype_0
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0
-  }{
-    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \stype_0
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \stype_0
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tfloor{\stype_0}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0
-  }{
-    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tfloor{\stype_0}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tfloor{\stype_0}
-  }
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn
+%  }{
+%    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \stype_0
+%  }{
+%    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
+%  }{
+%    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn
+%  }{
+%    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \stype_0
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \stype_0
+%  }{
+%    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \stype_0
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
+%  }{
+%    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \stype_0
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn
+%  }{
+%    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tfloor{\stype_0}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \stype_0
+%  }{
+%    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tfloor{\stype_0}
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
+%  }{
+%    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tfloor{\stype_0}
+%  }
 \end{mathpar}
+
+\bigskip
+
+\begin{tabular}{l@{\qquad}l}
+\(\left[
+  \inferrule*{
+    \stypeenv \sST \sexpr_0 : \stspec_0
+  }{
+    \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1
+  }
+\right]\) &
+\(\begin{array}{llll}
+  \slang_0 & \stspec_0 & \stspec_1 \\\hline
+  \sU & \tdyn & \stspec_1 \\
+  \sD & \stype_0 & \stspec_1 \\
+  \sS & \tfloor{\stype_0} & \stspec_1 \\
+\end{array}\) \end{tabular}
+
 }}|]
 
 @figure[
   "fig:model:extra-type"
-  @elem{Subtyping judgment and types for primitive operations.}
+  @elem{Types for primitive operations.}
 
   @exact|{
-\lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
-  \inferrule*{
-  }{
-    \fsubt{\tnat}{\tint}
-  }
+%\lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
+%  \inferrule*{
+%  }{
+%    \fsubt{\tnat}{\tint}
+%  }
+%
+%  \inferrule*{
+%    \fsubt{\stype_0}{\stype_2}
+%    \\
+%    \fsubt{\stype_1}{\stype_3}
+%  }{
+%    \fsubt{\tpair{\stype_0}{\stype_1}}{\tpair{\stype_2}{\stype_3}}
+%  }
+%
+%  \inferrule*{
+%    \fsubt{\stype_2}{\stype_0}
+%    \\
+%    \fsubt{\stype_1}{\stype_3}
+%  }{
+%    \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
+%  }
+%\end{mathpar}}
 
-  \inferrule*{
-    \fsubt{\stype_0}{\stype_2}
-    \\
-    \fsubt{\stype_1}{\stype_3}
-  }{
-    \fsubt{\tpair{\stype_0}{\stype_1}}{\tpair{\stype_2}{\stype_3}}
-  }
-
-  \inferrule*{
-    \fsubt{\stype_2}{\stype_0}
-    \\
-    \fsubt{\stype_1}{\stype_3}
-  }{
-    \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
-  }
-\end{mathpar}}
-
+\begin{minipage}[t]{0.48\columnwidth}
 \lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\,\stype}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\sfst, \tpair{\stype_0}{\stype_1}) & \feq & \stype_0
@@ -410,7 +429,7 @@ integers.
     \sDelta(\ssnd, \tpair{\stype_0}{\stype_1}) & \feq & \stype_1
   \end{langarray}
 }
-
+\end{minipage}\begin{minipage}[t]{0.52\columnwidth}
 \lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop\,}{\tpair{\,\stype\,}{\,\stype}}}{\stype}$}}{
   \begin{langarray}
     \sDelta(\ssum, \tnat, \tnat) & \feq & \tnat
@@ -422,6 +441,7 @@ integers.
     \sDelta(\squotient, \tint, \tint) & \feq & \tint
   \end{langarray}
 }
+\end{minipage}
 }|]
 
 
@@ -633,7 +653,7 @@ confirm this expectation.
 
 @figure*[
   "fig:model:shallow-type"
-  @elem{@|sShallow| typing judgment, subtyping, and type-to-shape metafunction}
+  @elem{@|sShallow| typing judgment}
 
 @exact|{
 \begin{minipage}{\textwidth}
@@ -752,31 +772,6 @@ confirm this expectation.
     \stypeenv \sWTS \serror : \sshape_0
   }
 \end{mathpar}
-
-\bigskip
-\lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
-  \inferrule*{
-  }{
-    \fsubt{\knat}{\kint}
-  }
-
-  \inferrule*{
-  }{
-    \fsubt{\sshape_0}{\kany}
-  }
-\end{mathpar}}
-
-\lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
-  \begin{langarray}
-    \fshape{\tnat} & \feq & \knat
-  \\
-    \fshape{\tint} & \feq & \kint
-  \\
-    \fshape{\tpair{\stype_0}{\stype_1}} & \feq & \kpair
-  \\
-    \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
-  \end{langarray}
-}
 }
 \end{minipage}
 }|]
@@ -886,6 +881,36 @@ confirm this expectation.
 \end{mathpar}
 \end{minipage}
 }}|]
+
+@figure[
+  "fig:model:shallow-util"
+  @elem{@|sShallow| subtyping and type-to-shape metafunction}
+
+@exact|{
+\lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
+  \inferrule*{
+  }{
+    \fsubt{\knat}{\kint}
+  }
+
+  \inferrule*{
+  }{
+    \fsubt{\sshape_0}{\kany}
+  }
+\end{mathpar}}
+
+\lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
+  \begin{langarray}
+    \fshape{\tnat} & \feq & \knat
+  \\
+    \fshape{\tint} & \feq & \kint
+  \\
+    \fshape{\tpair{\stype_0}{\stype_1}} & \feq & \kpair
+  \\
+    \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
+  \end{langarray}
+}
+}|]
 
 @figure*[
   "fig:model:completion1"
@@ -998,37 +1023,33 @@ confirm this expectation.
 \end{minipage}
 }}|]
 
-@figure*[
+@figure[
   "fig:model:completion2"
   @elem{Completion rules for module boundaries (@figure-ref{fig:model:base-interaction})}
 
 @exact|{
-\begin{tabular}{l@{\quad}l@{~}l}
 \(\left[
-  \inferrule*[width=4cm]{
+  \inferrule*{
     \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
   }{
     \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1 \scompile \sexpr_2
   }
-\right]\) &
+\right]\)
+
+\bigskip
+
 \(\begin{array}{llll}
   \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
   \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \\
   \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
   \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
-  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \\[1ex]
-  \sU & \tdyn & \tfloor{\stype_0} & \escan{\fshape{\stype_0}}{\sexpr_1}
-\end{array}\)
-&
-\(\begin{array}{llll}
-  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
+  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \\
+  \sU & \tdyn & \tfloor{\stype_0} & \escan{\fshape{\stype_0}}{\sexpr_1} \\
   \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
   \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \\
   \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
-  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1} \\[1ex]
-  \vphantom{\sU} & \vphantom{\tdyn} & \vphantom{\tfloor{\stype_0}} & \vphantom{\escan{\stype_0}{\sexpr_1}}
+  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1}
 \end{array}\)
-\end{tabular}
 
 }|]
 
