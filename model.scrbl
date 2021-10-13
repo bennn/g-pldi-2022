@@ -1212,172 +1212,218 @@ these rules appear in the appendix.
 @figure*[
   "fig:model:rr"
   @; "fig:model:rrlbl"
-  @elem{Semantics for the evaluation syntax, labeled semantics, labeled syntax ....}
+  @elem{Semantics for the evaluation syntax (left) and labeled variant (right)}
 
 @exact|{
-\begin{minipage}[t]{0.42\textwidth}
-\begin{rrarray}
-\kern-1em \fbox{\(\sexpr \snr \sexpr\)} \\
-  \eunop{\svalue_0} & \snr
-  & \stagerror
-  \\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is undefined}
-  \\[1.0ex]
-  \eunop{\svalue_0} & \snr
-  & \sdelta(\sunop, \svalue_0)
-  \\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is defined}
-  \\[1.0ex]
-  \ebinop{\svalue_0}{\svalue_1} & \snr
-  & \stagerror
-  \\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is undefined}
-  \\[1.0ex]
-  \ebinop{\svalue_0}{\svalue_1} & \snr
-  & \sdelta(\sbinop, \svalue_0, \svalue_1)
-  \\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is defined}
-  \\[1.0ex]
-  \eappu{\svalue_0}{\svalue_1} & \snr &
-  \stagerror
-  \\\sidecond{if $\svalue_0 \not\in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
-  \\[1.0ex]
-  \eappu{(\efun{\svar_0}{\sexpr_0})}{\svalue_0} & \snr
-  & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
-  \\[1.0ex]
-  \eappu{(\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0})}{\svalue_0} & \snr
-  & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
-  \\[1.0ex]
-  \eappu{(\esfun{\svar_0}{\sshape_0}{\sexpr_0})}{\svalue_0} & \snr
-  & \sscanerror
-  \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \eappu{(\esfun{\svar_0}{\sshape_0}{\sexpr_0})}{\svalue_0} & \snr
-  & \esubst{\sexpr_0}{\svar_0}{\svalue_0}
-  \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \eappu{(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})}{\svalue_1} & \snr
-  & \ewrap{\stype_1}{(\eappu{\svalue_0}{(\ewrap{\stype_0}{\svalue_1})})}
-  \\[1.0ex]
-  \enoop{\svalue_0} & \snr
-  & \svalue_0
-  \\[1.0ex]
-  \escan{\sshape_0}{\svalue_0} & \snr
-  & \sscanerror
-  \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \escan{\sshape_0}{\svalue_0} & \snr
-  & \svalue_0
-  \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \ewrap{\stype_0}{\svalue_0} & \snr
-  & \swraperror
-  \\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
-  \\[1.0ex]
-  \ewrap{(\tfun{\stype_0}{\stype_1})}{\svalue_0} & \snr
-  & \emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0}
-  \\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
-  \\[1.0ex]
-  \ewrap{(\tpair{\stype_0}{\stype_1})}{\epair{\svalue_0}{\svalue_1}} & \snr
-  & \epair{\ewrap{\stype_0}{\svalue_0}}{\ewrap{\stype_1}{\svalue_1}}
-  \\[1.0ex]
-  \ewrap{\stype_0}{\svalue_0} & \snr
-  & \svalue_0
-  \\\sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
-\end{rrarray}
+\(\begin{array}{l@{\hspace{0.2em}}c@{\hspace{0.2em}}l@{\hspace{7mm}}l@{\hspace{0.2em}}c@{\hspace{0.2em}}l}
+\!\!\!\!\fbox{\(\sexpr \snr \sexpr\)}
+& & &
+\!\!\!\!\fbox{\(\obars{\sexpr}{\sowner} \snrlbl \obars{\sexpr}{\sowner}\)} \\
 
-\medskip
-\!\!\!\!\begin{tabular}{ll}
-\fbox{\(\sexpr \srr \sexpr\)}\(~~\sdefeq\) & reflexive, transitive,
-\\ &  compatible (w.r.t. $\sctx$) closure of $\snr$
-\end{tabular}
+\eunop{\svalue_0}
+& \snr
+& \stagerror
 
-\!\!\!\!\begin{tabular}{ll}
-\fbox{\(\sexpr \srrlbl \sexpr\)}\(~~\sdefeq\) & reflexive, transitive,
-\\ &  compatible (w.r.t. $\sctx$) closure of $\snrlbl$
-\end{tabular}
+& \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obars{\stagerror}{\sowner_1}
+\\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is undefined}
+& \sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sunop, \svalue_0)$ is undefined}
+\\[1.0ex]
 
-\end{minipage}\begin{minipage}[t]{0.58\textwidth}
-\begin{rrarray}
-\kern-1em \fbox{\(\obars{\sexpr}{\sowner} \snrlbl \obars{\sexpr}{\sowner}\)} \\
-  \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obars{\stagerror}{\sowner_1}
-  \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sunop, \svalue_0)$ is undefined}
-  \\[1.0ex]
-  \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}
-  \\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is defined}
-  \\[1.0ex]
-  \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
-  & \snrlbl
-  & \obars{\stagerror}{\sowner_2}
-  \\\sidecond{if $\svalue_i \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is undefined}
-  \\[1.0ex]
-  \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
-  & \snrlbl
-  & \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}
-  \\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is defined}
-  \\[1.0ex]
-  \obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1}
-  & \snrlbl
-  & \obars{\stagerror}{\sowner_1}
-  \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
-  \\[1.0ex]
-  \obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snrlbl
-  & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
-  \\[1.0ex]
-  \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snrlbl
-  & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
-  \\[1.0ex]
-  \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snrlbl
-  & \obars{\sscanerror}{\sowner_1}
-  \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snrlbl
-  & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
-  \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \obars{\eappu{\obbars{\emon{(\tfun{\stype_0}{\stype_1})}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2}
-  & \snrlbl
-  & \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}
-  \\[1.0ex]
-  \obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1}
-  & \snrlbl
-  & \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
-  \\[1.0ex]
-  \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obars{\sscanerror}{\sowner_1}
-  \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
-  \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
-  \\[1.0ex]
-  \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obars{\swraperror}{\sowner_1}
-  \\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
-  \\[1.0ex]
-  \obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obars{\emon{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  \\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
-  \\[1.0ex]
-  \obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}
-  \\[1.0ex]
-  \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snrlbl
-  & \obars{\svalue_0}{\sowner_1}
-  \\\sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
-\end{rrarray}
 
-\end{minipage}
+\eunop{\svalue_0}
+& \snr
+& \sdelta(\sunop, \svalue_0)
+
+& \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}
+\\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is defined}
+& \sidecond{if $\sdelta(\sunop, \svalue_0)$ is defined}
+\\[1.0ex]
+
+
+\ebinop{\svalue_0}{\svalue_1}
+& \snr
+& \stagerror
+
+& \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
+& \snrlbl
+& \obars{\stagerror}{\sowner_2}
+\\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is undefined}
+& \sidecond{if $\svalue_i \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is undefined}
+\\[1.0ex]
+
+
+\ebinop{\svalue_0}{\svalue_1}
+& \snr
+& \sdelta(\sbinop, \svalue_0, \svalue_1)
+
+& \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
+& \snrlbl
+& \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}
+\\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is defined}
+& \sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is defined}
+\\[1.0ex]
+
+\eappu{\svalue_0}{\svalue_1}
+& \snr
+& \stagerror
+
+& \obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1}
+& \snrlbl
+& \obars{\stagerror}{\sowner_1}
+\\\sidecond{if $\svalue_0 \not\in \efun{\svar}{\!\sexpr} \cup \efun{\tann{\svar}{\stype}}{\!\sexpr} \cup \esfun{\svar}{\sshape}{\!\sexpr} \cup \emon{\stype}{\!\svalue}$}
+& \sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\!\sexpr} \cup \efun{\tann{\svar}{\stype}}{\!\sexpr} \cup \esfun{\svar}{\sshape}{\!\sexpr} \cup \emon{\stype}{\!\svalue}$}
+\\[1.0ex]
+
+
+\eappu{(\efun{\svar_0}{\sexpr_0})}{\svalue_0}
+& \snr
+& \esubst{\sexpr_0}{\svar_0}{\svalue_0}
+
+& \obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+& \snrlbl
+& \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
+\\[1.0ex]
+
+
+\eappu{(\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0})}{\svalue_0}
+& \snr
+& \esubst{\sexpr_0}{\svar_0}{\svalue_0}
+
+& \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+& \snrlbl
+& \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
+\\[1.0ex]
+
+
+\eappu{(\esfun{\svar_0}{\sshape_0}{\sexpr_0})}{\svalue_0}
+& \snr
+& \sscanerror
+
+& \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+& \snrlbl
+& \obars{\sscanerror}{\sowner_1}
+\\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
+& \sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
+\\[1.0ex]
+
+
+\eappu{(\esfun{\svar_0}{\sshape_0}{\sexpr_0})}{\svalue_0}
+& \snr
+& \esubst{\sexpr_0}{\svar_0}{\svalue_0}
+
+& \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
+& \snrlbl
+& \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
+\\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
+& \sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
+\\[1.0ex]
+
+
+\eappu{(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})}{\svalue_1}
+& \snr
+&
+
+& \obars{\eappu{\obbars{\emon{(\tfun{\stype_0}{\stype_1})}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2}
+& \snrlbl
+\\[-2.0ex]\sidestep{\ewrap{\stype_1}{(\eappu{\svalue_0}{(\ewrap{\stype_0}{\svalue_1})})}\hspace{4mm}\hphantom{x}}
+& \sidestep{\obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}}
+\\[1.0ex]
+
+
+\enoop{\svalue_0}
+& \snr
+& \svalue_0
+
+& \obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1}
+& \snrlbl
+& \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
+\\[1.0ex]
+
+
+\escan{\sshape_0}{\svalue_0}
+& \snr
+& \sscanerror
+
+& \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obars{\sscanerror}{\sowner_1}
+\\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
+& \sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
+\\[1.0ex]
+
+
+\escan{\sshape_0}{\svalue_0}
+& \snr
+& \svalue_0
+
+& \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
+\\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
+& \sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
+\\[1.0ex]
+
+
+\ewrap{\stype_0}{\svalue_0}
+& \snr
+& \swraperror
+
+& \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obars{\swraperror}{\sowner_1}
+\\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
+& \sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
+\\[1.0ex]
+
+
+\ewrap{(\tfun{\stype_0}{\stype_1})}{\svalue_0}
+& \snr
+& \emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0}
+
+& \obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obars{\emon{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+\\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
+& \sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
+\\[1.0ex]
+
+
+\ewrap{(\tpair{\stype_0}{\stype_1})}{\epair{\svalue_0}{\svalue_1}}
+& \snr
+& \epair{\ewrap{\stype_0}{\!\svalue_0}}{\ewrap{\stype_1}{\!\svalue_1}}
+
+& \obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obars{\!\epair{\ewrap{\stype_0}{\!\obbars{\svalue_0}{\sownerlist_0}}\!\!}{\ewrap{\stype_1}{\!\obbars{\svalue_1}{\sownerlist_0}}}\!}{\sowner_1}\!
+\\[1.0ex]
+
+
+\ewrap{\stype_0}{\svalue_0}
+& \snr
+& \svalue_0
+
+& \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
+& \snrlbl
+& \obars{\svalue_0}{\sowner_1}
+\\\sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
+& \sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
+
+\\[2ex]
+
+\multicolumn{3}{l}{\!\!\!\!\begin{tabular}{l@{~}l}
+\fbox{\(\sexpr \srr \sexpr\)}\(~~\sdefeq\) & reflexive, transitive, compatible
+\\ &  (w.r.t. $\sctx$) closure of $\snr$
+\end{tabular}}
+&
+\multicolumn{3}{l}{\!\!\!\!\begin{tabular}{l@{~}l}
+\fbox{\(\sexpr \srrlbl \sexpr\)}\(~~\sdefeq\) & reflexive, transitive, compatible
+\\ &  (w.r.t. $\sctx$) closure of $\snrlbl$
+\end{tabular}}
+\end{array}\)
 }|]
 
 
@@ -1410,15 +1456,15 @@ these rules appear in the appendix.
   \begin{langarray}
    \fshapematch{\kfun}{\svalue_0} & \feq & \ftrue
    \\\sidecond{if $\svalue_0 \in \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
-   \\[0.8ex]
+   \\[0.5ex]
    \fshapematch{\kpair}{\epair{\svalue_0}{\svalue_1}} & \feq & \ftrue
-   \\[0.8ex]
+   \\[0.5ex]
    \fshapematch{\kint}{\sint_0} & \feq & \ftrue
-   \\[0.8ex]
+   \\[0.5ex]
    \fshapematch{\knat}{\snat_0} & \feq & \ftrue
-   \\[0.8ex]
+   \\[0.5ex]
    \fshapematch{\kany}{\svalue_0} & \feq & \ftrue
-   \\[0.8ex]
+   \\[0.5ex]
    \fshapematch{\sshape_0}{\svalue_0} & \feq & \ffalse
    \\\sidecond{otherwise}
   \end{langarray}
@@ -1534,6 +1580,7 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
     \mid \esfun{\svar}{\sshape}{\sexpr} \mid
+  \\ & &
     \emon{\stype}{\obars{\svalue}{\sowner}}
     \mid \obars{\svalue}{\sowner}
   \\

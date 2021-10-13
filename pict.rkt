@@ -813,10 +813,22 @@ eos
             "      Bitmap)))")))
          (main
            (untyped-codeblock '(
+            "(text \"cat\" \"roman\")")))
+         (untyped2
+          (untyped-codeblock '(
+            "(define (text s f)"
+            "  ; render string s using font f"
+            "  ....)")))
+         (interface2
+           (typed-codeblock '(
+            "(require/typed/provide"
+            " (text (-> String Font Bitmap)))")))
+         (main2
+           (untyped-codeblock '(
             "(text \"cat\" \"roman\")"))))
     (values
       (ht-append hshim untyped right-arrow interface right-arrow main)
-      (vc-append vshim untyped down-arrow interface down-arrow main))))
+      (vc-append vshim untyped2 down-arrow interface2 down-arrow main2))))
 
 ;; -----------------------------------------------------------------------------
 
