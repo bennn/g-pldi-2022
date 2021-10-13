@@ -139,7 +139,8 @@ integers.
 
 @figure[
   "fig:model:surface-type"
-  @elem{Surface typing judgment (selected rules, others in @appendixref{appendix:rules})}
+  @elem{Surface typing (selected rules), subtyping, and types for primitive operations}
+  @;@appendixref{appendix:rules}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec\)}}{
@@ -374,8 +375,7 @@ integers.
 %  }
 \end{mathpar}
 
-\bigskip
-
+\medskip
 \begin{tabular}{l@{\qquad}l}
 \(\left[
   \inferrule*{
@@ -390,37 +390,33 @@ integers.
   \sD & \stype_0 & \stspec_1 \\
   \sS & \tfloor{\stype_0} & \stspec_1 \\
 \end{array}\) \end{tabular}
+}
 
-}}|]
+\medskip
+\lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\vspace{-0.6cm}\begin{mathpar}
+  \inferrule*{
+  }{
+    \fsubt{\tnat}{\tint}
+  }
 
-@figure[
-  "fig:model:extra-type"
-  @elem{Types for primitive operations.}
+  \inferrule*{
+    \fsubt{\stype_0}{\stype_2}
+    \\\\
+    \fsubt{\stype_1}{\stype_3}
+  }{
+    \fsubt{\tpair{\stype_0}{\stype_1}}{\tpair{\stype_2}{\stype_3}}
+  }
 
-  @exact|{
-%\lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
-%  \inferrule*{
-%  }{
-%    \fsubt{\tnat}{\tint}
-%  }
-%
-%  \inferrule*{
-%    \fsubt{\stype_0}{\stype_2}
-%    \\
-%    \fsubt{\stype_1}{\stype_3}
-%  }{
-%    \fsubt{\tpair{\stype_0}{\stype_1}}{\tpair{\stype_2}{\stype_3}}
-%  }
-%
-%  \inferrule*{
-%    \fsubt{\stype_2}{\stype_0}
-%    \\
-%    \fsubt{\stype_1}{\stype_3}
-%  }{
-%    \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
-%  }
-%\end{mathpar}}
+  \inferrule*{
+    \fsubt{\stype_2}{\stype_0}
+    \\\\
+    \fsubt{\stype_1}{\stype_3}
+  }{
+    \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
+  }
+\end{mathpar}}
 
+\medskip
 \begin{minipage}[t]{0.48\columnwidth}
 \lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\,\stype}}{\stype}$}}{
   \begin{langarray}
@@ -442,7 +438,59 @@ integers.
   \end{langarray}
 }
 \end{minipage}
+
 }|]
+
+@;@figure[
+@;  "fig:model:extra-type"
+@;  @elem{Types for primitive operations.}
+@;
+@;  @exact|{
+@;%\lbl{\fbox{$\fsubt{\stype}{\stype}$}}{\begin{mathpar}
+@;%  \inferrule*{
+@;%  }{
+@;%    \fsubt{\tnat}{\tint}
+@;%  }
+@;%
+@;%  \inferrule*{
+@;%    \fsubt{\stype_0}{\stype_2}
+@;%    \\
+@;%    \fsubt{\stype_1}{\stype_3}
+@;%  }{
+@;%    \fsubt{\tpair{\stype_0}{\stype_1}}{\tpair{\stype_2}{\stype_3}}
+@;%  }
+@;%
+@;%  \inferrule*{
+@;%    \fsubt{\stype_2}{\stype_0}
+@;%    \\
+@;%    \fsubt{\stype_1}{\stype_3}
+@;%  }{
+@;%    \fsubt{\tfun{\stype_0}{\stype_1}}{\tfun{\stype_2}{\stype_3}}
+@;%  }
+@;%\end{mathpar}}
+@;
+@;\begin{minipage}[t]{0.48\columnwidth}
+@;\lbl{\fbox{$\sDelta : \ffun{\tpair{\sunop\,}{\,\stype}}{\stype}$}}{
+@;  \begin{langarray}
+@;    \sDelta(\sfst, \tpair{\stype_0}{\stype_1}) & \feq & \stype_0
+@;  \\
+@;    \sDelta(\ssnd, \tpair{\stype_0}{\stype_1}) & \feq & \stype_1
+@;  \end{langarray}
+@;}
+@;\end{minipage}\begin{minipage}[t]{0.52\columnwidth}
+@;\lbl{\fbox{$\sDelta : \ffun{\tpair{\sbinop\,}{\tpair{\,\stype\,}{\,\stype}}}{\stype}$}}{
+@;  \begin{langarray}
+@;    \sDelta(\ssum, \tnat, \tnat) & \feq & \tnat
+@;  \\
+@;    \sDelta(\ssum, \tint, \tint) & \feq & \tint
+@;  \\
+@;    \sDelta(\squotient, \tnat, \tnat) & \feq & \tnat
+@;  \\
+@;    \sDelta(\squotient, \tint, \tint) & \feq & \tint
+@;  \end{langarray}
+@;}
+@;\end{minipage}
+@;}|]
 
 
 @section[#:tag "sec:model:model:eval-syntax"]{Common Evaluation Syntax}
@@ -543,7 +591,8 @@ confirm this expectation.
 
 @figure[
   "fig:model:deep-type"
-  @elem{@|sDeep| typing judgment (selected rules, others in @appendixref{appendix:rules})}
+  @elem{@|sDeep| typing judgment (selected rules)}
+  @;@appendixref{appendix:rules}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sWTT \sexpr : \stype\)}}{
@@ -651,7 +700,8 @@ confirm this expectation.
 
 @figure[
   "fig:model:shallow-type"
-  @elem{@|sShallow| typing judgment (selected rules, others in @appendixref{appendix:rules})}
+  @elem{@|sShallow| typing (selected rules), subtyping, and type-to-shape metafunction}
+  @;@appendixref{appendix:rules}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
@@ -770,12 +820,41 @@ confirm this expectation.
 %  }
 \end{mathpar}
 }
+
+\medskip
+\lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\vspace{-0.6cm}\begin{mathpar}
+  \inferrule*{
+  }{
+    \fsubt{\knat}{\kint}
+  }
+
+  \inferrule*{
+  }{
+    \fsubt{\sshape_0}{\kany}
+  }
+\end{mathpar}}
+
+\medskip
+\lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
+\begin{tabular}{ll}
+  \begin{langarray}
+    \fshape{\tnat} & \feq & \knat
+  \\
+    \fshape{\tint} & \feq & \kint
+  \end{langarray} &
+  \begin{langarray}
+    \fshape{\tpair{\stype_0}{\stype_1}} & \feq & \kpair
+  \\
+    \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
+  \end{langarray}
+\end{tabular}}
 }|]
 
 
 @figure[
   "fig:model:untyped-type"
-  @elem{Untyped typing judgment (selected rules, others in @appendixref{appendix:rules})}
+  @elem{Untyped typing judgment (selected rules)}
+  @;@appendixref{appendix:rules}
   @; ... aka dynamic typing, most types checked at runtime
 
 @exact|{
@@ -839,30 +918,30 @@ confirm this expectation.
     \stypeenv \sWTU \eappu{\sexpr_0}{\sexpr_1} : \tdyn
   }
 
-  \inferrule*{
-    \stypeenv \sWTU \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sWTU \enoop{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sWTS \sexpr_0 : \sshape_0
-  }{
-    \stypeenv \sWTU \enoop{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sWTU \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sWTU \escan{\sshape_0}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sWTS \sexpr_0 : \sshape_1
-  }{
-    \stypeenv \sWTU \escan{\sshape_0}{\sexpr_0} : \tdyn
-  }
-
+%  \inferrule*{
+%    \stypeenv \sWTU \sexpr_0 : \tdyn
+%  }{
+%    \stypeenv \sWTU \enoop{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_0
+%  }{
+%    \stypeenv \sWTU \enoop{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTU \sexpr_0 : \tdyn
+%  }{
+%    \stypeenv \sWTU \escan{\sshape_0}{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_1
+%  }{
+%    \stypeenv \sWTU \escan{\sshape_0}{\sexpr_0} : \tdyn
+%  }
+%
   \inferrule*{
     \stypeenv \sWTT \sexpr_0 : \stype_0
   }{
@@ -876,58 +955,58 @@ confirm this expectation.
 \end{mathpar}
 }}|]
 
+@;@figure[
+@;  "fig:model:shallow-util"
+@;  @elem{@|sShallow| subtyping and type-to-shape metafunction}
+@;
+@;@exact|{
+@;\lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
+@;  \inferrule*{
+@;  }{
+@;    \fsubt{\knat}{\kint}
+@;  }
+@;
+@;  \inferrule*{
+@;  }{
+@;    \fsubt{\sshape_0}{\kany}
+@;  }
+@;\end{mathpar}}
+@;
+@;\lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
+@;  \begin{langarray}
+@;    \fshape{\tnat} & \feq & \knat
+@;  \\
+@;    \fshape{\tint} & \feq & \kint
+@;  \\
+@;    \fshape{\tpair{\stype_0}{\stype_1}} & \feq & \kpair
+@;  \\
+@;    \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
+@;  \end{langarray}
+@;}
+@;}|]
+
 @figure[
-  "fig:model:shallow-util"
-  @elem{@|sShallow| subtyping and type-to-shape metafunction}
-
-@exact|{
-\lbl{\fbox{$\fsubt{\sshape}{\sshape}$}}{\begin{mathpar}
-  \inferrule*{
-  }{
-    \fsubt{\knat}{\kint}
-  }
-
-  \inferrule*{
-  }{
-    \fsubt{\sshape_0}{\kany}
-  }
-\end{mathpar}}
-
-\lbl{\fbox{$\sshapecheck : \ffun{\stype}{\sshape}$}}{
-  \begin{langarray}
-    \fshape{\tnat} & \feq & \knat
-  \\
-    \fshape{\tint} & \feq & \kint
-  \\
-    \fshape{\tpair{\stype_0}{\stype_1}} & \feq & \kpair
-  \\
-    \fshape{\tfun{\stype_0}{\stype_1}} & \feq & \kfun
-  \end{langarray}
-}
-}|]
-
-@figure*[
   "fig:model:completion1"
-  @elem{Surface-to-evaluation completion (selected rules, others in @appendixref{appendix:rules})}
+  @elem{Surface-to-evaluation completion (selected rules)}
+  @;@appendixref{appendix:rules}
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec \scompile \sexpr\)}}{\begin{mathpar}
   \inferrule*{
   }{
-    \stypeenv \sST \svar_0 : \tdyn \scompile \svar_0
+    \stypeenv \sST \svar_0 : \stspec_0 \scompile \svar_0
   }
 
-  \inferrule*{
-  }{
-    \stypeenv \sST \svar_0 : \stype_0 \scompile \svar_0
-  }
-
-  \inferrule*{
-  }{
-    \stypeenv \sST \svar_0 : \tfloor{\stype_0} \scompile \svar_0
-  }
-
+%  \inferrule*{
+%  }{
+%    \stypeenv \sST \svar_0 : \stype_0 \scompile \svar_0
+%  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sST \svar_0 : \tfloor{\stype_0} \scompile \svar_0
+%  }
+%
 %  \inferrule*{
 %  }{
 %    \stypeenv \sST \sint_0 : \tdyn \scompile \sint_0
@@ -989,7 +1068,7 @@ confirm this expectation.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tdyn \scompile \sexpr_3
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tdyn \scompile \eappu{\sexpr_2}{\sexpr_3}
@@ -997,7 +1076,7 @@ confirm this expectation.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfun{\stype_1}{\stype_0} \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \stype_1 \scompile \sexpr_3
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \stype_0 \scompile \eappu{\sexpr_2}{\sexpr_3}
@@ -1005,47 +1084,70 @@ confirm this expectation.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\tfun{\stype_1}{\stype_0}} \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_1} \scompile \sexpr_3
     \\
     \fshape{\stype_0} = \sshape_0
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tfloor{\stype_0} \scompile \escan{\sshape_0}{(\eappu{\sexpr_2}{\sexpr_3})}
   }
-
 \end{mathpar}
-\end{minipage}
-}}|]
 
-@figure[
-  "fig:model:completion2"
-  @elem{Completion rules for module boundaries (@figure-ref{fig:model:base-interaction})}
-
-@exact|{
-\(\left[
+\medskip
+\begin{tabular}[t]{l@{~~}l}
+\!\!\!\!\(\left[
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
   }{
-    \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1 \scompile \sexpr_2
+    \stypeenv\!\sST\!\emodule{\slang_0}{\sexpr_0}\!:\!\stspec_1\!\scompile\!\sexpr_2
   }
-\right]\)
-
-\bigskip
-
+\right]\) &
 \(\begin{array}{llll}
-  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
-  \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \\
-  \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
-  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
-  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \\
-  \sU & \tdyn & \tfloor{\stype_0} & \escan{\fshape{\stype_0}}{\sexpr_1} \\
-  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
-  \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \\
-  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
-  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1}
+  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \!\! \\\hline
+  \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \!\! \\
+  \sU & \tdyn & \tfloor{\stype_0} & \escan{\sshape_0}{\sexpr_1} \!\!
 \end{array}\)
+\\ & \qquad\hbox{where \(\sshape_0 = \fshape{\stype_0}\)}
 
-}|]
+%  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
+%  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
+%  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1}
+\end{tabular}
+
+}}|]
+
+@;@figure[
+@;  "fig:model:completion2"
+@;  @elem{Completion rules for module boundaries (@figure-ref{fig:model:base-interaction})}
+@;
+@;@exact|{
+@;\left[
+@;  \inferrule*{
+@;    \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
+@;  }{
+@;    \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1 \scompile \sexpr_2
+@;  }
+@;\right]
+@;
+@;\medskip
+@;\begin{array}{llll}
+@;  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
+@;  \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \\
+@;  \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
+@;  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
+@;  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \\
+@;  \sU & \tdyn & \tfloor{\stype_0} & \escan{\fshape{\stype_0}}{\sexpr_1} \\
+@;  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
+@;  \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \\
+@;  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
+@;  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1}
+@;\end{array}
+@;
+@;}|]
 
 
 @section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
@@ -1107,10 +1209,13 @@ For other expressions, the completion rules simply transform subexpressions;
 these rules appear in the appendix.
 
 
-@figure[
+@figure*[
   "fig:model:rr"
-  @elem{Semantics for the evaluation syntax}
+  @; "fig:model:rrlbl"
+  @elem{Semantics for the evaluation syntax, labeled semantics, labeled syntax ....}
+
 @exact|{
+\begin{minipage}[t]{0.42\textwidth}
 \begin{rrarray}
 \kern-1em \fbox{\(\sexpr \snr \sexpr\)} \\
   \eunop{\svalue_0} & \snr
@@ -1178,98 +1283,101 @@ these rules appear in the appendix.
 \end{rrarray}
 
 \medskip
-\fbox{\(\sexpr \srr \sexpr\)}\(~~\sdefeq \mbox{reflexive, transitive, compatible (w.r.t. $\sctx$) closure of $\snr$}\)
+\!\!\!\!\begin{tabular}{ll}
+\fbox{\(\sexpr \srr \sexpr\)}\(~~\sdefeq\) & reflexive, transitive,
+\\ &  compatible (w.r.t. $\sctx$) closure of $\snr$
+\end{tabular}
 
-}|]
+\!\!\!\!\begin{tabular}{ll}
+\fbox{\(\sexpr \srrlbl \sexpr\)}\(~~\sdefeq\) & reflexive, transitive,
+\\ &  compatible (w.r.t. $\sctx$) closure of $\snrlbl$
+\end{tabular}
 
-@figure[
-  "fig:model:rrlbl"
-  @elem{Labeled semantics for the evaluation language}
-
-@exact|{
+\end{minipage}\begin{minipage}[t]{0.58\textwidth}
 \begin{rrarray}
-\kern-1em \fbox{\(\obars{\sexpr}{\sowner} \snr \obars{\sexpr}{\sowner}\)} \\
+\kern-1em \fbox{\(\obars{\sexpr}{\sowner} \snrlbl \obars{\sexpr}{\sowner}\)} \\
   \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\stagerror}{\sowner_1}
   \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sunop, \svalue_0)$ is undefined}
   \\[1.0ex]
   \obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\\sidecond{if $\sdelta(\sunop, \svalue_0)$ is defined}
   \\[1.0ex]
   \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
-  & \snr
+  & \snrlbl
   & \obars{\stagerror}{\sowner_2}
   \\\sidecond{if $\svalue_i \not\in \obars{\svalue}{\sowner}$ and $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is undefined}
   \\[1.0ex]
   \obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2}
-  & \snr
+  & \snrlbl
   & \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}
   \\\sidecond{if $\sdelta(\sbinop, \svalue_0, \svalue_1)$ is defined}
   \\[1.0ex]
   \obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\stagerror}{\sowner_1}
   \\\sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\sexpr} \cup \efun{\tann{\svar}{\stype}}{\sexpr} \cup \esfun{\svar}{\sshape}{\sexpr} \cup \emon{\stype}{\svalue}$}
   \\[1.0ex]
   \obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\[1.0ex]
   \obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\[1.0ex]
   \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\sscanerror}{\sowner_1}
   \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
   \obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
   \obars{\eappu{\obbars{\emon{(\tfun{\stype_0}{\stype_1})}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2}
-  & \snr
+  & \snrlbl
   & \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}
   \\[1.0ex]
   \obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\[1.0ex]
   \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\sscanerror}{\sowner_1}
   \\\sidecond{if $\neg\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
   \obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}
   \\\sidecond{if $\fshapematch{\sshape_0}{\svalue_0}$}
   \\[1.0ex]
   \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\swraperror}{\sowner_1}
   \\\sidecond{if $\neg\fshapematch{\fshape{\stype_0}}{\svalue_0}$}
   \\[1.0ex]
   \obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\emon{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
   \\\sidecond{if $\fshapematch{\kfun}{\svalue_0}$}
   \\[1.0ex]
   \obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}
   \\[1.0ex]
   \obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}
-  & \snr
+  & \snrlbl
   & \obars{\svalue_0}{\sowner_1}
   \\\sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
 \end{rrarray}
 
+\end{minipage}
 }|]
 
 
@@ -1278,6 +1386,7 @@ these rules appear in the appendix.
   @elem{Semantic metafunctions}
 
 @exact|{
+\begin{minipage}[t]{0.48\columnwidth}
 \lbl{\fbox{$\sdelta : \ffun{\tpair{\sunop\,}{\,\svalue}}{\svalue}$}}{
   \begin{langarray}
     \sdelta(\sfst, \epair{\svalue_0}{\svalue_1}) & \feq & \svalue_0
@@ -1285,7 +1394,7 @@ these rules appear in the appendix.
     \sdelta(\ssnd, \epair{\svalue_0}{\svalue_1}) & \feq & \svalue_1
   \end{langarray}
 }
-
+\end{minipage}\begin{minipage}[t]{0.52\columnwidth}
 \lbl{\fbox{$\sdelta : \ffun{\tpair{\sbinop\,}{\tpair{\,\svalue\,}{\,\svalue}}}{\svalue}$}}{
   \begin{langarray}
     \sdelta(\ssum, \sint_0, \sint_1) & \feq & \sint_0 + \sint_1
@@ -1295,6 +1404,7 @@ these rules appear in the appendix.
     \sdelta(\squotient, \sint_0, \sint_1) & \feq & \floorof{\sint_0 / \sint_1}
   \end{langarray}
 }
+\end{minipage}
 
 \lbl{\fbox{$\sshapematch : \ffun{\tpair{\sshape\,}{\,\svalue}}{\fbool}$}}{
   \begin{langarray}
@@ -1407,7 +1517,6 @@ assume full responsibility of numbers that reach a well-typed boundary.
   "fig:model:label-syntax"
   @elem{Labeled evaluation syntax}
 
-@list[
 @exact|{
 \begin{langarray}
   \sexpr & \slangeq &
@@ -1425,7 +1534,6 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
     \mid \esfun{\svar}{\sshape}{\sexpr} \mid
-  \\ & &
     \emon{\stype}{\obars{\svalue}{\sowner}}
     \mid \obars{\svalue}{\sowner}
   \\
@@ -1445,10 +1553,10 @@ assume full responsibility of numbers that reach a well-typed boundary.
   \sownerenv & \slangeq &
     \cdot \mid \fcons{\tann{\svar}{\sowner}}{\sownerenv}
 \end{langarray}
+
 \medskip
-}|
-@centered{Abbreviation: @$|{\obars{\cdots\obars{\sexpr_0}{\sowner_0}\cdots}{\sowner_n} = \obbars{\sexpr_0}{\fcons{\sowner_0}{\fcons{\cdots}{\sowner_n}}}}|}
-]]
+Abbreviation: \(\obars{\cdots\obars{\sexpr_0}{\sowner_0}\cdots}{\sowner_n} = \obbars{\sexpr_0}{\fcons{\sowner_0}{\fcons{\cdots}{\sowner_n}}}\)
+}|]
 
 Technically, the addition of labels to the evaluation language calls for an
 entirely new syntax.

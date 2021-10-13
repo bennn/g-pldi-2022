@@ -705,9 +705,9 @@ eos
             (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a) #:size (+ 1 title-text-size)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a)))))
       (ppict-do
         (blank 280 60)
-        #:go (coord 0 20/100 'lt #:abs-x 10) U
+        #:go (coord 0 25/100 'lt #:abs-x 10) S
         #:go (coord 1/2 0/100 'ct) D
-        #:go (coord 1 20/100 'rt #:abs-x -10) S))))
+        #:go (coord 1 25/100 'rt #:abs-x -10) U))))
 
 (define fig:opt0
   ;; only D <-> S, weaken
