@@ -423,7 +423,8 @@
       (configuration-info->mean-runtime cfg))
     (raise-arguments-error 'performance-info->runtime "cfg not found" "pi" pi "cfg" cfg-id)))
 
-(define DDD-TITLE '("Benchmark" "Best with D+S"))
+(define DDD-TITLE-X '("Benchmark" "Best with D+S"))
+(define DDD-TITLE-Y '("Benchmark" "Best w/ D+S"))
 
 (define (render-3d-table-x ddd)
   (render-3d-table ddd 'x))
@@ -441,19 +442,32 @@
          #:row-properties '(1)
          #:column-properties '(left)
          (let-values (((l* r*) (split-at ddd (quotient (length ddd) 2))))
-           (list (list (ddd-table l*) (ddd-table r*))))))
+           (list (list (ddd-table-x l*) (ddd-table-x r*))))))
       ((y)
-       (ddd-table ddd))
+       (tabular
+         #:sep (hspace 2)
+         #:style 'block
+         #:row-properties '(1)
+         #:column-properties '(left)
+         (let-values (((l* r*) (split-at ddd (quotient (length ddd) 2))))
+           (list (list (ddd-table-y l*) (ddd-table-y r*)))))
+       #;(ddd-table ddd))
       (else
         (raise-argument-error 'render-3d-table "(or/c 'x 'y)" 1 ddd how)))))
 
-(define (ddd-table ddd)
+(define (ddd-table-x ddd)
+  (ddd-table ddd DDD-TITLE-X))
+
+(define (ddd-table-y ddd)
+  (ddd-table ddd DDD-TITLE-Y))
+
+(define (ddd-table ddd title)
   (tabular
     #:sep (hspace 2)
     #:style 'block
     #:row-properties '(bottom-border 1)
     #:column-properties '(left right)
-    (list* DDD-TITLE
+    (list* title
            (for/list ((r (in-list ddd)))
              (list (bm (car r))
                    (format "~a%" (exact-round (string->number (cadr r)))))))))

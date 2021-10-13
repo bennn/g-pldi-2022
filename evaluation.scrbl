@@ -112,11 +112,6 @@ For compile-time type checking, @tt{Any} is a supertype of every other type.
 At run-time, the @tt{Any} type is enforced with an opaque wrapper that
 prohibits a client from inspecting the underlying value@~cite{fb-tr-2006}.
 
-@figure*[
-  "fig:evaluation:any-wrap"
-  @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}
-  fig:any-wrap]
-
 The opaque wrapper ensures full type soundness, but can be overly restrictive
 in programs such as the one shown in @figure-ref{fig:evaluation:any-wrap}.
 This program defines a mutable box of symbols in typed code,
@@ -163,11 +158,6 @@ But syntax wrappers would require changes to many parts of the Racket compiler,
  including the macro expander.
 })
 
-@figure*[
-  "fig:evaluation:no-wrap"
-  @elem{@|sDeep| lacks wrappers for mutable pairs and a few other uncommon datatypes}
-  fig:no-wrap]
-
 
 @|sShallow| Racket avoids the question of how to implement complex wrappers
 thanks to the @|stransient| semantics.
@@ -192,11 +182,6 @@ The wrapper that enforces this type
 Unfortunately, these input wrappers change the behavior of @tt{index-of};
  it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
  a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
-
-@figure*[
-  "fig:evaluation:index-of"
-  @elem{@|sDeep| contracts can change the behavior of code}
-  fig:index-of]
 
 @|sShallow| Racket avoids all such changes in behavior,
  including the well-know object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},

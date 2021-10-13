@@ -1255,6 +1255,23 @@ In the future, the @tt{define-typed/untyped-identifier}
  from a third argument that specifies behavior in @|sShallow| contexts.
 
 
+@section[#:tag "sec:racket-users"]{Example Programs}
+
+@figure*[
+  "fig:evaluation:any-wrap"
+  @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}
+  fig:any-wrap]
+
+@figure*[
+  "fig:evaluation:no-wrap"
+  @elem{@|sDeep| lacks wrappers for mutable pairs and a few other uncommon datatypes}
+  fig:no-wrap]
+
+@figure*[
+  "fig:evaluation:index-of"
+  @elem{@|sDeep| contracts can change the behavior of code}
+  fig:index-of]
+
 
 @section[#:tag "sec:racket-users"]{Mailing List Questions}
 
