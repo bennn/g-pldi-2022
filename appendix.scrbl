@@ -7,13 +7,16 @@
 
 @title[#:tag "sec:appendix"]{Appendix}
 
-@section[#:tag "appendix:rules"]{Surface Typing Judgment, Completion Judgment}
+@section[#:tag "appendix:rules"]{Surface Typing, Completion, Evaluation Typing}
 
 @Figure-ref{fig:appendix:surface-types} presents the full typing judgment
 for the surface language.
 @Figure-ref{fig:appendix:surface-completion} presents the completion rules
 for all expressions except for module expressions, which are covered in
 full by @figure-ref{fig:model:completion2}.
+@Figure-ref{fig:appendix:deep-types} presents the full @|sDeep| typing judgment,
+@figure-ref{fig:appendix:shallow-types} presents the full @|sShallow| typing judgment, and
+@figure-ref{fig:appendix:un-types} presents the full @|suntyped| judgment.
 
 @figure[
 "fig:appendix:surface-types"
@@ -360,6 +363,348 @@ full by @figure-ref{fig:model:completion2}.
 
 \end{mathpar}
 }|]
+
+@figure*[
+  "fig:appendix:deep-type"
+  @elem{@|sDeep| typing judgment}
+
+@exact|{
+\begin{minipage}{\textwidth}
+\lbl{\fbox{\(\stypeenv \sWTT \sexpr : \stype\)}}{
+\begin{mathpar}
+  \inferrule*{
+    \tann{\svar_0}{\stype_0} \in \stypeenv
+  }{
+    \stypeenv \sWTT \svar_0 : \stype_0
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTT \snat_0 : \tnat
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTT \sint_0 : \tint
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+    \\
+    \stypeenv \sWTT \sexpr_1 : \stype_1
+  }{
+    \stypeenv \sWTT \epair{\sexpr_0}{\sexpr_1} : \tpair{\stype_0}{\stype_1}
+  }
+
+  \inferrule*{
+    \fcons{\tann{\svar_0}{\stype_0}}{\stypeenv} \sWTT \sexpr_0 : \stype_1
+  }{
+    \stypeenv \sWTT \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0} : \tfun{\stype_0}{\stype_1}
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \svalue_0 : \tdyn
+  }{
+    \stypeenv \sWTT \emon{\stype_0}{\svalue_0} : \stype_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \svalue_0 : \sshape_0
+  }{
+    \stypeenv \sWTT \emon{\stype_0}{\svalue_0} : \stype_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+    \\\\
+    \sDelta(\sunop, \stype_0) = \stype_1
+  }{
+    \stypeenv \sWTT \eunop{\sexpr_0} : \stype_1
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+    \\
+    \stypeenv \sWTT \sexpr_1 : \stype_1
+    \\\\
+    \sDelta(\sbinop, \stype_0, \stype_1) = \stype_2
+  }{
+    \stypeenv \sWTT \ebinop{\sexpr_0}{\sexpr_1} : \stype_2
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \tfun{\stype_0}{\stype_1}
+    \\
+    \stypeenv \sWTT \sexpr_1 : \stype_0
+  }{
+    \stypeenv \sWTT \eappu{\sexpr_0}{\sexpr_1} : \stype_1
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+  }{
+    \stypeenv \sWTT \enoop{\sexpr_0} : \stype_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTT \ewrap{\stype_0}{\sexpr_0} : \stype_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+  }{
+    \stypeenv \sWTT \ewrap{\stype_0}{\sexpr_0} : \stype_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+    \\
+    \fsubt{\stype_0}{\stype_1}
+  }{
+    \stypeenv \sWTT \sexpr_0 : \stype_1
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTT \serror : \stype_0
+  }
+\end{mathpar}
+\end{minipage}
+}}|]
+
+@figure*[
+  "fig:appendix:shallow-type"
+  @elem{@|sShallow| typing judgment}
+
+@exact|{
+\begin{minipage}{\textwidth}
+\lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
+\begin{mathpar}
+  \inferrule*{
+    \tann{\svar_0}{\sshape_0} \in \stypeenv
+  }{
+    \stypeenv \sWTS \svar_0 : \sshape_0
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTS \snat_0 : \tnat
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTS \sint_0 : \tint
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+    \\
+    \stypeenv \sWTS \sexpr_1 : \sshape_1
+  }{
+    \stypeenv \sWTS \epair{\sexpr_0}{\sexpr_1} : \kpair
+  }
+
+  \inferrule*{
+    \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTS \efun{\svar_0}{\sexpr_0} : \kfun
+  }
+
+  \inferrule*{
+    \fcons{\tann{\svar_0}{\sshape_0}}{\stypeenv} \sWTS \sexpr_0 : \sshape_1
+  }{
+    \stypeenv \sWTS \esfun{\svar_0}{\sshape_0}{\sexpr_0} : \kfun
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \svalue_0 : \stype_0
+  }{
+    \stypeenv \sWTS \emon{\stype_0}{\svalue_0} : \kfun
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+  }{
+    \stypeenv \sWTS \eunop{\sexpr_0} : \kany
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+    \\
+    \stypeenv \sWTS \sexpr_1 : \sshape_1
+    \\
+    \sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2
+  }{
+    \stypeenv \sWTS \ebinop{\sexpr_0}{\sexpr_1} : \sshape_2
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \kfun
+    \\
+    \stypeenv \sWTS \sexpr_1 : \sshape_0
+  }{
+    \stypeenv \sWTS \eappu{\sexpr_0}{\sexpr_1} : \kany
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+  }{
+    \stypeenv \sWTS \enoop{\sexpr_0} : \sshape_0
+  }
+
+  \inferrule*{
+    %% why need this???
+    %% 2021-04-25 : because no way to check 'any' ... it should be a scan ... let's fix that
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTS \enoop{\sexpr_0} : \kany
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTS \escan{\sshape_0}{\sexpr_0} : \sshape_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_1
+  }{
+    \stypeenv \sWTS \escan{\sshape_0}{\sexpr_0} : \sshape_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+    \\
+    \fshape{\stype_0} = \sshape_0
+  }{
+    \stypeenv \sWTS \ewrap{\stype_0}{\sexpr_0} : \sshape_0
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+    \\
+    \fsubt{\sshape_0}{\sshape_1}
+  }{
+    \stypeenv \sWTS \sexpr_0 : \sshape_1
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTS \serror : \sshape_0
+  }
+\end{mathpar}
+}
+\end{minipage}
+}|]
+
+
+@figure*[
+  "fig:appendix:untyped-type"
+  @elem{Untyped typing judgment}
+  @; ... aka dynamic typing, most types checked at runtime
+
+@exact|{
+\begin{minipage}{\textwidth}
+\lbl{\fbox{\(\stypeenv \sWTU \sexpr : \tdyn\)}}{\begin{mathpar}
+  \inferrule*{
+    \tann{\svar_0}{\tdyn} \in \stypeenv
+  }{
+    \stypeenv \sWTU \svar_0 : \tdyn
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTU \sint_0 : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+    \\
+    \stypeenv \sWTU \sexpr_1 : \tdyn
+  }{
+    \stypeenv \sWTU \epair{\sexpr_0}{\sexpr_1} : \tdyn
+  }
+
+  \inferrule*{
+    \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTU \efun{\svar_0}{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \fcons{\tann{\svar_0}{\sshape_0}}{\stypeenv} \sWTS \sexpr_0 : \sshape_1
+  }{
+    \stypeenv \sWTU \esfun{\svar_0}{\sshape_0}{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \svalue_0 : \stype_0
+  }{
+    \stypeenv \sWTU \emon{\stype_0}{\svalue_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTU \eunop{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+    \\
+    \stypeenv \sWTU \sexpr_1 : \tdyn
+  }{
+    \stypeenv \sWTU \ebinop{\sexpr_0}{\sexpr_1} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+    \\
+    \stypeenv \sWTU \sexpr_1 : \tdyn
+  }{
+    \stypeenv \sWTU \eappu{\sexpr_0}{\sexpr_1} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTU \enoop{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_0
+  }{
+    \stypeenv \sWTU \enoop{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTU \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sWTU \escan{\sshape_0}{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTS \sexpr_0 : \sshape_1
+  }{
+    \stypeenv \sWTU \escan{\sshape_0}{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+    \stypeenv \sWTT \sexpr_0 : \stype_0
+  }{
+    \stypeenv \sWTU \ewrap{\stype_0}{\sexpr_0} : \tdyn
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sWTU \serror : \tdyn
+  }
+\end{mathpar}
+\end{minipage}
+}}|]
+
 
 @section[#:tag "sec:laws"]{How to lift a reduction relation}
 @; 2021-06-12 TODO edit

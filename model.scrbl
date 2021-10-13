@@ -541,12 +541,11 @@ Thus, if a program expects a particular shape from the element of a pair or the
 range of a function, then the program must use a @${\sscan} assertion to
 confirm this expectation.
 
-@figure*[
+@figure[
   "fig:model:deep-type"
-  @elem{@|sDeep| typing judgment}
+  @elem{@|sDeep| typing judgment (selected rules, others in @appendixref{appendix:rules})}
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTT \sexpr : \stype\)}}{
 \begin{mathpar}
   \inferrule*{
@@ -555,24 +554,24 @@ confirm this expectation.
     \stypeenv \sWTT \svar_0 : \stype_0
   }
 
-  \inferrule*{
-  }{
-    \stypeenv \sWTT \snat_0 : \tnat
-  }
-
-  \inferrule*{
-  }{
-    \stypeenv \sWTT \sint_0 : \tint
-  }
-
-  \inferrule*{
-    \stypeenv \sWTT \sexpr_0 : \stype_0
-    \\
-    \stypeenv \sWTT \sexpr_1 : \stype_1
-  }{
-    \stypeenv \sWTT \epair{\sexpr_0}{\sexpr_1} : \tpair{\stype_0}{\stype_1}
-  }
-
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTT \snat_0 : \tnat
+%  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTT \sint_0 : \tint
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTT \sexpr_0 : \stype_0
+%    \\
+%    \stypeenv \sWTT \sexpr_1 : \stype_1
+%  }{
+%    \stypeenv \sWTT \epair{\sexpr_0}{\sexpr_1} : \tpair{\stype_0}{\stype_1}
+%  }
+%
   \inferrule*{
     \fcons{\tann{\svar_0}{\stype_0}}{\stypeenv} \sWTT \sexpr_0 : \stype_1
   }{
@@ -591,24 +590,24 @@ confirm this expectation.
     \stypeenv \sWTT \emon{\stype_0}{\svalue_0} : \stype_0
   }
 
-  \inferrule*{
-    \stypeenv \sWTT \sexpr_0 : \stype_0
-    \\\\
-    \sDelta(\sunop, \stype_0) = \stype_1
-  }{
-    \stypeenv \sWTT \eunop{\sexpr_0} : \stype_1
-  }
-
-  \inferrule*{
-    \stypeenv \sWTT \sexpr_0 : \stype_0
-    \\
-    \stypeenv \sWTT \sexpr_1 : \stype_1
-    \\\\
-    \sDelta(\sbinop, \stype_0, \stype_1) = \stype_2
-  }{
-    \stypeenv \sWTT \ebinop{\sexpr_0}{\sexpr_1} : \stype_2
-  }
-
+%  \inferrule*{
+%    \stypeenv \sWTT \sexpr_0 : \stype_0
+%    \\\\
+%    \sDelta(\sunop, \stype_0) = \stype_1
+%  }{
+%    \stypeenv \sWTT \eunop{\sexpr_0} : \stype_1
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTT \sexpr_0 : \stype_0
+%    \\
+%    \stypeenv \sWTT \sexpr_1 : \stype_1
+%    \\\\
+%    \sDelta(\sbinop, \stype_0, \stype_1) = \stype_2
+%  }{
+%    \stypeenv \sWTT \ebinop{\sexpr_0}{\sexpr_1} : \stype_2
+%  }
+%
   \inferrule*{
     \stypeenv \sWTT \sexpr_0 : \tfun{\stype_0}{\stype_1}
     \\
@@ -635,28 +634,26 @@ confirm this expectation.
     \stypeenv \sWTT \ewrap{\stype_0}{\sexpr_0} : \stype_0
   }
 
-  \inferrule*{
-    \stypeenv \sWTT \sexpr_0 : \stype_0
-    \\
-    \fsubt{\stype_0}{\stype_1}
-  }{
-    \stypeenv \sWTT \sexpr_0 : \stype_1
-  }
-
-  \inferrule*{
-  }{
-    \stypeenv \sWTT \serror : \stype_0
-  }
+%  \inferrule*{
+%    \stypeenv \sWTT \sexpr_0 : \stype_0
+%    \\
+%    \fsubt{\stype_0}{\stype_1}
+%  }{
+%    \stypeenv \sWTT \sexpr_0 : \stype_1
+%  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTT \serror : \stype_0
+%  }
 \end{mathpar}
-\end{minipage}
 }}|]
 
-@figure*[
+@figure[
   "fig:model:shallow-type"
-  @elem{@|sShallow| typing judgment}
+  @elem{@|sShallow| typing judgment (selected rules, others in @appendixref{appendix:rules})}
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
 \begin{mathpar}
   \inferrule*{
@@ -665,24 +662,24 @@ confirm this expectation.
     \stypeenv \sWTS \svar_0 : \sshape_0
   }
 
-  \inferrule*{
-  }{
-    \stypeenv \sWTS \snat_0 : \tnat
-  }
-
-  \inferrule*{
-  }{
-    \stypeenv \sWTS \sint_0 : \tint
-  }
-
-  \inferrule*{
-    \stypeenv \sWTS \sexpr_0 : \sshape_0
-    \\
-    \stypeenv \sWTS \sexpr_1 : \sshape_1
-  }{
-    \stypeenv \sWTS \epair{\sexpr_0}{\sexpr_1} : \kpair
-  }
-
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTS \snat_0 : \tnat
+%  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTS \sint_0 : \tint
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_0
+%    \\
+%    \stypeenv \sWTS \sexpr_1 : \sshape_1
+%  }{
+%    \stypeenv \sWTS \epair{\sexpr_0}{\sexpr_1} : \kpair
+%  }
+%
   \inferrule*{
     \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sWTU \sexpr_0 : \tdyn
   }{
@@ -701,22 +698,22 @@ confirm this expectation.
     \stypeenv \sWTS \emon{\stype_0}{\svalue_0} : \kfun
   }
 
-  \inferrule*{
-    \stypeenv \sWTS \sexpr_0 : \sshape_0
-  }{
-    \stypeenv \sWTS \eunop{\sexpr_0} : \kany
-  }
-
-  \inferrule*{
-    \stypeenv \sWTS \sexpr_0 : \sshape_0
-    \\
-    \stypeenv \sWTS \sexpr_1 : \sshape_1
-    \\
-    \sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2
-  }{
-    \stypeenv \sWTS \ebinop{\sexpr_0}{\sexpr_1} : \sshape_2
-  }
-
+%  \inferrule*{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_0
+%  }{
+%    \stypeenv \sWTS \eunop{\sexpr_0} : \kany
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_0
+%    \\
+%    \stypeenv \sWTS \sexpr_1 : \sshape_1
+%    \\
+%    \sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2
+%  }{
+%    \stypeenv \sWTS \ebinop{\sexpr_0}{\sexpr_1} : \sshape_2
+%  }
+%
   \inferrule*{
     \stypeenv \sWTS \sexpr_0 : \kfun
     \\
@@ -759,31 +756,29 @@ confirm this expectation.
     \stypeenv \sWTS \ewrap{\stype_0}{\sexpr_0} : \sshape_0
   }
 
-  \inferrule*{
-    \stypeenv \sWTS \sexpr_0 : \sshape_0
-    \\
-    \fsubt{\sshape_0}{\sshape_1}
-  }{
-    \stypeenv \sWTS \sexpr_0 : \sshape_1
-  }
-
-  \inferrule*{
-  }{
-    \stypeenv \sWTS \serror : \sshape_0
-  }
+%  \inferrule*{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_0
+%    \\
+%    \fsubt{\sshape_0}{\sshape_1}
+%  }{
+%    \stypeenv \sWTS \sexpr_0 : \sshape_1
+%  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTS \serror : \sshape_0
+%  }
 \end{mathpar}
 }
-\end{minipage}
 }|]
 
 
-@figure*[
+@figure[
   "fig:model:untyped-type"
-  @elem{Untyped typing judgment}
+  @elem{Untyped typing judgment (selected rules, others in @appendixref{appendix:rules})}
   @; ... aka dynamic typing, most types checked at runtime
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTU \sexpr : \tdyn\)}}{\begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\tdyn} \in \stypeenv
@@ -791,19 +786,19 @@ confirm this expectation.
     \stypeenv \sWTU \svar_0 : \tdyn
   }
 
-  \inferrule*{
-  }{
-    \stypeenv \sWTU \sint_0 : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sWTU \sexpr_0 : \tdyn
-    \\
-    \stypeenv \sWTU \sexpr_1 : \tdyn
-  }{
-    \stypeenv \sWTU \epair{\sexpr_0}{\sexpr_1} : \tdyn
-  }
-
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTU \sint_0 : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTU \sexpr_0 : \tdyn
+%    \\
+%    \stypeenv \sWTU \sexpr_1 : \tdyn
+%  }{
+%    \stypeenv \sWTU \epair{\sexpr_0}{\sexpr_1} : \tdyn
+%  }
+%
   \inferrule*{
     \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sWTU \sexpr_0 : \tdyn
   }{
@@ -822,20 +817,20 @@ confirm this expectation.
     \stypeenv \sWTU \emon{\stype_0}{\svalue_0} : \tdyn
   }
 
-  \inferrule*{
-    \stypeenv \sWTU \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sWTU \eunop{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sWTU \sexpr_0 : \tdyn
-    \\
-    \stypeenv \sWTU \sexpr_1 : \tdyn
-  }{
-    \stypeenv \sWTU \ebinop{\sexpr_0}{\sexpr_1} : \tdyn
-  }
-
+%  \inferrule*{
+%    \stypeenv \sWTU \sexpr_0 : \tdyn
+%  }{
+%    \stypeenv \sWTU \eunop{\sexpr_0} : \tdyn
+%  }
+%
+%  \inferrule*{
+%    \stypeenv \sWTU \sexpr_0 : \tdyn
+%    \\
+%    \stypeenv \sWTU \sexpr_1 : \tdyn
+%  }{
+%    \stypeenv \sWTU \ebinop{\sexpr_0}{\sexpr_1} : \tdyn
+%  }
+%
   \inferrule*{
     \stypeenv \sWTU \sexpr_0 : \tdyn
     \\
@@ -873,13 +868,12 @@ confirm this expectation.
   }{
     \stypeenv \sWTU \ewrap{\stype_0}{\sexpr_0} : \tdyn
   }
-
-  \inferrule*{
-  }{
-    \stypeenv \sWTU \serror : \tdyn
-  }
+%
+%  \inferrule*{
+%  }{
+%    \stypeenv \sWTU \serror : \tdyn
+%  }
 \end{mathpar}
-\end{minipage}
 }}|]
 
 @figure[
