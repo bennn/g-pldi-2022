@@ -215,7 +215,7 @@ that extends Typed Racket v1.12.
 @; no need for a TR commit, sends the wrong message --- reproductions need not check that out
 
 
-@subsection[#:tag "sec:evaluation:perf:either-or"]{Worst-Case Overhead}
+@subsection[#:tag "sec:evaluation:perf:either-or"]{Worst-Case Overhead vs. Untyped}
 
 @(let* ((WT (get-mixed-worst-table SHALLOW-CURRENT-BENCHMARK*))
        )
@@ -223,7 +223,7 @@ that extends Typed Racket v1.12.
 @figure[
   "fig:evaluation:mixed-worst-table"
   @elem{
-   Worst-case overheads for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
+   Worst-case overheads vs. the untyped configuration for @|sDeep| alone, @|sShallow| alone, and an either-or mix.
   }
   @render-mixed-worst-table[WT]
 ]
@@ -238,13 +238,14 @@ These bottlenecks are indeed present and problematic in Typed Racket.
 
 Fortunately for the combined language, the bottlenecks of @|sdeep| and
 @|sshallow| types are often complementary.
-Consider a program with @${N} modules.
-@|sDeep| suffers in program configurations that mix typed and untyped code,
+Consider a program with @${N} modules and therefore @${2^N} @emph{configurations}
+in which a subset of these modules are untyped and the rest are typed.
+@|sDeep| suffers in configurations that frequently send values across type boundaries,
 but can run faster than untyped when all @${N} modules have types.
-@|sShallow| performance typically degrades as the number of typed modules
+@|sShallow| performance degrades as the number of typed modules
 increases.
-Toggling between @|sDeep| and @|sShallow| Racket is therefore an easy way
-to avoid the worst cases of each.
+Using @|sShallow| initially and @|sDeep| once all critical boundaries are
+typed is therefore an easy way to avoid the worst cases of each.
 
 @Figure-ref{fig:evaluation:mixed-worst-table} quantifies the benefits of
 switching between @|sDeep| and @|sShallow| Racket on the GTP benchmarks.
@@ -307,7 +308,7 @@ The complementary strengths of @|sDeep| and @|sShallow| Racket can help
 programmers quickly migrate an untyped codebase toward a more-typed configuration.
 The reason is because switching between the two often performance bottlenecks.
 
-For a fixed program with @${N} modules, a migration path is a sequence of
+In a program with @${N} modules, a migration path is a sequence of
 @${N\!+\!1} configurations.
 The first element of a path must be the untyped configuration.
 Each successive element adds types to one new module.
