@@ -1212,7 +1212,7 @@ these rules appear in the appendix.
 @figure*[
   "fig:model:rr"
   @; "fig:model:rrlbl"
-  @elem{Semantics for the evaluation syntax (left) and labeled variant (right)}
+  @elem{Semantics for the evaluation syntax (left) and a labeled variant (right)}
 
 @exact|{
 \(\begin{array}{l@{\hspace{0.2em}}c@{\hspace{0.2em}}l@{\hspace{7mm}}l@{\hspace{0.2em}}c@{\hspace{0.2em}}l}
@@ -1274,8 +1274,8 @@ these rules appear in the appendix.
 & \obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1}
 & \snrlbl
 & \obars{\stagerror}{\sowner_1}
-\\\sidecond{if $\svalue_0 \not\in \efun{\svar}{\!\sexpr} \cup \efun{\tann{\svar}{\stype}}{\!\sexpr} \cup \esfun{\svar}{\sshape}{\!\sexpr} \cup \emon{\stype}{\!\svalue}$}
-& \sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner} \cup \efun{\svar}{\!\sexpr} \cup \efun{\tann{\svar}{\stype}}{\!\sexpr} \cup \esfun{\svar}{\sshape}{\!\sexpr} \cup \emon{\stype}{\!\svalue}$}
+\\\sidecond{if $\neg\fshapematch{\kfun}{\svalue_0}$}
+& \sidecond{if $\svalue_0 \not\in \obars{\svalue}{\sowner}$ and $\neg\fshapematch{\kfun}{\svalue_0}$}
 \\[1.0ex]
 
 
@@ -1414,15 +1414,23 @@ these rules appear in the appendix.
 
 \\[2ex]
 
-\multicolumn{3}{l}{\!\!\!\!\begin{tabular}{l@{~}l}
+\multicolumn{3}{l}{\hspace{-1em}\begin{tabular}{l@{~}l}
 \fbox{\(\sexpr \srr \sexpr\)}\(~~\sdefeq\) & reflexive, transitive, compatible
 \\ &  (w.r.t. $\sctx$) closure of $\snr$
 \end{tabular}}
 &
-\multicolumn{3}{l}{\!\!\!\!\begin{tabular}{l@{~}l}
+\multicolumn{3}{l}{\hspace{-1em}\begin{tabular}{l@{~}l}
 \fbox{\(\sexpr \srrlbl \sexpr\)}\(~~\sdefeq\) & reflexive, transitive, compatible
 \\ &  (w.r.t. $\sctx$) closure of $\snrlbl$
 \end{tabular}}
+
+\\[2ex]
+
+\multicolumn{3}{l}{\hspace{-1em}\begin{tabular}{l@{~}l}
+\fbox{\(\ssurface \srr \sexpr\)}\(~~\sdefeq\) & \(\fexists{\stspec, \sexpr_1}{}\)
+\\ & \quad\(\sST \ssurface_0 : \stspec \scompile \sexpr_1 \wedge \sexpr_1 \srr \sexpr_0\)
+\end{tabular}}
+
 \end{array}\)
 }|]
 
@@ -1469,6 +1477,14 @@ these rules appear in the appendix.
    \\\sidecond{otherwise}
   \end{langarray}
 }
+
+\smallskip
+\lbl{\fbox{$\srev : \ffun{\sownerlist}{\sownerlist}$}}{
+  \begin{langarray}
+    \frev{\fcons{\sowner_0}{\fcons{\cdots}{\sowner_n}}} & \feq & {\fcons{\sowner_n}{\fcons{\cdots}{\sowner_0}}}
+  \end{langarray}
+}
+
 }|]
 
 
@@ -1580,9 +1596,9 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
     \mid \esfun{\svar}{\sshape}{\sexpr} \mid
+    \emon{\!\stype}{\!\obars{\svalue}{\sowner}\!} \mid
   \\ & &
-    \emon{\stype}{\obars{\svalue}{\sowner}}
-    \mid \obars{\svalue}{\sowner}
+   \obars{\svalue}{\sowner}
   \\
   \sctx & \slangeq &
     \ldots \mid \obars{\sctx}{\sowner}
@@ -1632,6 +1648,8 @@ with @${\svalue_0\!=\!42}
 and @${\sownerlist_0\!=\!\fcons{\sowner_0}{\fcons{\sowner_1}{\sowner_2}}}.
 }
 ]
+
+One label metafunction: $\srev$ reverses a sequence of labels.
 
 @Figure-ref{fig:model:ownership-consistency} presents a consistency
 judgment for labeled expressions.
@@ -1804,20 +1822,13 @@ complete monitoring.
 
 Type soundness predicts the possible outcomes of a well-typed expression.
 Because the surface language allows three kinds of typed expression
-(@|sdeep|, @|sshallow|, and @|suntyped|), the following statement of type
-soundness is parameterized over both a language kind @${\slang} and a characterization
-function @${\stypemap : \ffun{\stspec}{(\stype \cup \sshape \cup \tdyn)}\,}
-of possible outcomes.
-
-The notation @${\ssurface_0 \srr \sexpr_0} defines evaluation for surface
- expressions.
-The meaning is that @${\ssurface_0} is well-typed
- (@${\fexists{\stspec}{\sST \ssurface_0 : \stspec}}) and
- compiles to an intermediate evaluation expression (@${\sST \ssurface_0 : \stspec \scompile \sexpr_1})
- that eventually reduces to the named expression (@${\sexpr_1 \srr \sexpr_0}).
+(@|sdeep|, @|sshallow|, and @|suntyped|), the definition is
+parameterized over both a language kind @${\slang} and a characterization
+function @${\stypemap} that maps a surface type @${\stspec} to an evaluation-language
+type @${(\stype \cup \sshape \cup \tdyn)}.
 
 @exact|{
-\begin{definition}[$\fTS{\slang}{\stypemap}$]
+\begin{definition}[$\fTS{\slang}{\stypemap}$]\label{def:ts}
   Language\ $\slang$
   satisfies\ $\fTS{\sWTlang}{\stypemap}$
   if for all\ $\ssurface_0$
@@ -1844,14 +1855,14 @@ There are three important characterization functions @${\stypemap} for the analy
  @${\stypemapzero} maps every surface type to @${\tdyn};
  @${\stypemapshape} maps types to shapes (same as @${\sshapecheck} from @figure-ref{fig:model:shallow-type})
  and the unitype @${\tdyn} to itself;
- and @${\stypemapone} is the identity function on types and @${\tdyn}.
+ and @${\stypemapone} is the identity function on types.
 
 @exact|{
 \begin{theorem}[type soundness]\leavevmode
   \begin{itemize}
-    \item Language\ $\sU$ satisfies\ $\fTS{\sWTU}{\stypemapzero}$
-    \item Language\ $\sS$ satisfies\ $\fTS{\sWTS}{\stypemapshape}$
     \item Language\ $\sD$ satisfies\ $\fTS{\sWTD}{\stypemapone}$
+    \item Language\ $\sS$ satisfies\ $\fTS{\sWTS}{\stypemapshape}$
+    \item Language\ $\sU$ satisfies\ $\fTS{\sWTU}{\stypemapzero}$
   \end{itemize}
 \end{theorem}
 \begin{proofsketch}
@@ -1859,6 +1870,23 @@ There are three important characterization functions @${\stypemap} for the analy
  The compilation lemma says that every well-typed surface expression compiles
  to a well-typed evaluation expression.
 \end{proofsketch}
+}|
+
+Unlike a standard ``closed world'' soundness theorem@~cite{m-jcss-1978,wf-ic-1994},
+@exact{\definitionref{def:ts}} does not claim that the evaluation of a well-typed
+expression cannot go wrong by throwing a tag error.
+Such a claim would be false in general because typed expressions may contain
+modules with untyped code.
+It is true, however, that the reduction of a well-typed @emph{redex} cannot yield
+a tag error:
+
+@exact|{
+\begin{lemma}[type discipline]
+  If\ $\sexpr_0$ is typed
+  (either\ $~\sWTD \sexpr_0 : \stype_0$ or\ $~\sWTS \sexpr_0 : \sshape_0$)
+  and\ $\sexpr_0 \snr \sexpr_1$
+  then\ $\sexpr_1 \not\in \stagerror$
+\end{lemma}
 }|
 
 Complete monitoring states that the evaluation language has control
@@ -1871,17 +1899,18 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
 
 @exact|{
 \begin{theorem}[complete monitoring]
-  If\ $~\sST \ssurface_0 : \stspec$
-  and\ $\sST \ssurface_0 : \stspec \scompile \sexpr_0$
+  %% If\ $~\sST \ssurface_0 : \stspec$
+  If\ $~\sST \ssurface_0 : \stspec \scompile \sexpr_0$
   and\ $\sowner_0; \cdot \Vdash \sexpr_0$
-  and\ $\sexpr_0 \srr \sexpr_1$
+  and\ $\sexpr_0 \srrlbl \sexpr_1$
   then\ $\sowner_0; \cdot \Vdash \sexpr_1$.
+  %% If\ $~\sST \ssurface_0 : \stspec$
+  %% and\ $\ssurface_0 \srrlbl \sexpr_1$
+  %% then\ $\sowner_0; \cdot \Vdash \sexpr_1$.
 \end{theorem}
 \begin{proofsketch}
   By a preservation argument.
   The proofs for each basic reduction step are sketched below.
-  These depend on two metafunctions: $\srev$ reverses a sequence of labels
-   and $\slast$ extracts the last (outermost) element of such a sequence.
 
   \begin{description}
   \item[Case:]
@@ -1921,22 +1950,24 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlblbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
     \begin{enumerate}
     \item\label{step:model:cm:1}
       $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
     \item\label{step:model:cm:2}
       $\sowner_2; \cdot \sWL \svalue_0$, also by \sdeep{}-label consistency of the redex
     \item
-      $\flast{\sownerlist_0}; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}
+      let $\sowner_k$ be the outermost / right-most label in the sequence $\sownerlist_0$
     \item
-      $\flast{\sownerlist_0}; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by \sdeep{}-label consistency of the redex
+      $\sowner_k; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}
+    \item
+      $\sowner_k; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by \sdeep{}-label consistency of the redex
     \item
       by a substitution lemma
     \end{enumerate}
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlblbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
     similar to the previous case
 
@@ -1946,12 +1977,12 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlblbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
     similar to the other substitution cases
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snrbreak
+    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snrlblbreak
       \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}\)
     \begin{enumerate}
     \item
@@ -1991,7 +2022,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snrbreak
+    \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snrlblbreak
       \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)
   \item[]
     by the definition of $\sWL$;
