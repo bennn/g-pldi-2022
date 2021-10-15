@@ -6,6 +6,7 @@
 @; ps Greenberg is a 2nd impasse, stat-first vs dyn-first ... worth mentioning?
 
 @title[#:tag "sec:conclusion"]{Let The Programmer Choose}
+@; freedom?
 
 Gradual typing resolves the impasse between static and dynamic languages by
 bringing both styles under one roof and letting programmer choose.

@@ -68,7 +68,7 @@ The evidence for these claims has three parts:
   The proofs establish the integrity of types.
 }
 @item{
-  An implementation that combines the original @|sDeep| Typed Racket@~cite{tfffgksst-snapl-2017} with a @|sshallow|-typed variant@~cite{glfd-draft-2021} (@secref{sec:implementation}).
+  An implementation that combines the original @|sDeep| Typed Racket@~cite{tfffgksst-snapl-2017} with a @|sshallow|-typed variant@~cite{glfd-pj-2021} (@secref{sec:implementation}).
   The @|sdeep| and @|sshallow| halves of the implementation stand on equal footing.
   Indeed, every @|sdeep|-typed program can be expressed in @|sShallow| Racket.
 }

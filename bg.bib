@@ -23,6 +23,7 @@
 @string{pacmpl = {PACMPL}}
 @string{padl = {PADL}} %(string-append Symposium "on Practical Aspects of Declarative Languages")
 @string{pepm = {PEPM}} %{{{ACM SIGPLAN} Workshop on Partial Evaluation and Semantics-Based Program Manipulation}}
+@string{pj = {<Programming>}}
 @string{pldi = {PLDI}}
 @string{popl = {POPL}} %{{{ACM SIGPLAN} Symposium on Principles of Programming Languages}}
 @string{sac = {SAC}} %{{{ACM} Symposium on Applied Computing}}
@@ -236,6 +237,16 @@
   number=oopsla,
   pages="56:1--56:30",
   year={2017}
+}
+
+@article{mt-oopsla-2021,
+  author="Fabian Muehlboeck and Ross Tate",
+  title={Transitioning from Structural to Nominal Code with Efficient Gradual Typing},
+  journal=pacmpl,
+  volume={5},
+  number=oopsla,
+  pages="127:1--127:29",
+  year={2021}
 }
 
 @article{wmw-oopsla-2018,
@@ -762,9 +773,7 @@
 
 @inproceedings{bfnorsvw-oopsla-2009,
   title={{T}horn: Robust, Concurrent, Extensible Scripting on the {JVM}},
-  author={Bard Bloom and John Field and Nathaniel Nystrom and
-          Johan {\" O}stlund and Gregor Richards and Rok Strni{\v s}a and
-          Jan Vitek and Tobias Wrigstad},
+  author={Bard Bloom and John Field and Nathaniel Nystrom and Johan {\" O}stlund and Gregor Richards and Rok Strni{\v s}a and Jan Vitek and Tobias Wrigstad},
   booktitle=oopsla,
   pages={117--136},
   year={2009}
@@ -1401,11 +1410,13 @@
   year={2021}
 }
 
-@techreport{glfd-draft-2021,
-  author={{Anonymous Author(s)}},
+@article{glfd-pj-2021,
+  author={Ben Greenman and Lukas Lazarek and Christos Dimoulas and Matthias Felleisen},
   title={A Transient Semantics for {Typed Racket}},
-  institution={Anon},
-  number={{Submitted for review}},
+  journal=pj,
+  volume={6}
+  number={2},
+  pages={1--25},
   year={2021}
 }
 
@@ -1418,14 +1429,7 @@
 }
 
 @article{fddkmstz-icfp-2018,
-  author    = {Matthew Flatt and
-               Caner Derici and
-               Dybvig, R. Kent and
-               Keep, Andrew W. and
-               Massaccesi, Gustavo E. and
-               Sarah Spall and
-               Sam Tobin{-}Hochstadt and
-               Jon Zeppieri},
+  author    = {Matthew Flatt and Caner Derici and Dybvig, R. Kent and Keep, Andrew W. and Massaccesi, Gustavo E. and Sarah Spall and Sam Tobin{-}Hochstadt and Jon Zeppieri},
   title     = {Rebuilding {R}acket on {C}hez {S}cheme (experience report)},
   journal=pacmpl,
   volume={3},

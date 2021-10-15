@@ -313,8 +313,25 @@
       #:column-properties '(left right)
       (list* MIXED-PATH-TITLE
              (map (lambda (r)
-                    (cons (cadr r) (map (lambda (n) (string-append n "%")) (cddr r))))
+                    (cons (cadr r)
+                          (cleanup-path-row (cddr r))))
                   row*)))))
+
+(define (cleanup-path-row str*)
+  (define deep-str (car str*))
+  (define shallow-str (cadr str*))
+  (define ds-str (caddr str*))
+  (define ds+
+    (let ((n0 (string->number deep-str))
+          (n1 (string->number shallow-str))
+          (n2 (string->number ds-str)))
+      (if (< (max n0 n1) n2)
+        (bold (add% ds-str))
+        (add% ds-str))))
+  (list (add% deep-str) (add% shallow-str) ds+))
+
+(define (add% str)
+  (string-append str "%"))
 
 (define (get-mixed-path-table D name*)
   (parameterize ([*current-cache-directory* cache-dir]

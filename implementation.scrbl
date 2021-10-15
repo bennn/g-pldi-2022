@@ -25,7 +25,7 @@ and to checks throughout @|sshallow|-typed code.
 The model, however, is an abstraction that ignores practical issues.
 To show that a realistic language can also support @|sdeep| and @|sshallow|
 types, the authors have extended Typed Racket to combine its standard
-@|snatural| semantics@~cite{tf-popl-2008} with a @|stransient| one@~cite{glfd-draft-2021}.
+@|snatural| semantics@~cite{tf-popl-2008} with a @|stransient| one@~cite{glfd-pj-2021}.
 The two semantics coexist as modes of one compiler codebase and rely on the
 same static type checker.
 Unexpected challenges arose regarding the use of type definitions across
@@ -84,7 +84,7 @@ a superset of the programs that run with @|sdeep| types.
 @;The final pass is a type-directed optimizer@~cite{stff-padl-2012} that generates
 @;efficient untyped code for the compiler backend to further optimize.
 @;
-@;@|sShallow| Racket is implemented as a second mode of the Typed Racket compiler@~cite{g-thesis-2020,glfd-draft-2021}.
+@;@|sShallow| Racket is implemented as a second mode of the Typed Racket compiler@~cite{g-thesis-2020,glfd-pj-2021}.
 @;It too injects three passes between the macro expander and compiler backend,
 @;but with changes appropriate to the @|stransient| semantics.
 @;The first pass, the type checker, remains unchanged.

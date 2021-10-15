@@ -382,6 +382,7 @@ The challenge, however, lies in finding which typed modules ought to be @|sdeep|
 and which ought to be @|sshallow|.
 @Figure-ref{fig:both:3way} is the result of an exhaustive search in a
 @${3^N} lattice.
+FILL then again the best 3-way mix is only 2x faster than the best either-or, so that's probably enough.
 In practice, developers may not be willing to run a search to find the best
 combinations.
 Further experience with @|sdeep| and @|sshallow| types may
@@ -397,9 +398,9 @@ As a first step, the following three case studies report on manual searches.
   (render-3d-table-y DDD)]
 ])
 
-@itemlist[
-@item{@emph{Synth}@|~|@|~|
-@(let* ((synth-url "http://github.com/stamourv/synth")
+@parag{Synth}
+@(let* ((synth-short-url "github.com/stamourv/synth")
+        (synth-url (string-append "http://" synth-short-url))
         (synth-data
          (hash
            'd-lib-d-client '(809 821 834 771 733)
@@ -420,30 +421,30 @@ As a first step, the following three case studies report on manual searches.
                          (mean (hash-ref synth-data 's-lib-d-client))))))
   @elem{
 The GTP benchmark named @bm{synth} is based on @hyperlink[synth-url]{an untyped program}
-that interacts with a typed math library to synthesize music.@note{@shorturl[synth-url "github.com/stamourv/synth"]}
+that interacts with a typed math library to synthesize music.@note{@shorturl["https://" synth-short-url]}
 When the math library uses @|sDeep| Racket, the original client runs with
 high overhead.
 Compared to a @|sDeep| client program, the untyped client
 suffers a @~a[deep-delta]x slowdown.
 
-@exact{\subitem}Changing the library to use @|sShallow| Racket improves the gap between an
+Changing the library to use @|sShallow| Racket improves the gap between an
 untyped and @|sDeep| client to @~a[shallow-delta]x.
 This fast untyped configuration is roughly @~a[ds-fast]x slower than the fast
 @|sDeep|-@|sDeep| configuration, but the worst-case is @~a[ds-slow]x
 faster (@~a[ds-slow-sec] seconds) than before.
 Overall, a @|sShallow| version of the math library is a better tradeoff for @bm{synth}.
-})}
+})
 
-@item{@emph{MsgPack}@|~|@|~|
+@parag{MsgPack}
 @hyperlink["http://msgpack.org/"]{MessagePack} is a serialization format.
 @hyperlink["https://gitlab.com/HiPhish/MsgPack.rkt"]{MsgPack} is a Typed Racket
- library that maps Racket values to binary data.@note{@shorturl["https://gitlab.com/HiPhish/MsgPack.rkt" "gitlab.com/HiPhish/MsgPack.rkt"]}
+ library that maps Racket values to binary data.@note{@shorturl["https://" "gitlab.com/HiPhish/MsgPack.rkt"]}
 The author of this library
  @hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]{reported a performance hit}
- after narrowing some types from @tt{Any} to a more-precise union type for serializable inputs.@note{@shorturl["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ" "groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]}
+ after narrowing some types from @tt{Any} to a more-precise union type for serializable inputs.@note{@hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ" @tt{https://tinyurl.com/5f7mhks2}]}
 Tests that formerly passed on the package server timed out after the change.
 
-@exact{\subitem}After changing one bridge module from @|sDeep| to @|sShallow|
+After changing one bridge module from @|sDeep| to @|sShallow|
 (a one-line change),
 the time needed to run all tests improved from @${320} seconds to @${204} seconds.
 Migrating the rest of the library to @|sShallow| Racket adds only a slight
@@ -454,9 +455,9 @@ is best for MsgPack.
 @;  Deep, no pack casts = 117 seconds
 @;  Shallow, no pack casts = 67 seconds
 @;  untyped = 24 seconds!!!
-}
 
-@item{@emph{External Data, JSON}@|~|@|~|
+
+@parag{External Data, JSON}
 @(let* ((script_name "QA/transient-expressive/json/custom.rkt")
         (s* '(169 157 162 159 162))
         (t* '(3007 2991 2920 3096 3308))
@@ -475,10 +476,10 @@ To illustrate the pitfall, the first author wrote a typed script that reads a la
 @|sDeep| Racket runs the script @|slowdown| slower than @|sShallow| Racket.
 })
 
-@exact{\subitem}In principle, @|sDeep| can avoid the slowdown with a custom parser
+In principle, @|sDeep| can avoid the slowdown with a custom parser
  that validates data as it reads it.
 Indeed, Phil Nguyen has written a @hyperlink["https://github.com/philnguyen/json-type-provider"]{library}
  for JSON that mitigates the overhead of @|sdeep| types.
 Such libraries are ideal, but until we have them for the next data exchange
  format (CSV, XML, YAML, ...) @|sShallow| offers a pragmatic solution.
-}]
+

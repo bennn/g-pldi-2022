@@ -14,14 +14,20 @@ other data.@note{Personal communication. @shorturl["https://www.pyret.org" "pyre
 For example, pair types get a @|sdeep| check and function types get a
 @|sshallow| check.
 Static Python combines @|sshallow| and concrete checks.@note{Personal communication. @shorturl["https://github.com/facebookincubator/cinder" "github.com/facebookincubator/cinder"]}
-@|sShallow| checks are the default; concrete data structures are available.
+@|sShallow| checks are the default and concrete data structures are available.
 
 The model in @section-ref{sec:model} builds on the semantic framework
 of @citet{gf-icfp-2018}, which is in turn inspired by
 @citet{mf-toplas-2009}.
-The model is also inspired by the @exact{\kafka} framework, which introduces
-four compilers to transform a declarative surface syntax to an evaluation
-syntax that makes run-time checks manifest@~cite{clzv-ecoop-2018}.
+The @exact{\kafka} framework is another source of inspiration; specifically,
+its use of several compilers to transform a declarative surface syntax into
+an evalution syntax that makes run-time checks manifest@~cite{clzv-ecoop-2018}.
+
+There is a great deal of related work that addresses the performance of
+@|sdeep| or @|sshallow| types@~cite{bbst-oopsla-2017,kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,mt-oopsla-2017,rmhn-ecoop-2019,mt-oopsla-2021}.
+This research is orthogonal; these implementation techniques should be apply
+to a three-way language as well as any normal gradual language.
+Our language benefits from one such technique: collapsible contracts@~cite{fgsfs-oopsla-2018}.
 
 @; similar acks for implementation (Sam, TR) and evaluation (Takikawa) ?
 
