@@ -1,7 +1,6 @@
 #lang scribble/acmart @acmsmall @10pt @screen
 @(require "main.rkt" "bib.rkt"
-   (only-in scriblib/footnote note)
-   (only-in "pict.rkt" fig:model-interaction-y))
+   (only-in scriblib/footnote note))
 
 @; THESIS Deep and Shallow can interoperate
 @; - don't worry about CM extension, for self-edges and S/U
@@ -33,11 +32,6 @@ and a @emph[snoop] does nothing.
 at boundaries.
 @; @Sectionref{sec:model:model:theorems} proves the main result;
 @; namely, that a careful use of these checks can enforce the safety properties.
-
-@figure[
-  "fig:model:base-interaction"
-  @elem{Outline for @|sdeep|, @|sshallow|, and @|suntyped| interactions}
-  fig:model-interaction-y]
 
 
 @section[#:tag "sec:model:model:syntax"]{Three-way Surface Syntax}

@@ -56,7 +56,7 @@
 
 (define caption-shim 8)
 (define hshim 8)
-(define vshim 6)
+(define vshim 4)
 
 (struct code-arrow [src-tag src-find tgt-tag tgt-find start-angle end-angle start-pull end-pull style] #:transparent)
 
@@ -704,10 +704,10 @@ eos
                     ((l+a (in-list lbl+arr*)))
             (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a) #:size (+ 1 title-text-size)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a)))))
       (ppict-do
-        (blank 280 60)
-        #:go (coord 0 25/100 'lt #:abs-x 10) S
+        (blank 280 40)
+        #:go (coord 0 22/100 'lt #:abs-x 10) S
         #:go (coord 1/2 0/100 'ct) D
-        #:go (coord 1 25/100 'rt #:abs-x -10) U))))
+        #:go (coord 1 22/100 'rt #:abs-x -10) U))))
 
 (define fig:opt0
   ;; only D <-> S, weaken
@@ -817,7 +817,7 @@ eos
          (untyped2
           (untyped-codeblock '(
             "(define (text s f)"
-            "  ; render string s using font f"
+            "  ;; render string s using font f"
             "  ....)")))
          (interface2
            (typed-codeblock '(
