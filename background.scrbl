@@ -16,10 +16,9 @@
 
 @section{Gradual, Migratory, Mixed-Typed}
 
-@; TODO focus on research, not people
-For the past two decades, research has proposed methods to combine
-static and dynamic typing@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
-The ultimate goal of these efforts is a mixed-typed (or gradual@note{Following @citet{svcb-snapl-2015},
+Gradual typing explores combinations of static and dynamic
+typing@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
+The goal of this research is a mixed-typed (or gradual@note{Following @citet{svcb-snapl-2015},
 we reserve the name @emph{gradual} for mixed-typed languages with
 a dynamic type that satisfies the gradual guarantees.})
 @; graduality@~cite{nla-popl-2019}

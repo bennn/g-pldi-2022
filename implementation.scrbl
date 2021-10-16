@@ -15,19 +15,49 @@
 @;
 @; - for technical details, point to PR or dissertation
 
-@title[#:tag "sec:implementation"]{IMPLEMENTATION}
-@; Theory to Practice: Typed Racket}
-@; 2021-04-29 do we really need to discuss typed/untyped API? could point to dissertation for details
+@title[#:tag "sec:implementation"]{Implementation Challenges}
+
+We have implemented three-way interactions as an extension to Typed Racket
+[CITE].
+The extension combines standard ``@|sDeep|'' Typed Racket (@|snatural|
+semantics) with the @|sShallow| Racket implementation of @|stransient| [CITE].
+For programmers, these options are available as module languages:
+@tt{#lang typed/racket} provides @|sdeep| types and
+@tt{#lang typed/racket/shallow} provides @|sshallow| types.
+Changing from one to the other is a one-line change except for
+programs that directly manipulate type boundaries (@section-ref{sec:implementation:api}).
+
+For whole programs with no metaprogramming, the model was an adequate guide.
+Challenges arose regarding separate compilation, metaprogramming,
+and contract generation.
+@; ... of interest to other language designers
+
+
+@section{Separate Compilation}
+
+
+Scaling the model to a realistic implementation in Typed Racket was
+straightforward
+
+To show that a realistic language can also support @|sdeep| and @|sshallow|
+types, the authors have extended Typed Racket to combine its standard
+@|snatural| semantics@~cite{tf-popl-2008} with a @|stransient| one@~cite{glfd-pj-2021}.
+
+
+
 
 According to the model, a mixed-typed language can support three-way
 interactions by compiling types to contracts at @|sdeep|-typed boundaries
 and to checks throughout @|sshallow|-typed code.
 The model, however, is an abstraction that ignores practical issues.
+
 To show that a realistic language can also support @|sdeep| and @|sshallow|
 types, the authors have extended Typed Racket to combine its standard
 @|snatural| semantics@~cite{tf-popl-2008} with a @|stransient| one@~cite{glfd-pj-2021}.
+
 The two semantics coexist as modes of one compiler codebase and rely on the
 same static type checker.
+
 Unexpected challenges arose regarding the use of type definitions across
 @|sdeep| and @|sshallow| modules and the adaptation of an API that customizes
 @|sdeep|--@|suntyped| boundaries.
@@ -69,8 +99,8 @@ a superset of the programs that run with @|sdeep| types.
 @Section-ref{sec:evaluation:expressiveness} explores this semantic gap in greater detail.
 
 
-@;@section[#:tag "sec:implementation:internals"]{Three-way Internals}
-@;
+@section[#:tag "sec:implementation:internals"]{Three-way Internals}
+
 @;The Racket compiler processes an untyped module in two steps.
 @;First, the macro expander simplifies expressions within the module to
 @;a kernel language@~cite{f-icfp-2002,f-popl-2016}.
@@ -99,10 +129,10 @@ a superset of the programs that run with @|sdeep| types.
 @;The unexpected challenges for the three-way implementation arose in two
 @;places: at the boundaries between @|sDeep| and @|sShallow| modules
 @;and in Typed Racket's boundary API.
-@;
-@;
-@;@subsection[#:tag "sec:implementation:impl:code"]{@|sDeep| and @|sShallow| Interaction}
-@;
+
+
+@subsection[#:tag "sec:implementation:impl:code"]{@|sDeep| and @|sShallow| Interaction}
+
 @;Racket supports both separate compilation and hygienic macros@~cite{f-icfp-2002}.
 @;Each module in a program compiles to a core language and other modules can
 @;re-use the output.

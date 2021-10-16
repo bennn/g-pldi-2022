@@ -19,9 +19,11 @@ Static Python combines @|sshallow| and concrete checks.@note{Personal communicat
 The model in @section-ref{sec:model} builds on the semantic framework
 of @citet{gf-icfp-2018}, which is in turn inspired by
 @citet{mf-toplas-2009}.
-The @exact{\kafka} framework is another source of inspiration; specifically,
-its use of several compilers to transform a declarative surface syntax into
-an evalution syntax that makes run-time checks manifest@~cite{clzv-ecoop-2018}.
+Unlike those frameworks, the present model uses a surface-to-evaluation compiler
+similar to how @citet{clzv-ecoop-2018} compile several gradual languages to
+the @exact{\kafka} core language.
+Our compiler is essentially a completion pass@~cite{h-scp-1994} because its primary role is
+to insert run-time checks.
 
 There is a great deal of related work that addresses the performance of
 @|sdeep| or @|sshallow| types@~cite{bbst-oopsla-2017,kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,mt-oopsla-2017,rmhn-ecoop-2019,mt-oopsla-2021}.

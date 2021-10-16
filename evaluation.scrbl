@@ -324,7 +324,7 @@ the third column counts paths using @|sDeep| or @|sShallow| at each point.
 With @|sDeep| alone, all paths in @integer->word[(length deep-dead*)]
 benchmarks reach a bottleneck that exceeds the @~a[D]x limit.
 With @|sShallow| alone, all paths in @integer->word[(length shallow-dead*)] benchmarks
- exceed the limit as well---typically near the end of the migration path.
+ exceed the limit as well---often near the end of the migration path.
 With the either-or mix, only @integer->word[(length mix-dead*)] benchmark (@bm[(car mix-dead*)])
  has zero @ddeliverable[D] paths.
 

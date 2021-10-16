@@ -9,27 +9,27 @@
 
 @title[#:tag "sec:model"]{Model and Metatheory}
 
-A typical mixed-typed language allows for two styles of code, typed and untyped,
+A normal mixed-typed language allows for two styles of code, typed and untyped,
 and uses run-time checks to enforce the claims made by static types.
-The model here allows three styles:
+Our model allows for three syntaxes:
 @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
-Both the @|sdeep| and @|sshallow| code must satisfy a type checker that
+Both @|sdeep| and @|sshallow| code must satisfy a type checker that
 validates typical well-formedness properties.
-The @|suntyped| code has fewer constraints, but is nevertheless free to
-communicate with @|sdeep| and @|sshallow| chunks of code.
+@|sUntyped| code has fewer constraints.
+Run-time checks enforce type claims at boundaries, but use different strategies
+for @|sdeep| and for @|sshallow| types.
 
 Overall, the primary goal of the model is to test whether @|sdeep|, @|sshallow|,
 and @|suntyped| code can safely interoperate.
-The @|sdeep| types must satisfy type soundness and complete monitoring properties,
-and the @|sshallow| types must satisfy only a weak type soundness.
-A secondary goal of the model is to serve as the outline for an implementation.
+A secondary goal of the model is to outline an implementation.
 For this reason, the three syntaxes compile to one kernel language
-that employs standard run-time-checking concepts.
-A @emph[swrap] term corresponds to a higher-order contract,
-a @emph[sscan] performs a first-order check,
-and a @emph[snoop] does nothing.
-@Figure-ref{fig:model:base-interaction} sketches the plan for applying these checks
-at boundaries.
+that can express a variety of standard run-time checks:
+a @emph[swrap] term applies a contract and
+a @emph[sscan] performs a first-order (predicate) check.
+A third @emph[snoop] term represents a boundary that any value may cross.
+@Figure-ref{fig:model:base-interaction} sketches the plan for applying these terms
+at type boundaries.
+
 @; @Sectionref{sec:model:model:theorems} proves the main result;
 @; namely, that a careful use of these checks can enforce the safety properties.
 
@@ -48,7 +48,7 @@ at boundaries.
     \mid \efun{\tann{\svar}{\stype}}{\ssurface}
     \mid \efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface} \mid
   \\ & &
-    \eunop{\ssurface} \mid \ebinop{\ssurface}{\ssurface} \mid
+    \eunop{\,\ssurface} \mid \ebinop{\,\ssurface}{\ssurface} \mid
     \eappu{\ssurface}{\ssurface} \mid
     \emod{\slang}{\ssurface}
   \\
@@ -74,8 +74,8 @@ Surface expressions @${\ssurface} consist of function applications (@${\eappu{\s
 An @|suntyped| function has no annotation (@${\efun{\svar}{\ssurface}}),
  a @|sdeep|-typed function has a plain type annotation (@${\efun{\tann{\svar}{\stype}}{\ssurface}}),
  and a @|sshallow|-typed function has an underlined type annotation (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}}).
-The underline is simply a notational device; it is meant to suggest that only
-the top-level shape of this type is guaranteed at run-time.
+The underline is a hint that only the top-level shape of this type is
+guaranteed at run-time.
 Types @${\stype} express natural numbers (@${\tnat}),
  integers (@${\tint}),
  pairs (@${\tpair{\stype}{\stype}}),
@@ -93,27 +93,26 @@ typing style or a different one.
 @; TODO why not reformat, present as 2 or 3 judgments?
 @;  the evaluation typing is 3 judgments (different invariants)
 
-Both @|sdeep| and @|sshallow| code must satisfy type constraints,
-and @|suntyped| code cannot reference variables that it did not bind.
+@|sDeep| and @|sshallow| code must satisfy type constraints.
+@|sUntyped| code cannot reference variables that it did not bind.
 These well-formedness conditions are spelled out in the typing judgment
 of @figure-ref{fig:model:surface-type}, which relates a type environment
 @${\stypeenv} and an expression @${\ssurface} to a result specification.
 A result @${\stspec} is either a type @${\stype} for @|sdeep|-typed code,
 an underlined type @${\tfloor{\stype}} for @|sshallow|-typed code,
+@; (e.g. @${\tfloor{\tpair{\tint}{\tnat}}})
 or the uni-type @${\tdyn} for @|suntyped| code.
 
 With the exception of modules, the typing rules are standard for a basic
 functional language.
-Note that the subsumption rule means the judgment is not syntax-directed.
-The rules for modules allow one kind of expression to appear within another.
+Modules allow any kind of expression to appear within another.
 For instance, an @|suntyped| expression may appear within a @|sdeep|
-expression @${\ssurface_0} via a module boundary;
-if so, the full expression @${\ssurface_0} satisfies the typing judgment if the
-@|sdeep| parts are well-typed and the @|suntyped| parts are well-formed.
-
-@Figureref{fig:model:extra-type} defines the subtyping judgment (@${\ssubt})
+expression provided that the @|suntyped| code is well-formed.
+There are nine such rules to ensure that the module language (@${\slang_0})
+matches the type of the subexpression (@${\stspec_0}); @figure-ref{fig:model:surface-type}
+compresses these rules into a table.
+@Figureref{fig:model:surface-type} also defines a subtyping judgment (@${\ssubt})
 and a type-assignment for primitive operations (@${\sDelta}).
-These are both standard.
 Subtyping declares that the natural numbers are a subset of the integers
 and extends this decree covariantly to pairs and contra/co-variantly to
 function domains/codomains.
@@ -140,12 +139,6 @@ integers.
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec\)}}{
 \begin{mathpar}
   \inferrule*{
-    \tann{\svar_0}{\tdyn} \in \stypeenv
-  }{
-    \stypeenv \sST \svar_0 : \tdyn
-  }
-
-  \inferrule*{
     \tann{\svar_0}{\stype_0} \in \stypeenv
   }{
     \stypeenv \sST \svar_0 : \stype_0
@@ -158,8 +151,9 @@ integers.
   }
 
   \inferrule*{
+    \tann{\svar_0}{\tdyn} \in \stypeenv
   }{
-    \stypeenv \sST \snat_0 : \tdyn
+    \stypeenv \sST \svar_0 : \tdyn
   }
 
   \inferrule*{
@@ -170,6 +164,11 @@ integers.
   \inferrule*{
   }{
     \stypeenv \sST \snat_0 : \tfloor{\tnat}
+  }
+
+  \inferrule*{
+  }{
+    \stypeenv \sST \snat_0 : \tdyn
   }
 
 %  \inferrule*{
@@ -207,12 +206,6 @@ integers.
 %  }
 %
   \inferrule*{
-    \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \efun{\svar_0}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
     \fcons{\tann{\svar_0}{\stype_0}}{\stypeenv} \sST \sexpr_0 : \stype_1
   }{
     \stypeenv \sST \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0} : \tfun{\stype_0}{\stype_1}
@@ -224,6 +217,12 @@ integers.
     \stypeenv \sST \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0} : \tfloor{\tfun{\stype_0}{\stype_1}}
   }
 
+  \inferrule*{
+    \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sST \sexpr_0 : \tdyn
+  }{
+    \stypeenv \sST \efun{\svar_0}{\sexpr_0} : \tdyn
+  }
+
 %  \inferrule*{
 %    \stypeenv \sST \ssurface_0 : \tdyn
 %  }{
@@ -232,8 +231,8 @@ integers.
 %
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0
-    \\\\
-    \sDelta(\sunop, \stype_0) = \stype_1
+    \\
+    \sDelta(\sunop, \stype_0)\!=\!\stype_1
   }{
     \stypeenv \sST \eunop{\sexpr_0} : \stype_1
   }
@@ -292,7 +291,7 @@ integers.
 %
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\tfun{\stype_0}{\stype_1}}
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_0}
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tfloor{\stype_1}
@@ -308,7 +307,7 @@ integers.
 %
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-    \\\\
+    \\
     \fsubt{\stype_0}{\stype_1}
   }{
     \stypeenv \sST \sexpr_0 : \tfloor{\stype_1}
@@ -380,9 +379,9 @@ integers.
 \right]\) &
 \(\begin{array}{llll}
   \slang_0 & \stspec_0 & \stspec_1 \\\hline
-  \sU & \tdyn & \stspec_1 \\
   \sD & \stype_0 & \stspec_1 \\
   \sS & \tfloor{\stype_0} & \stspec_1 \\
+  \sU & \tdyn & \stspec_1
 \end{array}\) \end{tabular}
 }
 
@@ -489,30 +488,28 @@ integers.
 
 @section[#:tag "sec:model:model:eval-syntax"]{Common Evaluation Syntax}
 
-By contrast to the declarative surface syntax, the purpose of the evaluation
-syntax is to present a core set of expressions that can support three-way
-interactions.
-The syntax removes surface terms that merely express an intent and adds
-terms that directly map to run-time checks.
+@; By contrast to the declarative surface syntax, the evaluation
+@; syntax implements three-way interactions.
+@; This syntax removes surface terms that merely express an intent and adds
+@; terms that correspond to run-time checks.
 
 Evaluation expressions @${\sexpr} consist of variables, values, primitive
 applications, function applications, errors, and boundary terms.
-The module boundaries from the surface syntax are gone.
+Unlike the surface syntax, there are no module terms.
 Instead, three @emph{boundary terms} describe run-time checks.
 A @|swrap| boundary asks for the full enforcement of a type, either with a comprehensive first-order
-check or a higher-order wrapper;
-a @|sscan| boundary asks for a first-order type-shape (@${\sshape}) check;
-and a @|snoop| boundary asks for no check.
+check or a higher-order wrapper.
+A @|sscan| boundary asks for a first-order type-shape (@${\sshape}) check.
+A @|snoop| boundary asks for no check.
 
 Together, values and errors represent the possible results of an evaluation.
-A value is either an integer, a pair, a function, or a guard wrapper.
-A guard @${(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})} is a wrapped
-function; more precisely, it provides access to the function @${\svalue_0}
-subject to type-directed checks.
+The values are integers, pairs, functions, and guard wrappers.
+A guard wrapper @${(\emon{(\tfun{\stype_0}{\stype_1})}{\svalue_0})} provides
+type-restricted access to a function.
 @|sShallow|-typed functions have a shape annotation and a @${\sscan} tag in
 the evaluation syntax (@${\esfun{\svar}{\sshape}{\sexpr}})
 to suggest that such functions must validate the shape of their input at run-time.
-An error may arise from either a failed check at @|swrap| boundary (@${\swraperror}),
+Errors may arise from either a failed check at @|swrap| boundary (@${\swraperror}),
 a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 (@${\sdivzeroerror}), or a malformed untyped expression (@${\stagerror}).
 
@@ -523,7 +520,7 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 
 @figure[
   "fig:model:eval-syntax"
-  @elem{Evaluation Syntax}
+  @elem{Evaluation syntax}
 
   @exact|{
 \begin{langarray}
@@ -563,15 +560,15 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 @section[#:tag "sec:model:model:eval-types"]{Three-way Evaluation Typing}
 
 The evaluation syntax comes with three typing judgments that describe the
-run-time invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
+invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
 The @|sdeep| typing judgment (@${\sWTD}) validates full types.
 The @|sshallow| judgment (@${\sWTS}) checks top-level type shapes.
 And the @|suntyped| judgment (@${\sWTU}) checks that all variables
-have proper bindings.
+are bound.
 
 Both the @|sdeep| and @|suntyped| rules are similar to the corresponding
 surface-language rules because they support equally-strong conclusions
-(full types and the unitype).
+(full types and the uni-type).
 The @|sshallow| judgment is rather different because it validates type
 shapes instead of full (underlined @${\tfloor{\stype}}) types.
 When inspecting a pair, for example, the judgment concludes with the @${\kpair}
@@ -579,9 +576,9 @@ shape no matter what shapes the elements have.
 Consequently, a pair elimination form such as @${(\efstu{\svar_0})} has the
 @${\kany} shape because the pair may contain any sort of value.
 Similar comments apply to functions and applications.
-Thus, if a program expects a particular shape from the element of a pair or the
-range of a function, then the program must use a @${\sscan} assertion to
-confirm this expectation.
+If a program expects a particular shape from the element of a pair or the
+range of a function, then the program must use a @${\sscan} term to
+confirm the expectation.
 
 @figure[
   "fig:model:deep-type"
@@ -981,14 +978,14 @@ confirm this expectation.
 
 @figure[
   "fig:model:completion1"
-  @elem{Surface-to-evaluation completion (selected rules)}
+  @elem{Surface-to-evaluation compilation (selected rules)}
   @;@appendixref{appendix:rules}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec \scompile \sexpr\)}}{\begin{mathpar}
   \inferrule*{
   }{
-    \stypeenv \sST \svar_0 : \stspec_0 \scompile \svar_0
+    \stypeenv\!\sST\!\svar_0\!:\!\stspec_0\!\scompile\!\svar_0
   }
 
 %  \inferrule*{
@@ -1041,15 +1038,9 @@ confirm this expectation.
 %  }
 %
   \inferrule*{
-    \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sST \sexpr_0 : \tdyn \scompile \sexpr_1
-  }{
-    \stypeenv \sST \efun{\svar_0}{\sexpr_0} : \tdyn \scompile \efun{\svar_0}{\sexpr_1}
-  }
-
-  \inferrule*{
     \fcons{\tann{\svar_0}{\stype_0}}{\stypeenv} \sST \sexpr_0 : \stype_1 \scompile \sexpr_1
   }{
-    \stypeenv \sST \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0} : \tfun{\stype_0}{\stype_1} \scompile \efun{\tann{\svar_0}{\stype_0}}{\sexpr_1}
+    \stypeenv\!\sST\!\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}\!:\!\tfun{\stype_0}{\stype_1}\!\scompile\!\efun{\tann{\svar_0}{\stype_0}}{\sexpr_1}
   }
 
   \inferrule*{
@@ -1060,14 +1051,12 @@ confirm this expectation.
     \stypeenv \sST \efun{\tann{\svar_0}{\tfloor{\stype_0}}}{\sexpr_0} : \tfloor{\tfun{\stype_0}{\stype_1}} \scompile \esfun{\svar_0}{\sshape_0}{\sexpr_1}
   }
 
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_2
-    \\
-    \stypeenv \sST \sexpr_1 : \tdyn \scompile \sexpr_3
-  }{
-    \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tdyn \scompile \eappu{\sexpr_2}{\sexpr_3}
-  }
-
+%  \inferrule*{
+%    \fcons{\tann{\svar_0}{\tdyn}}{\stypeenv} \sST \sexpr_0 : \tdyn \scompile \sexpr_1
+%  }{
+%    \stypeenv \sST \efun{\svar_0}{\sexpr_0} : \tdyn \scompile \efun{\svar_0}{\sexpr_1}
+%  }
+%
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfun{\stype_1}{\stype_0} \scompile \sexpr_2
     \\
@@ -1085,6 +1074,14 @@ confirm this expectation.
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tfloor{\stype_0} \scompile \escan{\sshape_0}{(\eappu{\sexpr_2}{\sexpr_3})}
   }
+%
+%  \inferrule*{
+%    \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_2
+%    \\
+%    \stypeenv \sST \sexpr_1 : \tdyn \scompile \sexpr_3
+%  }{
+%    \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tdyn \scompile \eappu{\sexpr_2}{\sexpr_3}
+%  }
 \end{mathpar}
 
 \medskip
@@ -1114,93 +1111,41 @@ confirm this expectation.
 
 }}|]
 
-@;@figure[
-@;  "fig:model:completion2"
-@;  @elem{Completion rules for module boundaries (@figure-ref{fig:model:base-interaction})}
-@;
-@;@exact|{
-@;\left[
-@;  \inferrule*{
-@;    \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
-@;  }{
-@;    \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1 \scompile \sexpr_2
-@;  }
-@;\right]
-@;
-@;\medskip
-@;\begin{array}{llll}
-@;  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \\\hline
-@;  \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \\
-@;  \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
-@;  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \\
-@;  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \\
-@;  \sU & \tdyn & \tfloor{\stype_0} & \escan{\fshape{\stype_0}}{\sexpr_1} \\
-@;  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
-@;  \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \\
-@;  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
-@;  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1}
-@;\end{array}
-@;
-@;}|]
-
 
 @section[#:tag "sec:model:model:completion"]{Compilation from Surface to Evaluation}
 
-The surface syntax has no semantics of its own.
-Instead, a compilation pass maps surface terms to evaluation-language
+A compilation pass maps surface terms with modules to evaluation-language
 terms with run-time checks.
-Most checks appear at boundaries; indeed, the main task of compilation is
-to replace surface module boundaries with check boundaries.
-Additional checks appear in @|sshallow|-typed code to support its type
-soundness property.
-
-Because compilation inserts run-time checks and little more, it is more
-like a completion pass that makes implicit operations explicit@~cite{h-scp-1994}
-than a typical compiler.
-Henceforth, this paper uses the term @emph{completion} instead of compilation.
-
-The overall goal of completion-inserted checks is to map all well-typed surface
-expressions to well-typed evaluation expressions (refer to the appendix
-for a formal specification).
+The goal of the inserted checks is to ensure that well-typed surface
+expressions are well-typed in the evaluation syntax.
 @itemlist[
 @item{
- In @|sdeep|-typed code, completion inserts @|swrap| expressions at the
-  module boundaries to less-typed code.
- Other @|sdeep| expressions have no checks.
+ In @|sdeep|-typed code, all module boundaries to less-typed code
+ become @|swrap| checks. Compilation inserts no other checks.
 }
 @item{
- In @|sshallow| code, completion scans incoming untyped values at boundaries
- and scan the result of every elimination form.
+ In @|sshallow| code, @|sdeep| boundaries become @|swrap| checks
+ and @|suntyped| boundaries become @|sscan| checks. Additional
+ @|sscan| checks protect typed code.
 }
 @item{
- In untyped code, completion adds no run-time checks.
- At the boundaries to @|sdeep| and @|sshallow| code, however, the above
- strategy calls for a @|swrap| check.
+ In untyped code, boundaries to @|sdeep| modules become @|swrap| checks
+ and boundaries to @|sshallow| modules become @|sscan| checks.
 }
 ]
-@|noindent|The rules shown in @figureref["fig:model:completion2" "fig:model:completion1"]
-say exactly how to insert the checks.
-@Figure-ref{fig:model:completion2} presents the rules for module boundaries
-using a tabular notation.
-The parameterized judgment at the left of the figure summarizes the rules for
-boundaries, and the tables at the right show the specific parameters for the
-nine possible combinations.
-These nine rules correspond to the six edges in
-@figure-ref{fig:model:base-interaction} plus three @${\snoop} self-edges.
-
-@Figureref{fig:model:completion1} illustrates the completion rules for
-functions.
-In @|sdeep|-typed and @|suntyped| code, the completion of an application is simply
-the completion of its subexpressions.
-In @|sshallow|-typed code, this elimination form requires a @|sscan| check to
-validate the result.
-Pairs and pair elimination forms follow a similar pattern.
-The completion of a @|sshallow| function has a @${\sscan} tag in its domain
-to indicate the need for a run-time check.
-A static analysis might remove these tags if the @|sshallow| function never
-escapes to an untyped context.
-For other expressions, the completion rules simply transform subexpressions;
-these rules appear in the appendix.
+@|noindent|The rules shown in @Figureref["fig:model:completion1"]
+demonstrate compilation in detail.
+Variables compile to themselves.
+Functions in @|sdeep| (and @|suntyped|) code simply recur on the
+function body and compile to a new function.
+Functions in @|sshallow| code add a @|sscan| tag to their argument to indicate
+the need for a domain check because untyped code can potentially invoke these functions.
+Applications in @|sdeep| (and @|suntyped|) code recur on their subexpressions.
+Applications in @|sshallow| code additionally use a @|sscan| check to validate
+computed results.
+Pair elimination forms (@${\sfst}, @${\ssnd}) use @|sscan|s in a similar way.
+Lastly, six rules for module boundaries are represented by one parameterized rule and a table.
+These rules correspond to edges in @figure-ref{fig:model:base-interaction}.
 
 
 @figure*[
@@ -1406,7 +1351,7 @@ these rules appear in the appendix.
 \\\sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
 & \sidecond{if $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$}
 
-\\[2ex]
+\\[4ex]
 
 \multicolumn{3}{l}{\hspace{-1em}\begin{tabular}{l@{~}l}
 \fbox{\(\sexpr \srr \sexpr\)}\(~~\sdefeq\) & reflexive, transitive, compatible
@@ -1473,10 +1418,11 @@ these rules appear in the appendix.
 }
 
 \smallskip
-\lbl{\fbox{$\srev : \ffun{\sownerlist}{\sownerlist}$}}{
+\lbl{\fbox{$\srev : \ffun{\sownerlist}{\sownerlist}$}
   \begin{langarray}
     \frev{\fcons{\sowner_0}{\fcons{\cdots}{\sowner_n}}} & \feq & {\fcons{\sowner_n}{\fcons{\cdots}{\sowner_0}}}
   \end{langarray}
+}{
 }
 
 }|]
@@ -1484,16 +1430,17 @@ these rules appear in the appendix.
 
 @section[#:tag "sec:model:model:reduction"]{Reduction Relation}
 
-@Figure-ref{fig:model:rr} presents a notion of reduction for the evaluation
-syntax.
-Each rule @${(\sexpr \snr \sexpr)} in the figure relates two expressions.
+The left half of @figure-ref{fig:model:rr} presents a notion of reduction for
+the evaluation syntax.
+(@Secref{sec:model:model:ownership} discusses the right half.)
+Each rule relates two expressions @${(\sexpr \snr \sexpr)}.
 Rules that share a syntactically-equal domain come with additional test
 for the domain expression.
 These tests use basic set theory to pattern-match on expressions;
 for example, the test @${(\svalue_0 \in \efun{\svar}{\sexpr})} holds when
 the value @${\svalue_0} is an unannotated lambda.
 
-The reduction rules for unary and binary operations apply the @${\sdelta}
+The rules for unary and binary operations apply the @${\sdelta}
 metafunction (@figure-ref{fig:model:extra-rr}) and halt with a tag error if
 @${\sdelta} is undefined.
 In general, @${\sdelta} models the behavior of a run-time system that works
@@ -1502,35 +1449,36 @@ For unary operations, @${\sdelta} extracts an element from a pair.
 For binary operations, @${\sdelta} performs arithmetic.
 
 The rules for function application check that the first expression is a
-function and typically substitute the argument expression into the function
+function and try to substitute the argument expression into the function
 body.
 If the function has a type-shape annotation (@${\sshape}), then an additional
-shape check validates the argument.
+shape check (@figure-ref{fig:model:extra-rr}) validates the argument before substitution.
 If the function is enclosed in a guard wrapper, then the application
 unfolds into two @${\swrap} checks: one for the argument and one for
 the result.
-Functions that are wrapped in several guards must unfold an equal number of
-times.
+Functions that are wrapped in several guards must step through several
+unfoldings.
 
 The remaining rules state the behavior of run-time checks.
 A @|snoop| boundary performs no check and lets any value across.
 A @|sscan| boundary checks the top-level shape of an incoming value against the
 expected type-shape, and halts if the two disagree.
-Lastly, a @|swrap| boundary checks the top-level shape of a value then goes
-further based on the type.
+Lastly, a @|swrap| boundary checks the top-level shape of a value and
+then proceeds based on the type.
 For function types, a @${\swrap} installs a guard wrapper.
 For pairs, a @${\swrap} validates both components and creates a new pair value.
 For base types, the shape check is enough.
 
-The overall semantics for the evaluation syntax is given by the reflexive,
+The overall semantics for the evaluation syntax is given in standard
+fashion@~cite{fff-2009} as the the reflexive,
 transitive closure of the compatible closure of @${\snr} relative to the
-evaluation contexts from @figure-ref{fig:model:eval-syntax}@~cite{fff-2009}.
+evaluation contexts from @figure-ref{fig:model:eval-syntax}.
 Each expression has a unique redex thanks to the inductive structure of
 evaluation contexts.
 
 
 
-@section[#:tag "sec:model:model:ownership"]{Labeled Reduction Relation, @|sDeep| Label Consistency}
+@section[#:tag "sec:model:model:ownership"]{Labeled Evaluation, @|sDeep| Label Consistency}
 
 The model requires two final definitions to enable a syntactic analysis of
 complete monitoring: a label-annotated reduction relation and a
@@ -1540,17 +1488,16 @@ More precisely, the labels on an expression describe the surface
 modules that are responsible for the behavior of the expression.
 A consistently-labeled expression keeps @|sdeep|-typed code separate
 from @|sshallow| and @|suntyped| code.
-Informally, consistent labelling is possible if a semantics is able to chaperone
+Informally, consistent labelling is possible if a semantics can check
 all inputs to and outputs from @|sdeep|-typed values.
 
-@Figure-ref{fig:model:rrlbl} presents a labeled notion of reduction for the
-evaluation language.@note{
+The right half of @figure-ref{fig:model:rr} presents a labeled notion of
+reduction for the evaluation language.@note{
 The design of a labeled reduction relation is like any other
 definition in that it requires ingenuity to create and careful reading
 to understand.
-To help readers gain an intuition about what makes for a good labeling,
-the appendix presents the guidelines that the authors followed to create
-@figure-ref{fig:model:rrlbl}.
+To help readers gain an intuition for appropriate labeling, the appendix
+presents our guidelines for the @figure-ref{fig:model:rr} rules.
 }
 By design, the reduction rules are identical to the basic rules from
 @figure-ref{fig:model:rr} except for superscript labels and additional parentheses.
@@ -1564,8 +1511,12 @@ substitutes an argument value into the function body.
 Because of the substitution, the parties that were responsible for the
 function become responsible for both the value and for the expression that
 the function computes.
-Labels typically accumulate.
-The way that labels may disappear is after a successful run-time check
+The label metafunction @${\srev} (@figure-ref{fig:model:extra-rr}) keeps these
+labels in proper order by reversing them, because the argument value flows in
+to the function.
+
+Labels typically accumulate without bound.
+The only way that labels may disappear is after a successful run-time check.
 For example, the @${\swrap} rule for base types says that party @${\sowner_1} may
 assume full responsibility of numbers that reach a well-typed boundary.
 
@@ -1590,8 +1541,8 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \mid \efun{\svar}{\sexpr}
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
     \mid \esfun{\svar}{\sshape}{\sexpr} \mid
-    \emon{\!\stype}{\!\obars{\svalue}{\sowner}\!} \mid
   \\ & &
+    \emon{(\tfun{\stype}{\stype}}{\obars{\svalue}{\sowner}} \mid
    \obars{\svalue}{\sowner}
   \\
   \sctx & \slangeq &
@@ -1617,20 +1568,20 @@ Abbreviation: \(\obars{\cdots\obars{\sexpr_0}{\sowner_0}\cdots}{\sowner_n} = \ob
 
 Technically, the addition of labels to the evaluation language calls for an
 entirely new syntax.
-@Figure-ref{fig:model:label-syntax} spells out the details.
+@Figure-ref{fig:model:label-syntax} lists the details.
 The expression form @${\obars{\sexpr}{\sowner}} attaches a label to any
 subexpression.
 A similar value form @${\obars{\svalue}{\sowner}} lets any value appear
 under an arbitrary number of labels.
-Labels correspond to modules from the surface syntax, and thus combine
+These labels correspond to modules from the surface syntax, and thus combine
 a kind (@${\sD}, @${\sS}, or @${\sU}) with a unique identifying number.
 Beyond these straightforward changes, the labeled syntax has two noteworthy
 aspects:
 @itemlist[
 @item{
 All boundaries require a label for their subexpression.
-This means that the @${\svalue_0} in the following four patterns must be
-a labeled value: @${(\ewrap{\stype_0}{\svalue_0})},
+This means that the @${\svalue_0} in the following four patterns must have at least one
+label: @${(\ewrap{\stype_0}{\svalue_0})},
 @${(\escan{\sshape_0}{\svalue_0})}, @${(\enoop{\svalue_0})}, and @${(\emon{\stype_0}{\svalue_0})}.
 @linebreak[]}
 @item{
@@ -1643,25 +1594,23 @@ and @${\sownerlist_0\!=\!\fcons{\sowner_0}{\fcons{\sowner_1}{\sowner_2}}}.
 }
 ]
 
-One label metafunction: $\srev$ reverses a sequence of labels.
-
 @Figure-ref{fig:model:ownership-consistency} presents a consistency
 judgment for labeled expressions.
 The judgment allows any mix of @|sshallow| (@${\sS}) and @|suntyped| (@${\sU})
 labels around an expression, but restricts the use of @|sdeep| (@${\sD}) labels.
 Concretely, the judgment analyzes an expression relative to a context label
 and an environment (@${\sownerenv}).
-Any variables must have a binding in the label environment that matches the
+Variables must have a binding in the label environment that matches the
 context label.
 Most expressions simply need consistent subterms.
 Boundary expressions and guards values are switch points; these terms
 are consistent if their subterm matches the context label that appears
 inside the boundary.
 Lastly, the rules for labeled expressions specify the allowed mixtures.
-A @|sdeep|-labeled expression may have other @|sdeep| labels, but nothing else.
-@|sShallow| and @|suntyped|-labeled expressions can mix together.
-Hence the name @emph{@|sdeep|-label consistency} describes what the judgment
-checks for.
+@|sShallow| and @|suntyped| labels can mix together around an expression,
+but a @|sdeep|-labeled expression can only have @|sdeep| labels.
+@; Hence the name @emph{@|sdeep|-label consistency} describes what the judgment
+@; checks for.
 
 
 @figure*[
@@ -1694,7 +1643,7 @@ checks for.
   \inferrule*{
     \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
   }{
-    \sowner_0; \sownerenv_0 \sWL \efun{\svar_0}{\sexpr_0}
+    \sowner_0; \sownerenv_0 \sWL \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}
   }
 
   \inferrule*{
@@ -1706,7 +1655,7 @@ checks for.
   \inferrule*{
     \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
   }{
-    \sowner_0; \sownerenv_0 \sWL \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}
+    \sowner_0; \sownerenv_0 \sWL \efun{\svar_0}{\sexpr_0}
   }
 
   \inferrule*{
@@ -1799,11 +1748,9 @@ checks for.
 
 @section[#:tag "sec:model:model:theorems"]{Properties}
 
-The time has come to validate the model's claim that it allows safe interactions
-among @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
-Cleary the surface language defines three kinds of code and
+Although the surface language defines three kinds of code and
 the evaluation language lets differently-typed code interact,
-but it remains to be seen whether the mixed language satisfies the properties that
+it remains to be seen whether the mixed language satisfies the properties that
 characterize @|sdeep| and @|sshallow| types.
 @|sDeep| code should provide a strong type soundness guarantee and
 complete monitoring.
@@ -1822,14 +1769,14 @@ function @${\stypemap} that maps a surface type @${\stspec} to an evaluation-lan
 type @${(\stype \cup \sshape \cup \tdyn)}.
 
 @exact|{
-\begin{definition}[$\fTS{\slang}{\stypemap}$]\label{def:ts}
+\begin{definition}[$\fTS{\sWTlang}{\stypemap}$]\label{def:ts}
   Language\ $\slang$
   satisfies\ $\fTS{\sWTlang}{\stypemap}$
   if for all\ $\ssurface_0$
-  such that\ $\sST \ssurface_0 : \stspec$
+  such that\ $~\sST \ssurface_0 : \stspec$
   holds, one of the following holds:
   \begin{itemize}
-    \item $\ssurface_0 \srr \svalue_0$ and\ $\sWTlang \svalue_0 : \ftypemap{\stspec}$
+    \item $\ssurface_0 \srr \svalue_0$ and\ $~\sWTlang \svalue_0 : \ftypemap{\stspec}$
     \item $\ssurface_0 \srr \serror$
     \item $\ssurface_0 \srr$ diverges
   \end{itemize}
@@ -1848,7 +1795,7 @@ type @${(\stype \cup \sshape \cup \tdyn)}.
 There are three important characterization functions @${\stypemap} for the analysis:
  @${\stypemapzero} maps every surface type to @${\tdyn};
  @${\stypemapshape} maps types to shapes (same as @${\sshapecheck} from @figure-ref{fig:model:shallow-type})
- and the unitype @${\tdyn} to itself;
+ and the uni-type @${\tdyn} to itself;
  and @${\stypemapone} is the identity function on types.
 
 @exact|{
@@ -1861,8 +1808,8 @@ There are three important characterization functions @${\stypemap} for the analy
 \end{theorem}
 \begin{proofsketch}
  By three lemmas for progress, preservation, and compilation (deferred to the appendix).
- The compilation lemma says that every well-typed surface expression compiles
- to a well-typed evaluation expression.
+ % The compilation lemma says that every well-typed surface expression compiles
+ % to a well-typed evaluation expression.
 \end{proofsketch}
 }|
 
@@ -1888,7 +1835,7 @@ over every interaction between @|sdeep|-typed code and weaker code.
 More precisely, the question is whether the labels
 that arise in evaluation are consistent according to the @${\sWL} judgment
 (@figure-ref{fig:model:ownership-consistency}).
-Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
+@; Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
 @; if no labeling for (compiled s0) exists, then vacuously true, victory
 
 @exact|{
@@ -1910,7 +1857,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
   \item[Case:]
     \(\obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\stagerror}{\sowner_1}\)
   \item[]
-    by the definition, \(\sowner_1; \cdot \sWL \obars{\stagerror}{\sowner_1}\)
+    by definition \(\sowner_1; \cdot \sWL \obars{\stagerror}{\sowner_1}\)
 
   \item[Case:]
     \(\obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}\)
@@ -1935,8 +1882,8 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
   \item[Case:]
     \(\obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2} \snr \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}\)
   \item[]
-    by the definition of $\sWL$ and $\sdelta$; note that the binary operators are not elimination forms in the model, thus the number
-    computed by $\sdelta$ does not acquire the labels on $\svalue_0$ and $\svalue_1$
+    by the definition of $\sWL$ and $\sdelta$ (binary operators are not elimination forms in the model, thus the number
+    computed by $\sdelta$ does not acquire labels from $\svalue_0$ and $\svalue_1$)
 
   \item[Case:]
     \(\obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1} \snr \obars{\stagerror}{\sowner_1}\)
@@ -1944,18 +1891,18 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \item[Case:]
-    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlblbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \!\snrlbl\! \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\!\)
     \begin{enumerate}
     \item\label{step:model:cm:1}
       $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
     \item\label{step:model:cm:2}
       $\sowner_2; \cdot \sWL \svalue_0$, also by \sdeep{}-label consistency of the redex
     \item
-      let $\sowner_k$ be the outermost / right-most label in the sequence $\sownerlist_0$
+      let $\sowner_n$ be the rightmost label in the sequence $\sownerlist_0$
     \item
-      $\sowner_k; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}
+      $\sowner_n; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}
     \item
-      $\sowner_k; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by \sdeep{}-label consistency of the redex
+      $\sowner_n; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by \sdeep{}-label consistency of the redex
     \item
       by a substitution lemma
     \end{enumerate}
@@ -1982,7 +1929,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     \item
       $\sowner_0; \cdot \sWL \svalue_0$, by \sdeep{}-label consistency of the redex
     \item
-      $\sowner_2; \cdot \sWL \svalue_1$, again by \sdeep{}-label consistency of the redex
+      $\sowner_2; \cdot \sWL \svalue_1$, again by \sdeep{}-label consistency
     \item
       $\sownerlist_1$ is either all \sdeep{} or a mix of \sshallow{} and \suntyped{}, again by the redex
     \item
@@ -1992,8 +1939,9 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
   \item[Case:]
     \(\obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1} \snr \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
-    by the definition of $\scompile$, because a $\snoop{}$ boundary connects either:
-     two \sdeep{} components, two \sshallow{} components, two \suntyped{} components, or one \sshallow{} and one \suntyped{} component
+    by the definition of $\scompile$, because a $\snoop{}$ boundary connects either
+     two \sdeep{} components or a mix of \sshallow{} and \suntyped{} components
+     (self edges or ${\sS}$ to ${\sU}$)
 
   \item[Case:]
     \(\obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\sscanerror}{\sowner_1}\)
@@ -2003,7 +1951,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
   \item[Case:]
     \(\obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}\)
   \item[]
-    by the definition of $\scompile$, because a $\sscan{}$ boundary only links an \suntyped{} component to a \sshallow{} component
+    by the definition of $\scompile$, because a $\sscan{}$ boundary links only \sshallow{} and/or \suntyped{} components
 
   \item[Case:]
     \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\swraperror}{\sowner_1}\)
@@ -2019,8 +1967,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snrlblbreak
       \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)
   \item[]
-    by the definition of $\sWL$;
-    note that the rule moves the elements of the pair in the redex into a new pair in the contractum
+    by the definition of $\sWL$; the step makes a new pair
 
   \item[Case:]
   \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\svalue_0}{\sowner_1}\)
@@ -2029,6 +1976,7 @@ Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.
     by the definition of $\sWL$
 
   \end{description}
+  \vspace{-10mm}
 \end{proofsketch}
 }|
 

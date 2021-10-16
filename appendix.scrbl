@@ -11,7 +11,7 @@
 
 @Figure-ref{fig:appendix:surface-types} presents the full typing judgment
 for the surface language.
-@Figure-ref{fig:appendix:surface-completion} presents the completion rules
+@Figure-ref{fig:appendix:surface-completion} presents the compilation rules
 for all expressions except for module expressions, which are covered in
 full by @figure-ref{fig:model:completion2}.
 @Figure-ref{fig:appendix:deep-types} presents the full @|sDeep| typing judgment,
@@ -257,7 +257,7 @@ full by @figure-ref{fig:model:completion2}.
 
 @figure[
   "fig:appendix:surface-completion"
-  @elem{Surface-to-evaluation completion}
+  @elem{Surface-to-evaluation compilation}
 
 @exact|{
 \begin{mathpar}
@@ -911,7 +911,7 @@ Although the design of a lifted reduction relation is a challenge
 @section[#:tag "sec:model:model:lemmas"]{Lemmas for the Model}
 
 @exact|{
-\begin{lemma}[completion]\label{lemma:model:completion}
+\begin{lemma}[compilation]\label{lemma:model:completion}
   If\ $\sST \ssurface_0 : \stspec$
   then\ $\sST \ssurface_0 : \stspec \scompile \sexpr_0$
   and either:
