@@ -17,15 +17,15 @@ never escape to untyped, then @|sdeep| and @|sshallow| can freely share these
 values.
 These are all potential directions for future work.
 
-A second line of future work is to incorporate a dynamic type
-that satisfies the graduality properties@~cite{svcb-snapl-2015}.
-For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
-can be achieved by adding a new wrapper for dynamic-typed values and nothing
-more.
-Implementing the dynamic type may pose new challenges, especially when it
-comes to blame and if the implementation targets an existing
-static language@~cite{g-snapl-2019}.
-@; HO HUM ... cut this paragraph?
+@; A second line of future work is to incorporate a dynamic type
+@; that satisfies the graduality properties@~cite{svcb-snapl-2015}.
+@; For the model, the authors conjecture that @|sdeep| and @|sshallow| soundness
+@; can be achieved by adding a new wrapper for dynamic-typed values and nothing
+@; more.
+@; Implementing the dynamic type may pose new challenges, especially when it
+@; comes to blame and if the implementation targets an existing
+@; static language@~cite{g-snapl-2019}.
+@; @; HO HUM ... cut this paragraph?
 
 A third direction is to identify best practices for coding in
 a three-way language.
