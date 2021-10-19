@@ -32,8 +32,8 @@ over what makes for a convenient mix.
 Gradually-typed languages include a universal @tt{Dynamic} type that
 helps to blur the distinction between typed and untyped code@~cite{svcb-snapl-2015}.
 Migratory typing systems add
-idiomatic types to an existing language@~cite{tfffgksst-snapl-2017} 
-Other methods include the development of novel languages@~cite{wnlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
+idiomatic types to an existing language@~cite{tfffgksst-snapl-2017}.
+Other methods include the development of novel languages@~cite{wzlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
 and compilers@~cite{rat-oopsla-2017,bbst-oopsla-2017}.
 
 The goal of this paper is to advance the state of mixed-typed languages in a

@@ -1445,7 +1445,7 @@ metafunction (@figure-ref{fig:model:extra-rr}) and halt with a tag error if
 @${\sdelta} is undefined.
 In general, @${\sdelta} models the behavior of a run-time system that works
 at a lower level of abstraction than the evaluation language.
-For unary operations, @${\sdelta} extracts an element from a pair.
+For unary operations, @${\sdelta} eliminates a pair.
 For binary operations, @${\sdelta} performs arithmetic.
 
 The rules for function application check that the first expression is a
@@ -1516,7 +1516,8 @@ labels in proper order by reversing them, because the argument value flows in
 to the function.
 
 Labels typically accumulate without bound.
-The only way that labels may disappear is after a successful run-time check.
+The only way that labels may disappear is after a successful run-time check
+(or after an error).
 For example, the @${\swrap} rule for base types says that party @${\sowner_1} may
 assume full responsibility of numbers that reach a well-typed boundary.
 
@@ -1589,7 +1590,7 @@ To minimize parenthesis and superscripts, the abbrevation @${\obbars{\cdot}{\cdo
 captures a sequence of labels.
 For example, the value @${\obars{\obars{\obars{4}{\sowner_0}}{\sowner_1}}{\sowner_2}}
 matches the pattern @${\obbars{\svalue_0}{\sownerlist_0}}
-with @${\svalue_0\!=\!42}
+with @${\svalue_0\!=\!4}
 and @${\sownerlist_0\!=\!\fcons{\sowner_0}{\fcons{\sowner_1}{\sowner_2}}}.
 }
 ]
@@ -1603,7 +1604,7 @@ and an environment (@${\sownerenv}).
 Variables must have a binding in the label environment that matches the
 context label.
 Most expressions simply need consistent subterms.
-Boundary expressions and guards values are switch points; these terms
+Boundary expressions and guarded values are switch points; these terms
 are consistent if their subterm matches the context label that appears
 inside the boundary.
 Lastly, the rules for labeled expressions specify the allowed mixtures.
@@ -1896,7 +1897,7 @@ that arise in evaluation are consistent according to the @${\sWL} judgment
     \item\label{step:model:cm:1}
       $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
     \item\label{step:model:cm:2}
-      $\sowner_2; \cdot \sWL \svalue_0$, also by \sdeep{}-label consistency of the redex
+      $\sowner_1; \cdot \sWL \svalue_0$, also by \sdeep{}-label consistency of the redex
     \item
       let $\sowner_n$ be the rightmost label in the sequence $\sownerlist_0$
     \item

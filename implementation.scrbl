@@ -48,8 +48,7 @@ to reason about its uses of @|sdeep|-typed identifiers.
 
 In Typed Racket, all exports from @|sdeep| code get compiled to
 @emph{rename transformers} that statically resolve to either an
-unwrapped identifier or a wrapped one@~cite{tscff-pldi-2011}.
-@; ctf-sfp-2007
+unwrapped identifier or a wrapped one@~cite{ctf-sfp-2007,tscff-pldi-2011}.
 The wrappers do not have types due to the organization of
 compiled code,@note{
 Type environment information gets compiled to a submodule@~cite{f-gpce-2013}.

@@ -40,7 +40,7 @@ Anecdotal experience suggests the following strategy:
 }
 @item{
   Once all high-traffic boundaries
-  are typed, switch back to @|sdeep| maximize performance.
+  are typed, switch back to @|sdeep| to maximize performance.
 }
 ]
 @|noindent|The challenge is to systematically test the effectiveness of this

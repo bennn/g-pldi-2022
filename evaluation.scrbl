@@ -148,7 +148,7 @@ a function contract that seals inputs and unseals outputs@~cite{gmfk-dls-2007}.
 The seals change the outcome of basic operations.
 
 @|sShallow| Racket avoids all such changes in behavior,
- including the well-know object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},
+ including the well-known object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},
  because the @|stransient| semantics does not use wrappers.
 
 
