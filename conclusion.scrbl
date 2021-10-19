@@ -5,35 +5,38 @@
 
 @; ps Greenberg is a 2nd impasse, stat-first vs dyn-first ... worth mentioning?
 
-@title[#:tag "sec:conclusion"]{Let The Programmer Choose}
-@; freedom?
+@title[#:tag "sec:conclusion"]{Conclusion}
+@; {On Language Design}
+@; {Let the Programmer Choose}
 
-Gradual typing resolves the impasse between static and dynamic languages by
-bringing both styles under one roof and letting programmer choose.
-In the same way, combining @|sdeep| and @|sshallow| types resolves an
-impasse among mixed-typed languages.
-The problem is that every sound method of typed--untyped interoperability must
+Gradual typing resolves the impasse between static and dynamic typing by
+bringing both styles under one roof and letting the programmer choose.
+In the same way, the combination of @|sdeep| and @|sshallow| types resolves an
+impasse evident in mixed-typed languages.
+Every sound method for mixed-typed interoperability must
 balance three dimensions: the guarantees that types provide, the expressiveness
 of type boundaries, and the cost of run-time checks.
-Different balances offer distinct strengths and weaknesses, but no existing
-language lets programmers combine type-enforcement strategies.
+Because different choices offer fundamentally different strengths and
+weaknesses, a promising way forward is to give programmers
+control over how to enforce gradual types.
 
-This paper contributes the first language design that gives programmers the
-ability to choose between two forms of sound gradual typing.
-The author of a typed module can use either @|sdeep| types as realized by
-the @|snatural| semantics or @|sshallow| types as realized by the @|stransient|
-semantics.
-At run-time, the language ensures the integrity of @|sdeep| and @|sshallow|
-types against untyped code and, as needed, against one another.
-An implementation of this design in Typed Racket suggests that the combination
-is better than either @|sdeep| or @|sshallow| alone on all three fronts.
 
-As a whole, the work reveals insights about the extent to which two typed
-languages can cooperate in the presence of untyped code.
-The integration of @|snatural| and @|stransient| demonstrates that extreme
-combinations are possible.
-Further systematic efforts are needed to find optimal points in this
-multi-faceted design space.
+@; This paper contributes the first language design that gives programmers the
+@; ability to choose between two forms of sound gradual typing.
+@; The author of a typed module can use either @|sdeep| types as realized by
+@; the @|snatural| semantics or @|sshallow| types as realized by the @|stransient|
+@; semantics.
+@; At run-time, the language ensures the integrity of @|sdeep| and @|sshallow|
+@; types against untyped code and, as needed, against one another.
+@; An implementation of this design in Typed Racket suggests that the combination
+@; is better than either @|sdeep| or @|sshallow| alone on all three fronts.
+@; 
+@; As a whole, the work reveals insights about the extent to which two typed
+@; languages can cooperate in the presence of untyped code.
+@; The integration of @|snatural| and @|stransient| demonstrates that extreme
+@; combinations are possible.
+@; Further systematic efforts are needed to find optimal points in this
+@; multi-faceted design space.
 
 
 @;@section[#:tag "sec:evaluation:perf:release"]{Release Information}

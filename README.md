@@ -5,7 +5,7 @@ Goal: move chapter 6 of Ben G. dissertation to a paper
 
 Target: PLDI 2022
 - deadline 2021-11-19
-- cfp <https://pldi22.sigplan.org/track/pldi-2022-pldi#Call-for-Papers
+- cfp <https://pldi22.sigplan.org/track/pldi-2022-pldi#Call-for-Papers>
 - 12 pages 10pt
 - pldi.zip format
 

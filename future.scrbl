@@ -27,26 +27,25 @@ These are all potential directions for future work.
 @; static language@~cite{g-snapl-2019}.
 @; @; HO HUM ... cut this paragraph?
 
-A third direction is to identify best practices for coding in
+A second future direction is to identify best practices for coding in
 a three-way language.
-Anecdotal experience suggests that mixing @|sdeep| and @|sshallow| provides
-a better way to type a codebase:
+Anecdotal experience suggests the following strategy:
 @itemlist[#:style 'ordered
 @item{
-  Start by adding @|sdeep| types, because their strong guarantees may help
+  Start by adding @|sdeep| types because their strong guarantees may help
   identify logical errors.
 }
 @item{
-  If performance becomes an issue, switch to @|sshallow| types and continue
-  adding @|sshallow| annotations to the next modules.
+  If performance becomes an issue, switch to @|sshallow|.
 }
 @item{
-  Once the codebase is predominantly typed, or once all high-traffic boundaries
+  Once all high-traffic boundaries
   are typed, switch back to @|sdeep| maximize performance.
 }
 ]
-@|noindent|The challenge is to rigorously test the effectiveness of this
-migration story and to seek out other ways to leverage the spectrum of
+@|noindent|The challenge is to systematically test the effectiveness of this
+migration story.
+Meanwhile, there may be additional ways to leverage the spectrum of
 type enforcement.
 
 

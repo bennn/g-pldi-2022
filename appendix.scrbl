@@ -1257,6 +1257,53 @@ In the future, the @tt{define-typed/untyped-identifier}
 
 @section[#:tag "sec:racket-users"]{Example Programs}
 
+Other top types for higher-order values can lead to similar programs.
+For example, @|sShallow| can import a function at the general @tt{Procedure} type,
+cast it to a more specific type, and try an application.
+The application may succeed if the specific type is correct.
+A @|sDeep| cast simply adds a second wrapper on top of the
+restrictive wrapper for the @tt{Procedure} type.@note{Because
+@|sdeep| program can do so little with a @tt{Procedure} value, library authors
+must use clever types to define generic utility functions for procedures.
+Until recently, the @tt{object-name} function had a useless type
+(@github-commit["racket" "typed-racket" "47a5ab3e2f335e6956aea4b98700d22a359ad6b2"]).}
+
+@Figure-ref{fig:evaluation:no-wrap} demonstrates the issue with a mutable pair
+(@tt{MPairof}) type.
+@|sDeep| Racket raises a run-time error when untyped code tries to call the @tt{add-mpair}
+ function, but @|sShallow| can run the program.
+
+@Figure-ref{fig:evaluation:index-of} presents a second, more subtle case.
+This typed module imports an untyped function, @tt{index-of}, with a precise
+ polymorphic type.
+The wrapper that enforces this type
+ creates a new wrapper for every input to the function---to enforce parametric
+ polymorphism@~cite{gmfk-dls-2007}.
+Unfortunately, these input wrappers change the behavior of @tt{index-of};
+ it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
+ a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
+
+@|sDeep| Racket wrappers is to reject certain operations
+without otherwise changing the behavior of program, wrappers can cause some
+programs to run differently.
+One obvious case is code that explicitly looks for wrappers; the answers to
+low-level observations such as @tt{has-contract?} may depend on the type
+boundaries in a @|sDeep| Racket program.
+@Figure-ref{fig:evaluation:index-of} presents a second, more subtle case.
+This typed module imports an untyped function, @tt{index-of}, with a precise
+ polymorphic type.
+The wrapper that enforces this type
+ creates a new wrapper for every input to the function---to enforce parametric
+ polymorphism@~cite{gmfk-dls-2007}.
+Unfortunately, these input wrappers change the behavior of @tt{index-of};
+ it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
+ a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
+
+@|sShallow| Racket avoids all such changes in behavior,
+ including the well-know object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},
+ because the @|stransient| semantics does not use wrappers to enforce types.
+
+
 @figure*[
   "fig:evaluation:any-wrap"
   @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}

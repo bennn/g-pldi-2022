@@ -47,7 +47,7 @@ Just-in-time enforcement may improve performance@~cite{kas-pldi-2019,vsc-dls-201
 Gradual languages may add a dynamic type.
 
 
-@section{@|sDeep| and @|sShallow| Types}
+@section[#:tag "sec:background:deep-shallow"]{@|sDeep| and @|sShallow| Types}
 
 @(define untyped-fn @tt{text})
 

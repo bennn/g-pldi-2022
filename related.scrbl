@@ -22,8 +22,8 @@ of @citet{gf-icfp-2018}, which is in turn inspired by
 Unlike those frameworks, the present model uses a surface-to-evaluation compiler
 similar to how @citet{clzv-ecoop-2018} compile several gradual languages to
 the @exact{\kafka} core language.
-Our compiler is essentially a completion pass@~cite{h-scp-1994} because its primary role is
-to insert run-time checks.
+Our particular compiler is inspired by @citet{h-scp-1994}, who defines
+a completion pass to make run-time type checks explicit.
 
 There is a great deal of related work that addresses the performance of
 @|sdeep| or @|sshallow| types@~cite{bbst-oopsla-2017,kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,mt-oopsla-2017,rmhn-ecoop-2019,mt-oopsla-2021}.
