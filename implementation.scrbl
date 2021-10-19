@@ -20,11 +20,11 @@
 
 We have implemented three-way interactions as an extension to Typed Racket.
 The extension combines standard ``@|sDeep|'' Typed Racket, which implements the
-@|snatural| semantics, [CITE] with the ``@|sShallow| Racket'' implementation of
-@|stransient|@~cite{glfd-pj-2021}.
+@|snatural| semantics@~cite{tf-popl-2008}, with the ``@|sShallow| Racket''
+implementation of @|stransient|@~cite{glfd-pj-2021}.
 Programmers can access these options via two module
-languages: @tt{#lang typed/racket} provides @|sdeep| types and
-@tt{typed/racket/shallow} provides @|sshallow| types.
+languages: @tt{#lang typed/racket} for @|sdeep| types and
+@tt{typed/racket/shallow} for @|sshallow|.
 Switching between languages is a one-line change except in programs that
 manipulate type boundaries directly.
 
@@ -48,10 +48,11 @@ to reason about its uses of @|sdeep|-typed identifiers.
 
 In Typed Racket, all exports from @|sdeep| code get compiled to
 @emph{rename transformers} that statically resolve to either an
-unwrapped identifier or a wrapped one [CITE].
+unwrapped identifier or a wrapped one@~cite{tscff-pldi-2011}.
+@; ctf-sfp-2007
 The wrappers do not have types due to the organization of
 compiled code,@note{
-Type environment information gets compiled to a submodule [CITE].
+Type environment information gets compiled to a submodule@~cite{f-gpce-2013}.
 Wrappers compile to a sibling submodule to delay the cost of
 building them.}
 but they do come with a compile-time pointer to the unwrapped identifier.
@@ -85,16 +86,17 @@ contracts.
 
 @section[#:tag "sec:implementation:macro"]{Macros and Hidden Exports}
 
-Macro expansion may let private identifiers from one
-module appear in (the expansion of) another module [CITE].
-If one module is @|sdeep|-typed and the other is @|sshallow|-typed,
+Macro expansion may cause private identifiers from one
+module to appear in (the expansion of) another module@~cite{f-popl-2016}.
+@; fcdf-jfp-2012
+If one module uses @|sdeep|-typed and the other uses @|sshallow|,
 this behavior is a threat to type soundness.
-The stowed identifiers must be protected or validated like any other export.
+The stowed identifiers must be protected/validated like any other export.
 
 By default, Typed Racket prevents @|sDeep| Racket and @|sShallow| Racket
 modules from sharing macros.
 A programmer must inspect each macro and provide it unsafely
-to allow reuse.
+to enable reuse.
 @; example: rackunit macros
 @; future: replace manual with a static analysis
 @; future: protect stowed exports
@@ -107,8 +109,8 @@ Static types and higher-order contracts are fundamentally different
 tools.
 Types enable proofs via static analysis.
 Contracts check behaviors dynamically.
-For certain types, such as a type for terminating functions,
-it is hard to formulate an equivalent contract [CITE].
+For certain types, such as a type for terminating functions@~cite{ngtv-pldi-2019},
+it is hard to formulate an equivalent contract.
 A language may therefore wish to offer an API that lets programmers
 fine-tune the contracts that enforce @|sdeep| types at a boundary.
 These APIs may cause friction in a three-way implementation.

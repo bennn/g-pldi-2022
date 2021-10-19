@@ -8,6 +8,7 @@
 @string{flops = {FLOPS}} %{Functional and Logic Programming}
 @string{fpca = {FPCA}} % Functional Programming Languages and Computer Architecture
 @string{fse = {FSE}} %{"{ACM SIGSOFT} International Symposium on the Foundations of Software Engineering"}
+@string{gpce = {GPSE}} % {Generative Programming: Concepts and Experiences}
 @string{hosc = {HOSC}} %{Higher-order and symbolic computation}
 @string{icalp = {ICALP}} % ....
 @string{icfp = {ICFP}} %{{{ACM SIGPLAN} International Conference on Functional Programming}}
@@ -1310,6 +1311,14 @@
   year={2007}
 }
 
+@inproceedings{f-gpce-2013,
+  author    = {Matthew Flatt},
+  title     = {Submodules in Racket: You Want it \emph{When}, Again?},
+  booktitle = gpce,
+  pages     = {13--22},
+  year      = {2013}
+}
+
 @inproceedings{grmhn-vmil-2019,
   title = {Which of My Transient Type Checks Are Not (Almost) Free?},
   author = {Gariano, Isaac Oscar and Roberts, Richard and Marr, Stefan and Homer, Michael and Noble, James},
@@ -1440,9 +1449,19 @@
 
 @inproceedings{ngtv-pldi-2019,
   author    = {Phuc C. Nguyen and Thomas Gilray and Sam Tobin{-}Hochstadt and David Van Horn},
-  title     = {Size-change termination as a contract: dynamically and statically enforcing termination for higher-order programs},
+  title     = {Size-change Termination as a Contract: Dynamically and Statically Enforcing Termination for Higher-Order Programs},
   booktitle = pldi,
   pages     = {845--859},
   year      = {2019}
+}
+
+@article{fcdf-jfp-2012,
+  author    = {Matthew Flatt and Ryan Culpepper and David Darais and Robert Bruce Findler},
+  title     = {Macros that Work Together: Compile-Time Bindings, Partial Expansion, and Definition Contexts},
+  journal   = jfp,
+  volume    = {22},
+  number    = {2},
+  pages     = {181--216},
+  year      = {2012}
 }
 
