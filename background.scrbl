@@ -111,7 +111,27 @@ from every type boundary.
 @figure[
   "fig:model:base-interaction"
   @elem{Outline for @|sdeep|, @|sshallow|, and @|suntyped| interactions}
-  fig:model-interaction-y]
+  @; fig:model-interaction-y
+  @exact|{ \newcommand{\bigicon}[1]{\scalebox{1.6}{\(#1\)}}\begin{tikzpicture}[tips=proper]
+
+  \node (S) {\bigicon{\sS}};
+  \node (D) [right of=S,xshift=1.4cm,yshift=8mm] {\bigicon{\sD}};
+  \node (U) [right of=D,xshift=1.4cm,yshift=-8mm] {\bigicon{\sU}};
+
+  \draw [>=latex,<->] (S) edge [bend left=7] node [above,xshift=-1mm] {\(\swrap\)} (D);
+  %\draw [>=latex,<->] (D) edge [bend left=7] (S);
+
+  \draw [>=latex,<->] (D) edge [bend left=7] node [above,xshift=2mm] {\(\swrap\)} (U);
+  %\draw [>=latex,->] (U) edge [bend left=7] (D);
+
+  \draw [>=latex,->] ([yshift=-0.5mm] S.east) edge [bend right=7] node [above,yshift=-1mm] {\(\snoop\)} ([yshift=-0.5mm] U.west);
+  \draw [>=latex,->] ([yshift=-2mm] U.west) edge [bend left=7] node [below] {\(\sscan\)} ([yshift=-2mm] S.east);
+
+  %\draw [->] (S) edge [loop, min distance=2mm,in=240,out=200,looseness=3] node [below] {\(\snoop\)} (S);
+  %\draw [->] (D) edge [loop, min distance=2mm,in=110,out=70,looseness=3] node [above] {\(\snoop\)} (D);
+  %\draw [->] (U) edge [loop, min distance=2mm,in=300,out=340,looseness=3] node [below] {\(\snoop\)} (U);
+
+\end{tikzpicture}\vspace{-2ex} }|]
 
 @subsection{@|sNatural| Semantics}
 
