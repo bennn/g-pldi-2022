@@ -28,7 +28,7 @@
 (define (get-with-cache-version)
   ((get-info '("with-cache")) 'version))
 
-(define no-keys (string->symbol (string-append "no-keys:" (get-with-cache-version))))
+(define no-keys (string->symbol (string-append "no-keys:" #;(get-with-cache-version))))
 
 (define *use-cache?* (make-parameter #t))
 (define *current-cache-directory* (make-parameter (build-path (current-directory) "compiled" "with-cache")))
