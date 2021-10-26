@@ -44,7 +44,7 @@ behavioral claims implied by higher-order types.
 The @|sTransient| strategy uses first-order checks to enforce @|sshallow| aspects
 of types in type-annotated code.
 Unsurprisingly, these different methods of enforcing types come with
-benefits and drawbacks.
+different benefits and drawbacks.
 Contracts in @|sNatural| enable strong type soundness
 and complete monitoring guarantees@~cite{gfd-oopsla-2019},
 but can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
@@ -54,39 +54,44 @@ but rarely dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-20
 The question thus arises as to whether the two enforcement strategies can
 interoperate, giving programmers @|sdeep| types
 when guarantees matter and @|sshallow| types to avoid performance bottlenecks.
-This paper provides an affirmative answer: 
-@|sdeep| and @|sshallow| types can interoperate without sacrificing
+This paper provides an affirmative answer.
+The @|sdeep| and @|sshallow| types can interoperate without sacrificing
 their formal properties.
-Futhermore, the combination brings measurable benefits.
-The evidence for these claims has three parts:
+Best of all, the combination brings measurable benefits.
+
+Studying these questions yields three contributions:
 
 @itemlist[
-@item{
-  A model language with proofs of type soundness and complete monitoring (@secref{sec:model}).
-  The language supports @|sdeep|-typed code, @|sshallow|-typed code, and untyped code
-  via a semantics that applies ideas from @|sNatural| and @|sTransient|.
-  @; The proofs establish the integrity of types.
-}
-@item{
-  An implementation that combines the original @|sDeep| Typed Racket@~cite{tfffgksst-snapl-2017} with a @|sshallow|-typed variant@~cite{glfd-pj-2021} (@secref{sec:implementation}).
-  The @|sdeep| and @|sshallow| halves of the implementation stand on equal footing.
-  Indeed, every @|sdeep|-typed program can be expressed in @|sShallow| Racket.
-}
-@item{
-  An evaluation of the guarantees, expressiveness, and performance
-  of the Typed Racket implementation (@secref{sec:evaluation}).
-  The performance study uses the GTP benchmark suite.@note{@|gtp-url|}
-  The expressiveness findings are driven by questions posted to the Typed Racket
-  mailing list.
-}
-]
 
-In general, this paper is the first to combine type-sound gradual
-typing strategies in a way that gives programmers control over the
-protection/performance tradeoff.
-The combination is coarse and the two typed semantics do little to cooperate
-(@section-ref{sec:future}), but the evaluation suggests that interoperability
-can effectively address tradeoffs without restricting the source language
-or replacing the compiler.
+@item{A theoretical model that integrates @|sdeep|-typed code,
+  @|sshallow|-typed code, and untyped code via a semantics that
+  applies ideas from @|sNatural| and @|sTransient| (@secref{sec:model}).
+  The model comes with two essential meta-theorems: the first
+  validates plain type soundness for @|sshallow|-typed code, and the
+  second shows that @|sdeep|-typed code retains the customary type
+  soundness property @emph{with} complete monitoring.}
+  
+@item{An implementation of Typed Racket@~cite{tfffgksst-snapl-2017}
+  that permits developers to combine @|sDeep|, a @|sshallow|, and
+  untyped components in a safe manner (@secref{sec:implementation}).
+  The @|sdeep| and @|sshallow| halves of the implementation stand on
+  equal footing.  Every @|sdeep|-typed program can be expressed in
+  @|sShallow| Racket and vice versa. Switching is a one-word change.}
+
+@item{A practical evaluation of the performance, guarantees, and
+  expressiveness of the revised Typed Racket implementation
+  (@secref{sec:evaluation}).  The performance study of the novel 3-way
+  Typed Racket demonstrates significant improvements on the GTP
+  benchmark suite@note{@|gtp-url|} over the old 2-way version.}
+  
+]
+@;
+Generally put, these contributions strongly suggest that combining
+type-sound gradual typing strategies gives programmers control over the
+protection/performance tradeoff.  The combination is coarse and the
+two typed semantics do little to cooperate (@section-ref{sec:future}),
+but the evaluation suggests that interoperability can effectively
+address tradeoffs without restricting the source language or replacing
+the compiler.
 
 
