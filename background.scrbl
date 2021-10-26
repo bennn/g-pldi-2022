@@ -36,15 +36,17 @@ idiomatic types to an existing language@~cite{tfffgksst-snapl-2017}.
 Other methods include the development of novel languages@~cite{wzlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
 and compilers@~cite{rat-oopsla-2017,bbst-oopsla-2017}.
 
-The goal of this paper is to advance the state of mixed-typed languages in a
+The goal is to advance the state of mixed-typed languages in a
 general setting.
 Consequently, the formal development begins with two restrictions:
  types may only be enforced with ahead-of-time techniques,
  and there is no dynamic type.
 These rules ensure a widely-applicable baseline.
-Specializations are promising avenues for future work.
+
+@; MF: this sounds like "future worK" so put it there
+@;{Specializations are promising avenues for future work.
 Just-in-time enforcement may improve performance@~cite{kas-pldi-2019,vsc-dls-2019,bbst-oopsla-2017,rmhn-ecoop-2019}.
-Gradual languages may add a dynamic type.
+Gradual languages may add a dynamic type.}
 
 
 @section[#:tag "sec:background:deep-shallow"]{@|sDeep| and @|sShallow| Types}
@@ -103,8 +105,8 @@ In untyped code, these predictions are trivial;
  soundness merely ensures a well-formed result.
 The property that distinguishes @|sdeep| types from @|sshallow| is
 complete monitoring@~cite{dtf-esop-2012,gfd-oopsla-2019}.
-A semantics that satisfies complete monitoring is able to enforce the obligations
-from every type boundary.
+A semantics that satisfies complete monitoring enforces the obligations
+from one type boundary across all boundaries. 
 @; thus giving an interface the ability to constrain behaviors.
 
 
@@ -158,8 +160,8 @@ optimizations in the same manner as a fully-typed language@~cite{tscff-pldi-2011
 
 The @|sTransient| semantics is an implementation of @|sshallow| types that
 does not require higher-order wrappers@~cite{vss-popl-2017}.
-@|sTransient| protects typed code by rewriting it to include first-order
-checks throughout typed code:
+@|sTransient| protects typed code by injecting first-order
+checks throughout typed pieces of code:
 typed, public functions must check their inputs;
 typed modules must check their untyped imports; and
 typed expressions must check the results computed during a function call,
