@@ -23,7 +23,7 @@
   gtp-plot/configuration-info
   gtp-plot/performance-info
   gtp-plot/typed-racket-info
-  with-cache
+  "../with-cache/with-cache.rkt"
   (only-in "../main.rkt" glob-first stransient default-rkt-version transient-rkt-version bm)
   (only-in math/number-theory factorial)
   (only-in math/statistics mean)
@@ -170,7 +170,7 @@
   (string->number (rnd
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () bm-name))]
-                 [*with-cache-fasl?* #f])
+                 #;[*with-cache-fasl?* #f])
     (with-cache (cachefile (format "mixed-bestpath-~a.rktd" bm-name))
       (λ ()
         (define pi (benchmark-name->performance-info3d bm-name))
@@ -186,7 +186,7 @@
   (map (lambda (nv) (cons (car nv) (if (cdr nv) (string->number (rnd (cdr nv))) #f)))
     (parameterize ([*current-cache-directory* cache-dir]
                    [*current-cache-keys* (list (λ () bm-name*))]
-                   [*with-cache-fasl?* #f])
+                   #;[*with-cache-fasl?* #f])
       (with-cache (cachefile "mixed-bestpath.rktd")
         (λ ()
           (for/list ((bm-name (in-list bm-name*)))
@@ -263,7 +263,7 @@
 (define (get-mixed-worst-table name*)
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () name*))]
-                 [*with-cache-fasl?* #f])
+                 #;[*with-cache-fasl?* #f])
     (with-cache (cachefile "mixed-worst-table.rktd")
       (λ ()
         (for/list ([name (in-list name*)])
@@ -336,7 +336,7 @@
 (define (get-mixed-path-table D name*)
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () (cons D name*)))]
-                 [*with-cache-fasl?* #f])
+                 #;[*with-cache-fasl?* #f])
     (with-cache (cachefile "mixed-path-table.rktd")
       (λ ()
         (for/list ([name (in-list name*)])
@@ -492,7 +492,7 @@
 (define (get-3d-table bm-name*)
   (parameterize ([*current-cache-directory* cache-dir]
                  [*current-cache-keys* (list (λ () bm-name*))]
-                 [*with-cache-fasl?* #f])
+                 #;[*with-cache-fasl?* #f])
     (with-cache (cachefile "mixed-3d-best.rktd")
       (λ ()
         (for/list ((bm (in-list bm-name*)))
