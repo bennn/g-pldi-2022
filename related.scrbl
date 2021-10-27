@@ -27,7 +27,7 @@ a completion pass to make run-time type checks explicit.
 
 There is a great deal of related work that addresses the performance of
 @|sdeep| or @|sshallow| types@~cite{bbst-oopsla-2017,kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,mt-oopsla-2017,rmhn-ecoop-2019,mt-oopsla-2021}.
-This research is orthogonal; these implementation techniques should be apply
+This research is orthogonal; these implementation techniques should apply
 to a three-way language as well as any normal gradual language.
 Our language benefits from one such technique: collapsible contracts@~cite{fgsfs-oopsla-2018}.
 
