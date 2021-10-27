@@ -70,7 +70,7 @@ Studying these questions yields three contributions:
   validates plain type soundness for @|sshallow|-typed code, and the
   second shows that @|sdeep|-typed code retains the customary type
   soundness property @emph{with} complete monitoring.}
-  
+
 @item{An implementation of Typed Racket@~cite{tfffgksst-snapl-2017}
   that permits developers to combine @|sDeep|, a @|sshallow|, and
   untyped components in a safe manner (@secref{sec:implementation}).
@@ -83,7 +83,7 @@ Studying these questions yields three contributions:
   (@secref{sec:evaluation}).  The performance study of the novel 3-way
   Typed Racket demonstrates significant improvements on the GTP
   benchmark suite@note{@|gtp-url|} over the old 2-way version.}
-  
+
 ]
 @;
 Generally put, these contributions strongly suggest that combining

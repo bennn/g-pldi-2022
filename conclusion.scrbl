@@ -9,16 +9,29 @@
 @; {On Language Design}
 @; {Let the Programmer Choose}
 
-Gradual typing resolves the impasse between static and dynamic typing by
-bringing both styles under one roof and letting the programmer choose.
-In the same way, the combination of @|sdeep| and @|sshallow| types resolves an
-impasse evident in mixed-typed languages.
-Every sound method for mixed-typed interoperability must
-balance three dimensions: the guarantees that types provide, the expressiveness
-of type boundaries, and the cost of run-time checks.
-Because different choices offer fundamentally different strengths and
-weaknesses, a promising way forward is to give programmers
-control over how to enforce gradual types.
+@; MF conclusion
+
+This is the first implementation of a grad typ sys where programmers can
+explicitly choose to trade performance for guarantees.
+While guarantees could be important during debugging, performance might be
+desirable for deploying.
+Indeed, even for the deployed system, strengthening guarantees in some brittle
+parts might just help debug the inevitable failure.
+
+In the future, implementors may wish to explore additional ways to trade
+performance for guarantees, making the trade-off even programmable.
+
+
+@; Gradual typing resolves the impasse between static and dynamic typing by
+@; bringing both styles under one roof and letting the programmer choose.
+@; In the same way, the combination of @|sdeep| and @|sshallow| types resolves an
+@; impasse evident in mixed-typed languages.
+@; Every sound method for mixed-typed interoperability must
+@; balance three dimensions: the guarantees that types provide, the expressiveness
+@; of type boundaries, and the cost of run-time checks.
+@; Because different choices offer fundamentally different strengths and
+@; weaknesses, a promising way forward is to give programmers
+@; control over how to enforce gradual types.
 
 
 @; This paper contributes the first language design that gives programmers the
