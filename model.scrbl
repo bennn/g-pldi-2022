@@ -13,8 +13,8 @@ A normal mixed-typed language allows for two styles of code, typed and untyped,
 and uses run-time checks to enforce the claims made by static types.
 Our model allows for three syntaxes:
 @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
-Both @|sdeep| and @|sshallow| code must satisfy a type checker that
-validates typical well-formedness properties.
+Both @|sdeep| and @|sshallow| code must satisfy a type checker, which
+validates conventional well-formedness properties.
 @|sUntyped| code has fewer constraints.
 Run-time checks enforce type claims at boundaries, but use different strategies
 for @|sdeep| and for @|sshallow| types.
@@ -1833,7 +1833,7 @@ a tag error:
 
 Complete monitoring states that the evaluation language has control
 over every interaction between @|sdeep|-typed code and weaker code.
-More precisely, the question is whether the labels
+More precisely, the proof-technical question is whether the labels
 that arise in evaluation are consistent according to the @${\sWL} judgment
 (@figure-ref{fig:model:ownership-consistency}).
 @; Both @${\sexpr_0} and @${\sexpr_1} below refer to labeled expressions.

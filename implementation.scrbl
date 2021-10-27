@@ -18,19 +18,22 @@
 
 @title[#:tag "sec:implementation"]{Implementation Challenges}
 
-We have implemented three-way interactions as an extension to Typed Racket.
-The extension combines standard ``@|sDeep|'' Typed Racket, which implements the
+We have implemented three-way interactions atop Typed Racket.
+The extension leverages the standard Typed Racket, which already implements the
 @|snatural| semantics@~cite{tf-popl-2008}, with the ``@|sShallow| Racket''
 implementation of @|stransient|@~cite{glfd-pj-2021}.
-Programmers can access these options via two module
-languages: @tt{#lang typed/racket} for @|sdeep| types and
+Programmers can access these options via module
+languages: @tt{typed/racket} for @|sdeep| types and
 @tt{typed/racket/shallow} for @|sshallow|.
-Switching between languages is a one-line change except in programs that
-manipulate type boundaries directly.
+Switching between typed languages is a one-word change.
 
 For the most part, the model was an effective guide for the implementation.
-Unexpected challenges arose regarding macros, separate compilation, and
+Unexpected challenges arose regarding separate compilation and
 the enforcement of @|sdeep| types with wrapping higher-order contracts.
+Racket's macros also posed a problem, but to keep the paper applicable to
+other gradually typed languages, a description of these issues is relegated
+to the appendix. 
+
 @; The following sections describe the issues, both in general terms and
 @; in the context of Typed Racket.
 
@@ -83,6 +86,7 @@ More substantially, this approach makes only one copy of the validating
 contracts.
 
 
+@;{
 @section[#:tag "sec:implementation:macro"]{Macros and Hidden Exports}
 
 Macro expansion may cause private identifiers from one
@@ -99,7 +103,7 @@ to enable reuse.
 @; example: rackunit macros
 @; future: replace manual with a static analysis
 @; future: protect stowed exports
-
+}
 
 @section[#:tag "sec:implementation:api"]{Type-Boundary Utilities}
 @; TB api
