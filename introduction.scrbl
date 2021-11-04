@@ -43,7 +43,7 @@ The @|sNatural| strategy uses higher-order contracts to enforce the @|sdeep|
 behavioral claims implied by higher-order types.
 The @|sTransient| strategy uses first-order checks to enforce @|sshallow| aspects
 of types in type-annotated code.
-Unsurprisingly, these different methods of enforcing types come with
+Unsurprisingly, these two methods of enforcing types come with
 different benefits and drawbacks.
 Contracts in @|sNatural| enable strong type soundness
 and complete monitoring guarantees@~cite{gfd-oopsla-2019},
@@ -55,7 +55,7 @@ The question thus arises as to whether the two enforcement strategies can
 interoperate, giving programmers @|sdeep| types
 when guarantees matter and @|sshallow| types to avoid performance bottlenecks.
 This paper provides an affirmative answer.
-The @|sdeep| and @|sshallow| types can interoperate without sacrificing
+@|sDeep| and @|sshallow| types can interoperate without sacrificing
 their formal properties.
 Best of all, the combination brings measurable benefits.
 
@@ -69,14 +69,16 @@ Studying these questions yields three contributions:
   The model comes with two essential meta-theorems: the first
   validates plain type soundness for @|sshallow|-typed code, and the
   second shows that @|sdeep|-typed code retains the customary type
-  soundness property @emph{with} complete monitoring.}
+  soundness property via complete monitoring.}
 
 @item{An implementation of Typed Racket@~cite{tfffgksst-snapl-2017}
-  that permits developers to combine @|sDeep|, a @|sshallow|, and
-  untyped components in a safe manner (@secref{sec:implementation}).
+  that permits developers to combine @|sdeep|, @|sshallow|, and
+  untyped components (@secref{sec:implementation}).
   The @|sdeep| and @|sshallow| halves of the implementation stand on
-  equal footing.  Every @|sdeep|-typed program can be expressed in
-  @|sShallow| Racket and vice versa. Switching is a one-word change.}
+  equal footing.
+  @; Every @|sdeep|-typed program can be expressed in
+  @; @|sShallow| Racket and vice versa.
+  Switching between them is a one-line change.}
 
 @item{A practical evaluation of the performance, guarantees, and
   expressiveness of the revised Typed Racket implementation

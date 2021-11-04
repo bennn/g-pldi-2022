@@ -18,49 +18,47 @@
 
 Gradual typing explores combinations of static and dynamic
 typing@~cite{st-sfp-2006,tf-dls-2006,mf-toplas-2009,gktff-sfp-2006}.
-The goal of this research is a mixed-typed (or gradual@note{Following @citet{svcb-snapl-2015},
-we reserve the name @emph{gradual} for mixed-typed languages with
-a dynamic type that satisfies the gradual guarantees.})
-@; graduality@~cite{nla-popl-2019}
-language that supports two styles of code in a convenient manner.
+The goal of this research is a language that supports two styles of code in a
+convenient manner.
 Untyped code is free to perform any computation that the language can express.
 Typed code is restricted to well-typed computations, but comes
 with a guarantee that static types are meaningful predictions about run-time
 behaviors.
-Differences among mixed-typed languages arise
+Differences among gradual languages arise
 over what makes for a convenient mix.
-Gradually-typed languages include a universal @tt{Dynamic} type that
+True gradually-typed languages include a universal @tt{Dynamic} type that
 helps to blur the distinction between typed and untyped code@~cite{svcb-snapl-2015}.
 Migratory typing systems add
 idiomatic types to an existing language@~cite{tfffgksst-snapl-2017}.
 Other methods include the development of novel languages@~cite{wzlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
 and compilers@~cite{rat-oopsla-2017,bbst-oopsla-2017}.
 
-The goal is to advance the state of mixed-typed languages in a
-general setting.
-Consequently, the formal development begins with two restrictions:
- types may only be enforced with ahead-of-time techniques,
- and there is no dynamic type.
-These rules ensure a widely-applicable baseline.
+With these various end-goals in mind, our formal development
+(@section-ref{sec:model}) begins with two restrictions:
+types may only be enforced with ahead-of-time techniques and
+there is no dynamic type.
+These rules ensure a widely-applicable baseline for languages
+that can mix typed and untyped code.
 
-@; MF: this sounds like "future worK" so put it there
-@;{Specializations are promising avenues for future work.
-Just-in-time enforcement may improve performance@~cite{kas-pldi-2019,vsc-dls-2019,bbst-oopsla-2017,rmhn-ecoop-2019}.
-Gradual languages may add a dynamic type.}
+
+@;  @note{Following @citet{svcb-snapl-2015},
+@;  we reserve the name @emph{gradual} for mixed-typed languages with
+@;  a dynamic type that satisfies the gradual guarantees.})
+@;  @; graduality@~cite{nla-popl-2019}
 
 
 @section[#:tag "sec:background:deep-shallow"]{@|sDeep| and @|sShallow| Types}
 
 @(define untyped-fn @tt{text})
 
-Sound mixed-typed language designs do not agree on how types should guide the
+Sound gradual language designs do not agree on how types should guide the
 behavior of a program.
-Two leading alternative for run-time properties are @|sdeep| and @|sshallow| types.
+Two leading alternatives for run-time properties are @|sdeep| and @|sshallow| types.
 To a first approximation, @|sdeep| types aim for the same guarantees as conventional
-static types and @|sshallow| types aim only for soundness in typed code.
+static types and @|sshallow| types aim only for local type soundness.
 
 @Figure-ref{fig:ds-example} presents a three-module program to illustrate
-the gap between @|sdeep| and @|sshallow|.
+the gap between @|sdeep| and @|sshallow| types.
 The untyped module on the left contains a stub definition for a function
 @|untyped-fn| that expects two arguments.
 This module is a simplified picture of the Racket @tt{images/icons/symbol}
@@ -105,9 +103,9 @@ In untyped code, these predictions are trivial;
  soundness merely ensures a well-formed result.
 The property that distinguishes @|sdeep| types from @|sshallow| is
 complete monitoring@~cite{dtf-esop-2012,gfd-oopsla-2019}.
-A semantics that satisfies complete monitoring enforces the obligations
-from one type boundary across all boundaries. 
-@; thus giving an interface the ability to constrain behaviors.
+A semantics that satisfies complete monitoring enforces types as invariants
+that all clients, typed or untyped, can rely on.
+
 
 
 @figure[
@@ -137,10 +135,10 @@ from one type boundary across all boundaries.
 
 @subsection{@|sNatural| Semantics}
 
-One way to implement @|sdeep| types is the @|sNatural|@note{Also known as
+One way to implement @|sdeep| types is the @|sNatural|
+semantics@~cite{tf-dls-2006,mf-toplas-2009,st-sfp-2006}.@note{@|sNatural| is a.k.a.
 Guarded@~cite{vksb-dls-2014}, Behavioral@~cite{clzv-ecoop-2018}, and
 Deep@~cite{tgpk-dls-2018}.}
-semantics@~cite{tf-dls-2006,mf-toplas-2009,st-sfp-2006} 
 Natural interprets types as contracts in a straightforward manner.@note{
 Researchers are actively seeking improved variants of @|sNatural|@~cite{htf-hosc-2010,g-popl-2015,stw-pldi-2015,gct-popl-2016}
 and measuring the efficiency of implementations@~cite{fgsfs-oopsla-2018,kas-pldi-2019}.
@@ -160,7 +158,7 @@ optimizations in the same manner as a fully-typed language@~cite{tscff-pldi-2011
 
 The @|sTransient| semantics is an implementation of @|sshallow| types that
 does not require higher-order wrappers@~cite{vss-popl-2017}.
-@|sTransient| protects typed code by injecting first-order
+@|sTransient| enforces types by injecting first-order
 checks throughout typed pieces of code:
 typed, public functions must check their inputs;
 typed modules must check their untyped imports; and

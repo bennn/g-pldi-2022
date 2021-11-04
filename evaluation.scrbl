@@ -44,7 +44,7 @@ benefits over either one alone:
 }
 @item{
   Switching from @|sDeep| to @|sShallow| can remove spurious errors
-  from a mixed-typed program (@section-ref{sec:evaluation:expressiveness}).
+  from a program (@section-ref{sec:evaluation:expressiveness}).
   @; because @|sshallow| types enforce fewer constraints.
 }
 @item{

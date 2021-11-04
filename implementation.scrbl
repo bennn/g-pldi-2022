@@ -19,23 +19,20 @@
 @title[#:tag "sec:implementation"]{Implementation Challenges}
 
 We have implemented three-way interactions atop Typed Racket.
-The extension leverages the standard Typed Racket, which already implements the
+The extension leverages the standard ``@|sDeep|'' Typed Racket, which already implements the
 @|snatural| semantics@~cite{tf-popl-2008}, with the ``@|sShallow| Racket''
 implementation of @|stransient|@~cite{glfd-pj-2021}.
 Programmers can access these options via module
 languages: @tt{typed/racket} for @|sdeep| types and
 @tt{typed/racket/shallow} for @|sshallow|.
-Switching between typed languages is a one-word change.
+Switching between typed languages is a one-line change.
 
 For the most part, the model was an effective guide for the implementation.
 Unexpected challenges arose regarding separate compilation and
 the enforcement of @|sdeep| types with wrapping higher-order contracts.
-Racket's macros also posed a problem, but to keep the paper applicable to
-other gradually typed languages, a description of these issues is relegated
-to the appendix. 
-
-@; The following sections describe the issues, both in general terms and
-@; in the context of Typed Racket.
+Metaprogramming also posed a problem, but to keep the paper applicable to
+a wide range of gradual languages a description of these issues
+is relegated to the appendix.
 
 
 @section[#:tag "sec:implementation:ctc-indirect"]{Wrapping Contracts and Type Lookup}
@@ -85,25 +82,6 @@ itself from @|sshallow|-typed clients, which simplifies the implementation.
 More substantially, this approach makes only one copy of the validating
 contracts.
 
-
-@;{
-@section[#:tag "sec:implementation:macro"]{Macros and Hidden Exports}
-
-Macro expansion may cause private identifiers from one
-module to appear in (the expansion of) another module@~cite{f-popl-2016}.
-@; fcdf-jfp-2012
-If one module uses @|sdeep|-typed and the other uses @|sshallow|,
-this behavior is a threat to type soundness.
-The stowed identifiers must be protected/validated like any other export.
-
-By default, Typed Racket prevents @|sDeep| Racket and @|sShallow| Racket
-modules from sharing macros.
-A programmer must inspect each macro and provide it unsafely
-to enable reuse.
-@; example: rackunit macros
-@; future: replace manual with a static analysis
-@; future: protect stowed exports
-}
 
 @section[#:tag "sec:implementation:api"]{Type-Boundary Utilities}
 @; TB api

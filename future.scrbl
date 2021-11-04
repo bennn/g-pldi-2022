@@ -1,6 +1,11 @@
 #lang scribble/acmart @acmsmall @10pt @screen
 @(require "main.rkt" "bib.rkt" (only-in "pict.rkt" fig:opt0 fig:opt1))
 
+@; @; MF: this sounds like "future worK" so put it there
+@; Specializations are promising avenues for future work.
+@; Just-in-time enforcement may improve performance@~cite{kas-pldi-2019,vsc-dls-2019,bbst-oopsla-2017,rmhn-ecoop-2019}.
+@; Gradual languages may add a dynamic type.
+
 @title[#:tag "sec:future"]{Future Work}
 
 One drawback apparent in the model is that @|sdeep| and @|sshallow| cannot

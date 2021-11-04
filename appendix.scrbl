@@ -1255,6 +1255,24 @@ In the future, the @tt{define-typed/untyped-identifier}
  from a third argument that specifies behavior in @|sShallow| contexts.
 
 
+@section[#:tag "sec:implementation:macro"]{Macros and Hidden Exports}
+
+Macro expansion may cause private identifiers from one
+module to appear in (the expansion of) another module@~cite{f-popl-2016}.
+@; fcdf-jfp-2012
+If one module uses @|sdeep|-typed and the other uses @|sshallow|,
+this behavior is a threat to type soundness.
+The stowed identifiers must be protected/validated like any other export.
+
+By default, Typed Racket prevents @|sDeep| Racket and @|sShallow| Racket
+modules from sharing macros.
+A programmer must inspect each macro and provide it unsafely
+to enable reuse.
+@; example: rackunit macros
+@; future: replace manual with a static analysis
+@; future: protect stowed exports
+
+
 @section[#:tag "sec:racket-users"]{Example Programs}
 
 Other top types for higher-order values can lead to similar programs.

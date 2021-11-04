@@ -9,7 +9,7 @@
 
 @title[#:tag "sec:model"]{Model and Metatheory}
 
-A normal mixed-typed language allows for two styles of code, typed and untyped,
+A normal gradual language allows for two styles of code, typed and untyped,
 and uses run-time checks to enforce the claims made by static types.
 Our model allows for three syntaxes:
 @|sdeep|-typed code, @|sshallow|-typed code, and @|suntyped| code.
@@ -1751,7 +1751,7 @@ but a @|sdeep|-labeled expression can only have @|sdeep| labels.
 
 Although the surface language defines three kinds of code and
 the evaluation language lets differently-typed code interact,
-it remains to be seen whether the mixed language satisfies the properties that
+it remains to be seen whether the three-way language satisfies the properties that
 characterize @|sdeep| and @|sshallow| types.
 @|sDeep| code should provide a strong type soundness guarantee and
 complete monitoring.
