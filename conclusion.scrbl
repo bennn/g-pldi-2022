@@ -43,7 +43,7 @@ performance for guarantees, making the trade-off even programmable.
 @; types against untyped code and, as needed, against one another.
 @; An implementation of this design in Typed Racket suggests that the combination
 @; is better than either @|sdeep| or @|sshallow| alone on all three fronts.
-@; 
+@;
 @; As a whole, the work reveals insights about the extent to which two typed
 @; languages can cooperate in the presence of untyped code.
 @; The integration of @|snatural| and @|stransient| demonstrates that extreme

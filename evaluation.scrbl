@@ -154,7 +154,7 @@ The seals change the outcome of basic operations.
 
 @section[#:tag "sec:evaluation:performance"]{Performance by @|sDeep| and @|sShallow|}
 @; - worst-case table (can trace "min" line in "fig:transient:overhead"
-@; - 
+@; -
 @; - ?? 2-way lattice? 3-way
 @; - ?? programs where mix is better than natural-only or transient-only
 

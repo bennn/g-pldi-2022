@@ -1972,7 +1972,7 @@ that arise in evaluation are consistent according to the @${\sWL} judgment
 
   \item[Case:]
   \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\svalue_0}{\sowner_1}\)
-  \\ where $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$ 
+  \\ where $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$
   \item[]
     by the definition of $\sWL$
 
