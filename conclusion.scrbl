@@ -1,8 +1,6 @@
 #lang scribble/acmart @acmsmall @10pt @screen
 @(require "main.rkt" "bib.rkt")
 
-@; bring in analogy to GT? typed + untyped ... weak-typed + strong-typed ?
-
 @; ps Greenberg is a 2nd impasse, stat-first vs dyn-first ... worth mentioning?
 
 @title[#:tag "sec:conclusion"]{Conclusion}
@@ -11,13 +9,15 @@
 
 @; MF conclusion
 
-This is the first implementation of a grad typ sys where programmers can
-explicitly choose to trade performance for guarantees.
-While guarantees could be important during debugging, performance might be
-desirable for deploying.
-Indeed, even for the deployed system, strengthening guarantees in some brittle
-parts might just help debug the inevitable failure.
-
+This is the first implementation of a gradual type system where
+programmers can explicitly choose to trade performance for guarantees
+as they add types.
+If a new set of type annotations brings unacceptable overhead,
+switching the types' semantics from @|sdeep| to @|sshallow|
+can avoid the bottleneck and may even be good enough to deploy.
+The guarantees from @|sdeep| types can always be used for debugging
+the inevitable failure, and can be applied sparingly to defend
+a critical module.
 In the future, implementors may wish to explore additional ways to trade
 performance for guarantees, making the trade-off even programmable.
 
