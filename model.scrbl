@@ -1977,7 +1977,6 @@ that arise in evaluation are consistent according to the @${\sWL} judgment
     by the definition of $\sWL$
 
   \end{description}
-  \vspace{-10mm}
 \end{proofsketch}
 }|
 
