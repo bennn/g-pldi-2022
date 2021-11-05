@@ -82,9 +82,9 @@ Studying these questions yields three contributions:
 
 @item{A practical evaluation of the performance, guarantees, and
   expressiveness of the revised Typed Racket implementation
-  (@secref{sec:evaluation}).  The performance study of the novel 3-way
+  (@secref{sec:evaluation}).  The performance study of the novel three-way
   Typed Racket demonstrates significant improvements on the GTP
-  benchmark suite@note{@|gtp-url|} over the old 2-way version.}
+  benchmark suite@note{@|gtp-url|} over the two-way versions.}
 
 ]
 @;
