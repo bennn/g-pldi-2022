@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt"
    (only-in racket/math
      exact-round)
@@ -94,7 +94,8 @@ It turns out that @|sdeep| types can be overly restrictive; in such programs,
 delayed @|sshallow| checks work better in practice.
 In other programs, the gap between @|sDeep| and @|sShallow| Racket is due
 to implementation issues.
-Refer to the appendix for example programs.
+Refer to the @appendixref{appendix:expressiveness} for example programs
+submitted by Typed Racket users.
 @; Language designers should be aware of these issues when building a new
 @; @|sdeep| semantics.
 

@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt"
    (only-in scriblib/footnote note)
    (only-in "pict.rkt"
@@ -30,7 +30,7 @@ Switching between options is a one-line change.
 For the most part, the model was an effective guide for the implementation.
 Unexpected challenges arose regarding separate compilation and
 the enforcement of @|sdeep| types with wrapping higher-order contracts.
-Metaprogramming also raised issues, but these are deferred to an appendix
+Metaprogramming also raised issues, but these are deferred to an @appendixref{appendix:macro}
 to keep the paper widely-applicable.
 
 
@@ -99,5 +99,5 @@ generate a (conservative, computable) contract.
 @; With @|sshallow| types in the mix, the restriction can lead to type errors.
 The other tool simply joins two identifiers into a context-sensitive export.
 To support @|sshallow| types, both tools can use a third input.
-Refer to the appendix for examples and more details.
+Refer to the @appendixref{appendix:boundary-api} for examples and more details.
 

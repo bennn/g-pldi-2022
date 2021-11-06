@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt"
    (only-in scriblib/footnote note))
 
@@ -132,8 +132,7 @@ integers.
 
 @figure[
   "fig:model:surface-type"
-  @elem{Surface typing (selected rules), subtyping, and types for primitive operations}
-  @;@appendixref{appendix:rules}
+  @elem{Surface typing (@appendixrules{appendix:rules}), subtyping, and types for primitive operations}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec\)}}{
@@ -582,8 +581,7 @@ confirm the expectation.
 
 @figure[
   "fig:model:deep-type"
-  @elem{@|sDeep| typing judgment (selected rules)}
-  @;@appendixref{appendix:rules}
+  @elem{@|sDeep| typing judgment (@appendixrules{appendix:rules})}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sWTT \sexpr : \stype\)}}{
@@ -691,8 +689,7 @@ confirm the expectation.
 
 @figure[
   "fig:model:shallow-type"
-  @elem{@|sShallow| typing (selected rules), subtyping, and type-to-shape metafunction}
-  @;@appendixref{appendix:rules}
+  @elem{@|sShallow| typing (@appendixrules{appendix:rules}), subtyping, and type-to-shape metafunction}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
@@ -844,8 +841,7 @@ confirm the expectation.
 
 @figure[
   "fig:model:untyped-type"
-  @elem{Untyped typing judgment (selected rules)}
-  @;@appendixref{appendix:rules}
+  @elem{Untyped typing judgment (@appendixrules{appendix:rules})}
   @; ... aka dynamic typing, most types checked at runtime
 
 @exact|{
@@ -978,8 +974,7 @@ confirm the expectation.
 
 @figure[
   "fig:model:completion1"
-  @elem{Surface-to-evaluation compilation (selected rules)}
-  @;@appendixref{appendix:rules}
+  @elem{Surface-to-evaluation compilation (@appendixrules{appendix:rules})}
 
 @exact|{
 \lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec \scompile \sexpr\)}}{\begin{mathpar}
@@ -1106,7 +1101,7 @@ confirm the expectation.
 
 %  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
 %  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
-%  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1}
+%  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1} \\
 \end{tabular}
 
 }}|]
@@ -1496,7 +1491,7 @@ reduction for the evaluation language.@note{
 The design of a labeled reduction relation is like any other
 definition in that it requires ingenuity to create and careful reading
 to understand.
-To help readers gain an intuition for appropriate labeling, the appendix
+To help readers gain an intuition for appropriate labeling, the @appendixref{appendix:laws}
 presents our guidelines for the @figure-ref{fig:model:rr} rules.
 }
 By design, the reduction rules are identical to the basic rules from
@@ -1799,7 +1794,7 @@ There are three important characterization functions @${\stypemap} for the analy
  and the uni-type @${\tdyn} to itself;
  and @${\stypemapone} is the identity function on types.
 
-@exact|{
+@exact{
 \begin{theorem}[type soundness]\leavevmode
   \begin{itemize}
     \item Language\ $\sD$ satisfies\ $\fTS{\sWTD}{\stypemapone}$
@@ -1808,11 +1803,11 @@ There are three important characterization functions @${\stypemap} for the analy
   \end{itemize}
 \end{theorem}
 \begin{proofsketch}
- By three lemmas for progress, preservation, and compilation (deferred to the appendix).
+ By lemmas for progress, preservation, and compilation (deferred to the @appendixref{appendix:lemmas}).
  % The compilation lemma says that every well-typed surface expression compiles
  % to a well-typed evaluation expression.
 \end{proofsketch}
-}|
+}
 
 Unlike a standard ``closed world'' soundness theorem@~cite{m-jcss-1978,wf-ic-1994},
 @exact{\definitionref{def:ts}} does not claim that the evaluation of a well-typed

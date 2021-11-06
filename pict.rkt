@@ -11,6 +11,9 @@
   fig:any-wrap
   fig:no-wrap
   fig:index-of
+  fig:any-wrap-y
+  fig:no-wrap-y
+  fig:index-of-y
   fig:ds-example-x
   fig:ds-example-y
 
@@ -197,6 +200,14 @@
   (define ur-pict (vc-append caption-shim u-pict (vc-append (* 1/2 caption-shim) s-pict d-pict)))
   (ht-append hshim t-pict right-arrow ur-pict))
 
+(define (make-example-atom-pict-y t-str* u-str* s-str* d-str*)
+  (define t-pict (typed-codeblock t-str*))
+  (define u-pict (untyped-codeblock u-str*))
+  (define s-pict (code-text (string-append "Shallow: " s-str*)))
+  (define d-pict (hc-append (code-text "Deep: ") (error-text d-str*)))
+  (define ur-pict (vc-append caption-shim u-pict (vc-append (* 1/2 caption-shim) s-pict d-pict)))
+  (vc-append vshim t-pict down-arrow ur-pict))
+
 (define (make-example-pair-pict u-str* t-str* r-str*)
   (define u-pict (untyped-codeblock u-str*))
   (define t-pict (typed-codeblock t-str*))
@@ -235,7 +246,6 @@
           (title-text "Typed Racket") (title-text "Nom")))
   (table 2 (interleave (take-right title* (length pict*)) pict*)
     lt-superimpose lt-superimpose 10 34))
-
 
 (define (typed-codeblock str* #:width-str [width #f] #:lbl [lbl #false])
   (define the-code
@@ -775,26 +785,40 @@ eos
                 ((l+a (in-list lbl+arr*)))
         (add-code-arrow pp (fourth l+a) #:line-width 2 #:label (sc-text (first l+a)) #:x-adjust-label (second l+a) #:y-adjust-label (third l+a))))))
 
-(define fig:any-wrap
-  (make-example-atom-pict
-    '("(define b : (Boxof Symbol)"
-      "  (box '$))"
-      ""
-      "(define any : Any b)")
-    '("(set-box! any 'qq)")
-    "(void)"
-    "cannot write to box"))
+(define-values [fig:any-wrap fig:any-wrap-y]
+  (let ()
+    (define code
+      '("(define b : (Boxof Symbol)"
+        "  (box '$))"
+        ""
+        "(define any : Any b)"))
+    (define code2
+      '("(set-box! any 'qq)"))
+    (define out1
+      "(void)")
+    (define out2
+      "cannot write to box")
+    (values
+      (make-example-atom-pict code code2 out1 out2)
+      (make-example-atom-pict-y code code2 out1 out2))))
 
-(define fig:no-wrap
-  (make-example-atom-pict
-    '("(: add-mpair (-> (MPairof Real Real) Real))"
-      "(define (add-mpair mp)"
-      "  (+ (mcar mp) (mcdr mp)))")
-    '("(add-mpair (mcons 2 4))")
-    "6"
-    "no contract for type"))
+(define-values [fig:no-wrap fig:no-wrap-y]
+  (let ()
+    (define code1
+      '("(: add-mpair (-> (MPairof Real Real) Real))"
+        "(define (add-mpair mp)"
+        "  (+ (mcar mp) (mcdr mp)))"))
+    (define code2
+      '("(add-mpair (mcons 2 4))"))
+    (define out1
+      "6")
+    (define out2
+      "no contract for type")
+    (values
+      (make-example-atom-pict code1 code2 out1 out2)
+      (make-example-atom-pict-y code1 code2 out1 out2))))
 
-(define fig:index-of
+(define-values [fig:index-of fig:index-of-y]
   (let* ((uu
           (untyped-codeblock '(
             "(index-of '(a b) 'a)")))
@@ -813,7 +837,9 @@ eos
                         (vc-append (* 1/2 caption-shim)
                           (code-text "Shallow: 0")
                           (code-text "Deep: #f")))))
-    (ht-append (* 8 hshim) uu tt)))
+    (values
+      (ht-append (* 8 hshim) uu tt)
+      (vc-append (* 2 vshim) uu tt))))
 
 (define-values [fig:ds-example-x fig:ds-example-y]
   (let* ((untyped

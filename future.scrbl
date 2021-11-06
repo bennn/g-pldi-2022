@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt" (only-in "pict.rkt" fig:opt0 fig:opt1))
 
 @; @; MF: this sounds like "future worK" so put it there

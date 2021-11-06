@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt" scriblib/footnote)
 
 @title[#:tag "sec:related"]{Related Work}

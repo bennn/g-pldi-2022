@@ -2,6 +2,7 @@
 
 (provide
   appendixref
+  appendixrules
   if-techrpt
   ~a ~s
   exact
@@ -78,7 +79,7 @@
 (define-syntax-rule (def2 k v)
   (begin (define k v) (define-for-syntax k v)))
 
-(def2 TECHRPT #false)
+(def2 TECHRPT #true)
 
 (define-syntax if-techrpt
   (if TECHRPT
@@ -86,10 +87,16 @@
      [(_ x ...) #'(begin x ...)]))
     (lambda (stx) #'(void))))
 
-(define appendixref
+(define (make-appendixref label)
   (if TECHRPT
-    (lambda (str) (secref str))
-    (lambda (str) "appendix")))
+    (lambda (tag) (seclink tag label))
+    (lambda (tag) label)))
+
+(define appendixrules
+  (make-appendixref "selected rules"))
+
+(define appendixref
+  (make-appendixref "appendix"))
 
 (define SR "Shallow Racket")
 
@@ -228,8 +235,8 @@
 
 (define (user-inspiration tag data*)
   (define num-msgs (length data*))
-  (nested-inset
-    (list @elem{The examples in @section-ref[tag] are inspired by the following messages to the Racket-Users mailing list:}
+  (values #;nested-inset
+    (list @emph{Inspired by the following messages to the Racket-Users mailing list:}
           (apply itemlist
                  (for/list ((ui (in-list data*)))
                    (item
@@ -239,8 +246,8 @@
                            " on "
                            (ui-date ui)
                            ". ")
-                     (linebreak)
-                     (format-url (ui-url ui))))))))
+                     ;; (linebreak)
+                     (exact "{\\footnotesize" (format-url (ui-url ui)) " (Accessed 2020-12-15)}" )))))))
 
 (define (nested-inset . content)
   (nested #:style 'inset content))

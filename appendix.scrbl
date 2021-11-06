@@ -1,28 +1,43 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 
-@(require "main.rkt" "bib.rkt")
+@(require "main.rkt" "bib.rkt" (only-in "pict.rkt" typed-codeblock fig:any-wrap-y fig:no-wrap-y fig:index-of-y))
 @(require scriblib/figure (only-in scribble/core make-style))
 
 @para[#:style 'pretitle @elem[#:style (make-style "appendix" '(exact-chars))]{}]
 
 @title[#:tag "sec:appendix"]{Appendix}
 
+@; TOPICS from rest of paper
+@; - [X] {Surface typing {appendix:rules}}
+@; - [X] {@|sDeep| typing judgment (@appendixref{appendix:rules})}
+@; - [X] {@|sShallow| typing (@appendixref{appendix:rules})}
+@; - [X] {Untyped typing judgment (@appendixref{appendix:rules})}
+@; - [X] {Surface-to-evaluation compilation (@appendixref{appendix:rules})}
+@; - [X] intiuition for labeling {appendix:laws}
+@; - [X] lemmas for progress, preservation, and compilation (deferred to the @appendixref{appendix:lemmas}).
+@; - [X] 3way macro issues @appendixref{appendix:macro}
+@; - [X] 3-way boundary in TR examples and more details @appendix{appendix:boundary-api}
+@; - [ ] Refer to the @appendixref{appendix:expressiveness} for example programs.
+
 @section[#:tag "appendix:rules"]{Surface Typing, Completion, Evaluation Typing}
+
+
 
 @Figure-ref{fig:appendix:surface-types} presents the full typing judgment
 for the surface language.
-@Figure-ref{fig:appendix:surface-completion} presents the compilation rules
-for all expressions except for module expressions, which are covered in
-full by @figure-ref{fig:model:completion2}.
-@Figure-ref{fig:appendix:deep-types} presents the full @|sDeep| typing judgment,
-@figure-ref{fig:appendix:shallow-types} presents the full @|sShallow| typing judgment, and
-@figure-ref{fig:appendix:un-types} presents the full @|suntyped| judgment.
+@Figure-ref{fig:appendix:surface-completion} presents the surface-to-evaluation
+compilation rules.
+Three other figures present the evaluation typing judgments:
+@figure-ref{fig:appendix:deep-type} for @|sdeep| types,
+@figure-ref{fig:appendix:shallow-type} for @|sshallow| types, and
+@figure-ref{fig:appendix:untyped-type} for dynamic typing.
 
 @figure[
 "fig:appendix:surface-types"
 @elem{Surface typing judgment}
 
 @exact|{
+\lbl{\fbox{\(\stypeenv \sST \ssurface : \stspec\)}}{
 \begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\tdyn} \in \stypeenv
@@ -198,61 +213,24 @@ full by @figure-ref{fig:model:completion2}.
   }{
     \stypeenv \sST \sexpr_0 : \tfloor{\stype_1}
   }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0
-  }{
-    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tdyn
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \stype_0
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0
-  }{
-    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \stype_0
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \stype_0
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tdyn
-  }{
-    \stypeenv \sST \emodule{\sulang}{\sexpr_0} : \tfloor{\stype_0}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \stype_0
-  }{
-    \stypeenv \sST \emodule{\sdlang}{\sexpr_0} : \tfloor{\stype_0}
-  }
-
-  \inferrule*{
-    \stypeenv \sST \sexpr_0 : \tfloor{\stype_0}
-  }{
-    \stypeenv \sST \emodule{\sslang}{\sexpr_0} : \tfloor{\stype_0}
-  }
 \end{mathpar}
+
+\medskip
+\begin{tabular}{l@{\qquad}l}
+\(\left[
+  \inferrule*{
+    \stypeenv \sST \sexpr_0 : \stspec_0
+  }{
+    \stypeenv \sST \emodule{\slang_0}{\sexpr_0} : \stspec_1
+  }
+\right]\) &
+\(\begin{array}{llll}
+  \slang_0 & \stspec_0 & \stspec_1 \\\hline
+  \sD & \stype_0 & \stspec_1 \\
+  \sS & \tfloor{\stype_0} & \stspec_1 \\
+  \sU & \tdyn & \stspec_1
+\end{array}\) \end{tabular}
+}
 }|]
 
 @figure[
@@ -293,7 +271,7 @@ full by @figure-ref{fig:model:completion2}.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tdyn \scompile \sexpr_3
   }{
     \stypeenv \sST \epair{\sexpr_0}{\sexpr_1} : \tdyn \scompile \epair{\sexpr_2}{\sexpr_3}
@@ -301,7 +279,7 @@ full by @figure-ref{fig:model:completion2}.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \stype_0 \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \stype_1 \scompile \sexpr_3
   }{
     \stypeenv \sST \epair{\sexpr_0}{\sexpr_1} : \tpair{\stype_0}{\stype_1} \scompile \epair{\sexpr_2}{\sexpr_3}
@@ -309,7 +287,7 @@ full by @figure-ref{fig:model:completion2}.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\stype_0} \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_1} \scompile \sexpr_3
   }{
     \stypeenv \sST \epair{\sexpr_0}{\sexpr_1} : \tfloor{\tpair{\stype_0}{\stype_1}} \scompile \epair{\sexpr_2}{\sexpr_3}
@@ -337,7 +315,7 @@ full by @figure-ref{fig:model:completion2}.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tdyn \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tdyn \scompile \sexpr_3
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \tdyn \scompile \eappu{\sexpr_2}{\sexpr_3}
@@ -345,7 +323,7 @@ full by @figure-ref{fig:model:completion2}.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfun{\stype_1}{\stype_0} \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \stype_1 \scompile \sexpr_3
   }{
     \stypeenv \sST \eappu{\sexpr_0}{\sexpr_1} : \stype_0 \scompile \eappu{\sexpr_2}{\sexpr_3}
@@ -353,7 +331,7 @@ full by @figure-ref{fig:model:completion2}.
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\tfun{\stype_1}{\stype_0}} \scompile \sexpr_2
-    \\\\
+    \\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_1} \scompile \sexpr_3
     \\
     \fshape{\stype_0} = \sshape_0
@@ -362,14 +340,37 @@ full by @figure-ref{fig:model:completion2}.
   }
 
 \end{mathpar}
+\medskip
+\begin{tabular}[t]{l@{~~}l}
+\!\!\!\!\(\left[
+  \inferrule*{
+    \stypeenv \sST \sexpr_0 : \stspec_0 \scompile \sexpr_1
+  }{
+    \stypeenv\!\sST\!\emodule{\slang_0}{\sexpr_0}\!:\!\stspec_1\!\scompile\!\sexpr_2
+  }
+\right]\) &
+\(\begin{array}{llll}
+  \slang_0 & \stspec_0 & \stspec_1 & \scompile \sexpr_2 \!\! \\\hline
+  \sD & \stype_0 & \stype_0 & \enoop{\sexpr_1} \\
+  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} & \enoop{\sexpr_1} \\
+  \sU & \tdyn & \tdyn & \enoop{\sexpr_1} \\
+  \sD & \stype_0 & \tdyn & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sS & \tfloor{\stype_0} & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sU & \tdyn & \stype_0 & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sD & \stype_0 & \tfloor{\stype_0} & \ewrap{\stype_0}{\sexpr_1} \!\! \\
+  \sS & \tfloor{\stype_0} & \tdyn & \enoop{\sexpr_1} \!\! \\
+  \sU & \tdyn & \tfloor{\stype_0} & \escan{\sshape_0}{\sexpr_1} \!\!
+\end{array}\)
+\\ & \qquad\hbox{where \(\sshape_0 = \fshape{\stype_0}\)}
+
+\end{tabular}
 }|]
 
-@figure*[
+@figure[
   "fig:appendix:deep-type"
   @elem{@|sDeep| typing judgment}
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTT \sexpr : \stype\)}}{
 \begin{mathpar}
   \inferrule*{
@@ -471,15 +472,13 @@ full by @figure-ref{fig:model:completion2}.
     \stypeenv \sWTT \serror : \stype_0
   }
 \end{mathpar}
-\end{minipage}
 }}|]
 
-@figure*[
+@figure[
   "fig:appendix:shallow-type"
   @elem{@|sShallow| typing judgment}
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTS \sexpr : \sshape\)}}{
 \begin{mathpar}
   \inferrule*{
@@ -555,8 +554,6 @@ full by @figure-ref{fig:model:completion2}.
   }
 
   \inferrule*{
-    %% why need this???
-    %% 2021-04-25 : because no way to check 'any' ... it should be a scan ... let's fix that
     \stypeenv \sWTU \sexpr_0 : \tdyn
   }{
     \stypeenv \sWTS \enoop{\sexpr_0} : \kany
@@ -596,17 +593,15 @@ full by @figure-ref{fig:model:completion2}.
   }
 \end{mathpar}
 }
-\end{minipage}
 }|]
 
 
-@figure*[
+@figure[
   "fig:appendix:untyped-type"
   @elem{Untyped typing judgment}
   @; ... aka dynamic typing, most types checked at runtime
 
 @exact|{
-\begin{minipage}{\textwidth}
 \lbl{\fbox{\(\stypeenv \sWTU \sexpr : \tdyn\)}}{\begin{mathpar}
   \inferrule*{
     \tann{\svar_0}{\tdyn} \in \stypeenv
@@ -702,20 +697,20 @@ full by @figure-ref{fig:model:completion2}.
     \stypeenv \sWTU \serror : \tdyn
   }
 \end{mathpar}
-\end{minipage}
 }}|]
 
 
-@section[#:tag "sec:laws"]{How to lift a reduction relation}
+@section[#:tag "appendix:laws"]{How to Lift a Reduction Relation}
 @; 2021-06-12 TODO edit
 
+@subsection{Background on Complete Monitoring}
 @; --- begin CUT???
-Complete monitoring tests whether a mixed-typed semantics has control over
- every interaction between typed and untyped code.
+The idea behind complete monitoring is to test whether a mixed-typed semantics
+has control over every interaction between typed and untyped code.
 If the property holds, then a programmer can rely on the language to insert
  checks at the right places, for example, between the library and client
  demonstrated in @figureref{fig:ds-example}.
-Concretely, if a value passes through the type @${(\tfun{\tint}{\tint})}
+As a concrete example, if a value passes through the type @${(\tfun{\tint}{\tint})}
  then complete monitoring guarantees that the language has control over
  every input to the function and every result that the function computes,
  regardless of whether these interactions occur in a typed or untyped context.
@@ -725,7 +720,7 @@ Because all such interactions originate at the boundaries
  a simplistic way to formalize complete monitoring is to ask whether each
  boundary comes with a full run-time check when possible and an error otherwise.
 A language that meets this strict requirement certainly has full control.
-Other good designs fail, however.
+Other good designs fail, though.
 Suppose typed code expects a pair of integers and a semantics initially
  admits any pair at the boundary but eventually checks that the pair contains integers.
 Despite the incomplete check at the boundary, this delayed-checking semantics eventually
@@ -744,7 +739,7 @@ The reduction of a boundary term is the semantics of an interaction in which
 At this point, the sender loses full control over the value.
 If the value fully matches the type expectations of the client, then the loss
  of control is no problem and the client gains full ownership.
-Otherwise, the sender and client may have to assume joint ownership of the value,
+Otherwise, the sender and client may have to assume joint ownership of the value
  depending on the nature of the reduction relation.
 If a semantics can create a value with multiple owners, then it admits that
  a component may lose full control over its interactions with other components.
@@ -761,7 +756,8 @@ Second, a single-ownership judgment @${\sWL} must test whether every value in an
  expression has a unique owner.
 To satisfy complete monitoring, reduction must preserve single-ownership.
 
-The key single-ownership rules deal with labeled expressions and boundary terms:
+The key single-ownership rules (@figure-ref{fig:model:ownership-consistency})
+deal with labeled expressions and boundary terms:
 
 @exact|{
 \smallskip
@@ -799,6 +795,8 @@ The client owns the wrapper, and the sender retains ownership of the enclosed va
 @; --- end CUT???
 
 
+@subsection{Lifting a Reduction Relation}
+
 In practice, a language comes with an unlabeled reduction relation,
  and it is up to a researcher to design a lifted relation that handles labeled terms.
 Lifting requires insight to correctly transfer labels
@@ -808,8 +806,10 @@ If labels do not transfer correctly, then a complete monitoring theorem becomes
 And if the lifted relation depends on labels to compute a result, then
  a complete monitoring theorem says nothing about the original reduction relation.
 
-These lifted reduction relations come about semi-automatically through the
- following informal guidelines, or natural (scientific) laws, for proper labeling.
+The following informal guidelines, or natural (scientific) laws,
+ explain how to lift a reduction relation.
+They convey the intuitions behind our formulation of complete monitoring
+and those of prior work@~cite{dfff-popl-2011,dtf-esop-2012,tsdtf-oopsla-2012,mdffc-oopsla-2016}.
 Each law describes a way that labels may be transferred or dropped
  during evaluation.
 To convey the general idea, each law also comes with a brief illustration, namely,
@@ -898,30 +898,24 @@ When reading an example, accept the transitions
   \end{enumerate}}
 }|
 
-@|noindent|Note: @exact{\lawref{law:neg}} talks about functions, but generalizes to
+@|noindent|Although @exact{\lawref{law:neg}} talks about functions, it generalizes to
  reference cells and other higher-order values that accept input.
 
-Although the design of a lifted reduction relation is a challenge
- for every language,
- the laws in this section bring across the intuition behind prior
- formalizations of complete monitoring@~cite{dfff-popl-2011,dtf-esop-2012,tsdtf-oopsla-2012,mdffc-oopsla-2016}
- and may help guide future work.
 
-
-@section[#:tag "sec:model:model:lemmas"]{Lemmas for the Model}
+@section[#:tag "appendix:lemmas"]{Lemmas for the Model}
 
 @exact|{
 \begin{lemma}[compilation]\label{lemma:model:completion}
-  If\ $\sST \ssurface_0 : \stspec$
-  then\ $\sST \ssurface_0 : \stspec \scompile \sexpr_0$
+  If\ $~\sST \ssurface_0 : \stspec$
+  then\ $~\sST \ssurface_0 : \stspec \scompile \sexpr_0$
   and either:
   \begin{itemize}
   \item $\stspec \in \stype$
-        and\ $\sWTT \sexpr_0 : \stspec$
+        and\ $~\sWTT \sexpr_0 : \stspec$
   \item $\stspec \in \tfloor{\stype}$
-        and\ $\sWTS \sexpr_0 : \ftypemapshape{\stspec}$
+        and\ $~\sWTS \sexpr_0 : \ftypemapshape{\stspec}$
   \item $\stspec \in \tdyn$
-        and\ $\sWTU \sexpr_0 : \tdyn$
+        and\ $~\sWTU \sexpr_0 : \tdyn$
   \end{itemize}
 \end{lemma}
 }|
@@ -938,7 +932,7 @@ Although the design of a lifted reduction relation is a challenge
 \begin{lemma}[type preservation]
   If\ $~\sST \sexpr_0 : \stspec$
   and\ $\sexpr_0 \scc \sexpr_1$
-  then\ $\sST \sexpr_1 : \stspec$
+  then\ $~\sST \sexpr_1 : \stspec$
 \end{lemma}
 }|
 
@@ -950,51 +944,51 @@ Although the design of a lifted reduction relation is a challenge
 \end{lemma}
 }|
 
-@exact|{
-\begin{lemma}[$\sdelta, \sDelta$ agreement]\label{lemma:model:delta}\leavevmode
-  \begin{itemize}
-    \item
-      If\ $~\sDelta(\sunop, \tdyn) = \tdyn$
-      and\ $\sWTU \svalue_0 : \tdyn$
-    \item[]
-      and\ $\fdefined{\sdelta(\sunop, \svalue_0)}$
-      then\ $\sWTU \sdelta(\sunop, \svalue_0) : \tdyn$
-    \item
-      If\ $~\sDelta(\sunop, \sshape_0) = \sshape_1$
-      and\ $\sWTS \svalue_0 : \sshape_0$
-    \item[]
-      and\ $\fdefined{\sdelta(\sunop, \svalue_0)}$
-      then\ $\sWTS \sdelta(\sunop, \svalue_0) : \sshape_1$
-    \item
-      If\ $~\sDelta(\sunop, \stype_0) = \stype_1$
-      and\ $\sWTD \svalue_0 : \stype_0$
-    \item[]
-      and\ $\fdefined{\sdelta(\sunop, \svalue_0)}$
-      then\ $\sWTD \sdelta(\sunop, \svalue_0) : \stype_1$
-    \item
-      If\ $~\sDelta(\sbinop, \tdyn, \tdyn) = \tdyn$
-      and\ $\sWTU \svalue_0 : \tdyn$
-      and\ $\sWTU \svalue_1 : \tdyn$
-    \item[]
-      and\ $\fdefined{\sdelta(\sbinop, \svalue_0, \svalue_1)}$
-      then\ $\sWTU \sdelta(\sbinop, \svalue_0, \svalue_1) : \tdyn$
-    \item
-      If\ $~\sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2$
-      and\ $\sWTS \svalue_0 : \sshape_0$
-      and\ $\sWTS \svalue_1 : \sshape_1$
-    \item[]
-      and\ $\fdefined{\sdelta(\sbinop, \svalue_0, \svalue_1)}$
-      then\ $\sWTS \sdelta(\sbinop, \svalue_0, \svalue_1) : \sshape_2$
-    \item
-      If\ $~\sDelta(\sbinop, \stype_0, \stype_1) = \stype_2$
-      and\ $\sWTD \svalue_0 : \stype_0$
-      and\ $\sWTD \svalue_1 : \stype_1$
-    \item[]
-      and\ $\fdefined{\sdelta(\sbinop, \svalue_0, \svalue_1)}$
-      then\ $\sWTD \sdelta(\sbinop, \svalue_0, \svalue_1) : \stype_2$
-  \end{itemize}
-\end{lemma}
-}|
+@;@exact|{
+@;\begin{lemma}[$\sdelta, \sDelta$ agreement]\label{lemma:model:delta}\leavevmode
+@;  \begin{itemize}
+@;    \item
+@;      If\ $~\sDelta(\sunop, \tdyn) = \tdyn$
+@;      and\ $\sWTU \svalue_0 : \tdyn$
+@;    \item[]
+@;      and\ $\fdefined{\sdelta(\sunop, \svalue_0)}$
+@;      then\ $\sWTU \sdelta(\sunop, \svalue_0) : \tdyn$
+@;    \item
+@;      If\ $~\sDelta(\sunop, \sshape_0) = \sshape_1$
+@;      and\ $\sWTS \svalue_0 : \sshape_0$
+@;    \item[]
+@;      and\ $\fdefined{\sdelta(\sunop, \svalue_0)}$
+@;      then\ $\sWTS \sdelta(\sunop, \svalue_0) : \sshape_1$
+@;    \item
+@;      If\ $~\sDelta(\sunop, \stype_0) = \stype_1$
+@;      and\ $\sWTD \svalue_0 : \stype_0$
+@;    \item[]
+@;      and\ $\fdefined{\sdelta(\sunop, \svalue_0)}$
+@;      then\ $\sWTD \sdelta(\sunop, \svalue_0) : \stype_1$
+@;    \item
+@;      If\ $~\sDelta(\sbinop, \tdyn, \tdyn) = \tdyn$
+@;      and\ $\sWTU \svalue_0 : \tdyn$
+@;      and\ $\sWTU \svalue_1 : \tdyn$
+@;    \item[]
+@;      and\ $\fdefined{\sdelta(\sbinop, \svalue_0, \svalue_1)}$
+@;      then\ $\sWTU \sdelta(\sbinop, \svalue_0, \svalue_1) : \tdyn$
+@;    \item
+@;      If\ $~\sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2$
+@;      and\ $\sWTS \svalue_0 : \sshape_0$
+@;      and\ $\sWTS \svalue_1 : \sshape_1$
+@;    \item[]
+@;      and\ $\fdefined{\sdelta(\sbinop, \svalue_0, \svalue_1)}$
+@;      then\ $\sWTS \sdelta(\sbinop, \svalue_0, \svalue_1) : \sshape_2$
+@;    \item
+@;      If\ $~\sDelta(\sbinop, \stype_0, \stype_1) = \stype_2$
+@;      and\ $\sWTD \svalue_0 : \stype_0$
+@;      and\ $\sWTD \svalue_1 : \stype_1$
+@;    \item[]
+@;      and\ $\fdefined{\sdelta(\sbinop, \svalue_0, \svalue_1)}$
+@;      then\ $\sWTD \sdelta(\sbinop, \svalue_0, \svalue_1) : \stype_2$
+@;  \end{itemize}
+@;\end{lemma}
+@;}|
 
 @;@exact|{
 @;\begin{lemma}[type substitution]\leavevmode
@@ -1027,46 +1021,46 @@ Although the design of a lifted reduction relation is a challenge
 
 @exact|{
 \begin{lemma}\label{lemma:model:su}
-  If\ $\sWTS \sexpr_0 : \sshape_0$
-  then\ $\sWTU \sexpr_0 : \tdyn$
+  If\ $~\sWTS \sexpr_0 : \sshape_0$
+  then\ $~\sWTU \sexpr_0 : \tdyn$
 \end{lemma}
 \begin{proof}
-  By definition.
-  Note the untyped rules for shape-annotated functions.
+  By definition, in particular because the untyped rules
+  allow shape-annotated functions.
 \end{proof}
 }|
 
-@exact|{
-\begin{lemma}[type in-hole]
-  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
-  then\ $\fexistsone{\stspec_1} \vdash \sexpr_0 : \stspec_1$
-\end{lemma}
-}|
-
-@exact|{
-\begin{lemma}[type replace]
-  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
-  and\ $~\vdash \sexpr_0 : \stspec_1$
-  and\ $~\vdash \sexpr_1 : \stspec_1$
-  then\ $~\vdash \finhole{\sctx_0}{\sexpr_1} : \stspec_0$
-\end{lemma}
-}|
+@;@exact|{
+@;\begin{lemma}[type in-hole]
+@;  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
+@;  then\ $\fexistsone{\stspec_1} \vdash \sexpr_0 : \stspec_1$
+@;\end{lemma}
+@;}|
+@;
+@;@exact|{
+@;\begin{lemma}[type replace]
+@;  If\ $~\vdash \finhole{\sctx_0}{\sexpr_0} : \stspec_0$
+@;  and\ $~\vdash \sexpr_0 : \stspec_1$
+@;  and\ $~\vdash \sexpr_1 : \stspec_1$
+@;  then\ $~\vdash \finhole{\sctx_0}{\sexpr_1} : \stspec_0$
+@;\end{lemma}
+@;}|
 
 @exact|{
 \begin{lemma}[boundary-crossing]\label{lemma:model:boundary}\leavevmode
   \begin{itemize}
     \item
-      If\ $\sWTlang \svalue_0 : \stspec$
+      If\ $~\sWTlang \svalue_0 : \stspec$
       and\ $\fshapematch{\sshape_0}{\svalue_0}$
-      then\ $\sWTS \svalue_0 : \sshape_0$
+      then\ $~\sWTS \svalue_0 : \sshape_0$
     \item
-      If\ $\sWTS \svalue_0 : \sshape_0$
-      then\ $\sWTU \svalue_0 : \tdyn$
+      If\ $~\sWTS \svalue_0 : \sshape_0$
+      then\ $~\sWTU \svalue_0 : \tdyn$
     \item
-      If\ $\sWTD \svalue_0 : \stype_0$
+      If\ $~\sWTD \svalue_0 : \stype_0$
       and\ $\ewrap{\stype_0}{\svalue_0} \snr \svalue_1$
-      then\ $\sWTS \svalue_1 : \ftypemapshape{\stype_0}$
-      and\ $\sWTU \svalue_1 : \tdyn$
+      then\ $~\sWTS \svalue_1 : \ftypemapshape{\stype_0}$
+      and\ $~\sWTU \svalue_1 : \tdyn$
   \end{itemize}
 \end{lemma}
 }|
@@ -1080,266 +1074,188 @@ Although the design of a lifted reduction relation is a challenge
 \end{lemma}
 }|
 
-@exact|{
-\begin{lemma}[label in-hole]
-  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
-  then\ $\fexistsone{\sowner_1} \sowner_1 \Vdash \sexpr_0$
-\end{lemma}
-}|
-
-@exact|{
-\begin{lemma}[label replace]
-  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
-  and\ $\sowner_1 \Vdash \sexpr_0$
-  and\ $\sowner_1 \Vdash \sexpr_1$
-  then\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_1}$
-\end{lemma}
-}|
-
-@section[#:tag "appendix:implementation"]{Implementation}
-
-@subsection[#:tag "sec:implementation:impl:syntax"]{Syntax Re-Use}
-
-One limitation is that @|sShallow| code cannot use macros from @|sDeep| Racket modules.
-Re-use is desirable to avoid copying code, but it requires a static analysis
- to enforce soundness.
-Consider the following simple macro.
-It applies a typed function @tt{f} to an input, and is consequently
- unsafe to send from @|sDeep| to @|sShallow| code:
-
-@typed-codeblock['("(define-syntax-rule (call-f x) (f x))")]
-
-@|noindent|If this macro could appear in a @|sShallow| Racket context, then any
- @|sShallow| value @tt{x} could sneak into the @|sDeep| function.
-Unless @tt{f} makes no assumptions about its input, such values can break
- the @|sDeep| soundness guarantee and lead to dangerous results in optimized
- code.
-
-One possible fix is to put a contract around every @|sDeep| identifier that
- appears in a macro.
-Doing so would require an analysis to find out which contracts are needed,
- and a second analysis to install contracts wisely;
- each identifier requires a contract, but repeated occurrences of one identifier
- should not lead to repeated contract checks.
-It may also be possible to avoid the contracts if the macro goes only to @|sDeep| clients.
-
-Another possibility is to statically check whether a macro is safe to
- export.
-Safe macros appear, for example, in the typed compatibility layer for the
- RackUnit testing library.
-RackUnit is an untyped library that exports some functions and some macros.
-The typed layer provides types for the functions and type-annotated copies
- of the macros (about 300 lines in total).
-For example, the following macro combines a sequence of expressions into
- a named RackUnit test case:
-
-@typed-codeblock['(
-  "(define-syntax (test-case stx)"
-  " (syntax-parse stx"
-  "  [(_ name expr ...)"
-  "   #'(parameterize ([test-name (ensure-str name)])"
-  "       (test-begin expr ...))]))"
-)]
-
-@|noindent|This macro is safe for @|sShallow| clients, but for complicated reasons.
-First, @tt{ensure-str} is a typed function that accepts any input.
-Second, @tt{test-begin} is a macro from the same file that is also safe.
-Third, @tt{parameterize} comes from untyped Racket.
-
-@; ;; rackunit/rackunit-typed/rackunit/main.rkt
-@;(define-syntax (test-begin stx)
-@;  (syntax-case stx ()
-@;    [(_ expr ...)
-@;     (syntax/loc stx
-@;       ((current-test-case-around)
-@;        (lambda ()
-@;          (with-handlers ([(λ (e)
-@;                             (and (exn:fail? e)
-@;                                  (not (exn:test? e))))
-@;                           (λ ([e : exn:fail])
-@;                             (test-log! #f)
-@;                             (raise e))])
-@;          (parameterize ([current-check-handler raise])
-@;            (void)
-@;            expr ...)))))]
-@;    [_
-@;     (raise-syntax-error
-@;      #f
-@;      "Correct form is (test-begin expr ...)"
-@;      stx)]))
-
-Currently, the author of a @|sDeep| library can enable syntax re-use by
-disabling the optimizer and unsafely providing macros.
-This work-around requires a manual inspection, but it is more appealing than
-forking the RackUnit library and asking programmers to import the version
-that matches their use own of @|sDeep| and @|sShallow|.
+@;@exact|{
+@;\begin{lemma}[label in-hole]
+@;  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
+@;  then\ $\fexistsone{\sowner_1} \sowner_1 \Vdash \sexpr_0$
+@;\end{lemma}
+@;}|
+@;
+@;@exact|{
+@;\begin{lemma}[label replace]
+@;  If\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_0}$
+@;  and\ $\sowner_1 \Vdash \sexpr_0$
+@;  and\ $\sowner_1 \Vdash \sexpr_1$
+@;  then\ $\sowner_0 \Vdash \finhole{\sctx_0}{\sexpr_1}$
+@;\end{lemma}
+@;}|
 
 
-@subsection[#:tag "sec:implementation:impl:tu"]{@|sDeep|--@|sUntyped| Utilities}
-@; struggles = edit old code , 2 of these => new type errors
-
-Typed Racket has a small API by Neil Toronto to let programmers control boundaries
- between @|sdeep| and @|suntyped| code.
-The API arose over time, as programmers (including Neil) discovered challenges.
-Two forms in this API can lead to type errors due to the existence of
- @|sShallow| Racket code.
-
-@; require/untyped-contract
-
-The first problem concerns @tt{require/untyped-contract}.
-This form lets untyped code import a typed identifier whose precise type
- cannot be expressed with a @|sdeep| contract.
-Users supply a supertype of the precise type and @|sDeep| Racket uses this
- weaker type to generate a contract.
-For example, the @bm{jpeg} benchmark (@section-ref{sec:evaluation:performance})
-depends on a library for multi-dimensional
-arrays (@render-lib[(make-lib "math/array" "https://docs.racket-lang.org/math/array.html")]).
-This library accepts two kinds of data for array indices:
- either a vector of natural numbers or a vector of integers.
-Helper functions check that values with the integer type do not actually
- contain negative numbers at run-time:
-
-@exact{\smallskip}
-@typed-codeblock['(
-  "(: check-array-shape"
-  "   (-> (U (Vectorof Natural) (Vectorof Integer))"
-  "       (Vectorof Natural)))")]
-
-@|noindent|Racket contracts cannot express the @|sDeep| Racket type of the checking
- function because they lack support for higher-order unions.
-The work around is to impose a supertype on untyped clients:
-
-@exact{\smallskip}
-@untyped-codeblock['(
-  "(require/untyped-contract"
-  "  [check-array-shape"
-  "   (-> (Vectorof Integer) (Vectorof Natural))])")]
-
-The @tt{require/untyped-contract} form comes with an odd design choice.
-If an untyped-contract identifier flows back into typed code,
-the type checker uses the original type and the unwrapped value.
-For @|sDeep| code, this choice is convenient.
-For @|sShallow| code, the convenience is unsound.
-A @|sShallow| client must instead receive the wrapped version of the identifier,
-which means that the client must behave in accordance with the supertype.
-Consequently, some well-typed @|sDeep| programs can raise type errors
-after a one-line switch to @|sShallow| Racket.
-
-@; define-typed/untyped-identifier
-@; TODO more extreme version of untyped-contract
-
-The second problematic form is @tt{define-typed/untyped-identifier},
- which creates a new identifier from two old ones.
-The following example defines @tt{f} from two other names:
-
-@exact{\smallskip}
-@typed-codeblock['(
-  "(define-typed/untyped-identifier f typed-f untyped-f)")]
-
-@|noindent|The meaning of @tt{f} depends on the context in which it appears.
-In typed code, @tt{f} expands to @tt{typed-f}.
-In untyped code, an @tt{f} is a synonym for @tt{untyped-f}.
-
-The @tt{typed-f} is intended for @|sDeep| Racket code;
-it cannot be safely used in a @|sShallow| module because it may
- assume full type soundness.
-Consequently, @|sShallow| code gets the untyped id.
-This means, unfortunately, that changing a @|sDeep| module to @|sShallow|
- can raise a type checking error because occurrences of @tt{f} that expand to
- @tt{untyped-f} are plain, untyped identifiers.
-There is no easy way to uncover the type that a @tt{typed-f} would have,
-but more importantly there is no guarantee that @tt{typed-f} and @tt{untyped-f}
-have the same behavior.
-In the future, the @tt{define-typed/untyped-identifier}
- form would benefit
- from a third argument that specifies behavior in @|sShallow| contexts.
-
-
-@section[#:tag "sec:implementation:macro"]{Macros and Hidden Exports}
+@section[#:tag "appendix:macro"]{Implementation: Macros and Hidden Exports}
 
 Macro expansion may cause private identifiers from one
-module to appear in (the expansion of) another module@~cite{f-popl-2016}.
-@; fcdf-jfp-2012
+module to appear in (the expansion of) another module@~cite{f-popl-2016,fcdf-jfp-2012}.
 If one module uses @|sdeep|-typed and the other uses @|sshallow|,
 this behavior is a threat to type soundness.
-The stowed identifiers must be protected/validated like any other export.
+The stowed identifiers must be protected like any other export.
 
 By default, Typed Racket prevents @|sDeep| Racket and @|sShallow| Racket
 modules from sharing macros.
-A programmer must inspect each macro and provide it unsafely
-to enable reuse.
+A programmer can only enable reuse by unsafely providing a macro.
+
 @; example: rackunit macros
 @; future: replace manual with a static analysis
 @; future: protect stowed exports
 
 
-@section[#:tag "sec:racket-users"]{Example Programs}
+@;@subsection[#:tag "sec:implementation:impl:syntax"]{Syntax Re-Use}
+@;
+@;One limitation is that @|sShallow| code cannot use macros from @|sDeep| Racket modules.
+@;Re-use is desirable to avoid copying code, but it requires a static analysis
+@; to enforce soundness.
+@;Consider the following simple macro.
+@;It applies a typed function @tt{f} to an input, and is consequently
+@; unsafe to send from @|sDeep| to @|sShallow| code:
+@;
+@;@typed-codeblock['("(define-syntax-rule (call-f x) (f x))")]
+@;
+@;@|noindent|If this macro could appear in a @|sShallow| Racket context, then any
+@; @|sShallow| value @tt{x} could sneak into the @|sDeep| function.
+@;Unless @tt{f} makes no assumptions about its input, such values can break
+@; the @|sDeep| soundness guarantee and lead to dangerous results in optimized
+@; code.
+@;
+@;One possible fix is to put a contract around every @|sDeep| identifier that
+@; appears in a macro.
+@;Doing so would require an analysis to find out which contracts are needed,
+@; and a second analysis to install contracts wisely;
+@; each identifier requires a contract, but repeated occurrences of one identifier
+@; should not lead to repeated contract checks.
+@;It may also be possible to avoid the contracts if the macro goes only to @|sDeep| clients.
+@;
+@;Another possibility is to statically check whether a macro is safe to
+@; export.
+@;Safe macros appear, for example, in the typed compatibility layer for the
+@; RackUnit testing library.
+@;RackUnit is an untyped library that exports some functions and some macros.
+@;The typed layer provides types for the functions and type-annotated copies
+@; of the macros (about 300 lines in total).
+@;For example, the following macro combines a sequence of expressions into
+@; a named RackUnit test case:
+@;
+@;@typed-codeblock['(
+@;  "(define-syntax (test-case stx)"
+@;  " (syntax-parse stx"
+@;  "  [(_ name expr ...)"
+@;  "   #'(parameterize ([test-name (ensure-str name)])"
+@;  "       (test-begin expr ...))]))"
+@;)]
+@;
+@;@|noindent|This macro is safe for @|sShallow| clients, but for complicated reasons.
+@;First, @tt{ensure-str} is a typed function that accepts any input.
+@;Second, @tt{test-begin} is a macro from the same file that is also safe.
+@;Third, @tt{parameterize} comes from untyped Racket.
+@;
+@;@; ;; rackunit/rackunit-typed/rackunit/main.rkt
+@;@;(define-syntax (test-begin stx)
+@;@;  (syntax-case stx ()
+@;@;    [(_ expr ...)
+@;@;     (syntax/loc stx
+@;@;       ((current-test-case-around)
+@;@;        (lambda ()
+@;@;          (with-handlers ([(λ (e)
+@;@;                             (and (exn:fail? e)
+@;@;                                  (not (exn:test? e))))
+@;@;                           (λ ([e : exn:fail])
+@;@;                             (test-log! #f)
+@;@;                             (raise e))])
+@;@;          (parameterize ([current-check-handler raise])
+@;@;            (void)
+@;@;            expr ...)))))]
+@;@;    [_
+@;@;     (raise-syntax-error
+@;@;      #f
+@;@;      "Correct form is (test-begin expr ...)"
+@;@;      stx)]))
+@;
+@;Currently, the author of a @|sDeep| library can enable syntax re-use by
+@;disabling the optimizer and unsafely providing macros.
+@;This work-around requires a manual inspection, but it is more appealing than
+@;forking the RackUnit library and asking programmers to import the version
+@;that matches their use own of @|sDeep| and @|sShallow|.
 
-Other top types for higher-order values can lead to similar programs.
-For example, @|sShallow| can import a function at the general @tt{Procedure} type,
-cast it to a more specific type, and try an application.
-The application may succeed if the specific type is correct.
-A @|sDeep| cast simply adds a second wrapper on top of the
-restrictive wrapper for the @tt{Procedure} type.@note{Because
-@|sdeep| program can do so little with a @tt{Procedure} value, library authors
-must use clever types to define generic utility functions for procedures.
-Until recently, the @tt{object-name} function had a useless type
-(@github-commit["racket" "typed-racket" "47a5ab3e2f335e6956aea4b98700d22a359ad6b2"]).}
 
-@Figure-ref{fig:evaluation:no-wrap} demonstrates the issue with a mutable pair
-(@tt{MPairof}) type.
-@|sDeep| Racket raises a run-time error when untyped code tries to call the @tt{add-mpair}
- function, but @|sShallow| can run the program.
+@section[#:tag "appendix:boundary-api"]{Implementation: Typed Racket Boundary Utilities}
 
-@Figure-ref{fig:evaluation:index-of} presents a second, more subtle case.
-This typed module imports an untyped function, @tt{index-of}, with a precise
- polymorphic type.
-The wrapper that enforces this type
- creates a new wrapper for every input to the function---to enforce parametric
- polymorphism@~cite{gmfk-dls-2007}.
-Unfortunately, these input wrappers change the behavior of @tt{index-of};
- it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
- a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
+Typed Racket has a small API by Neil Toronto to let programmers control boundaries
+ between @|sdeep| and @|suntyped| code.
+@; The API arose over time, as programmers discovered challenges.
+Two forms in this API pose challenges for @|sShallow| Racket.
 
-@|sDeep| Racket wrappers is to reject certain operations
-without otherwise changing the behavior of program, wrappers can cause some
-programs to run differently.
-One obvious case is code that explicitly looks for wrappers; the answers to
-low-level observations such as @tt{has-contract?} may depend on the type
-boundaries in a @|sDeep| Racket program.
-@Figure-ref{fig:evaluation:index-of} presents a second, more subtle case.
-This typed module imports an untyped function, @tt{index-of}, with a precise
- polymorphic type.
-The wrapper that enforces this type
- creates a new wrapper for every input to the function---to enforce parametric
- polymorphism@~cite{gmfk-dls-2007}.
-Unfortunately, these input wrappers change the behavior of @tt{index-of};
- it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
- a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
+@; require/untyped-contract
 
-@|sShallow| Racket avoids all such changes in behavior,
- including the well-know object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},
- because the @|stransient| semantics does not use wrappers to enforce types.
-
-
-@figure*[
-  "fig:evaluation:any-wrap"
-  @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}
-  fig:any-wrap]
-
-@figure*[
-  "fig:evaluation:no-wrap"
-  @elem{@|sDeep| lacks wrappers for mutable pairs and a few other uncommon datatypes}
-  fig:no-wrap]
-
-@figure*[
-  "fig:evaluation:index-of"
-  @elem{@|sDeep| contracts can change the behavior of code}
-  fig:index-of]
+The first is @tt{require/untyped-contract}.
+This form lets untyped code import a typed identifier whose precise type
+ cannot be expressed with a @|sdeep| contract.
+Users supply a supertype of the precise type and @|sDeep| Racket uses this
+ weaker type to generate a contract.
+@;For example, the @bm{jpeg} benchmark (@section-ref{sec:evaluation:performance})
+@;depends on a library for multi-dimensional
+@;arrays (@render-lib[(make-lib "math/array" "https://docs.racket-lang.org/math/array.html")]).
+@;This library accepts two kinds of data for array indices:
+@; either a vector of natural numbers or a vector of integers.
+@;Helper functions check that values with the integer type do not actually
+@; contain negative numbers at run-time:
+@;
+@;@exact{\smallskip}
+@;@typed-codeblock['(
+@;  "(: check-array-shape"
+@;  "   (-> (U (Vectorof Natural) (Vectorof Integer))"
+@;  "       (Vectorof Natural)))")]
+@;
+@;@|noindent|Racket contracts cannot express the @|sDeep| Racket type of the checking
+@; function because they lack support for higher-order unions.
+@;The work around is to impose a supertype on untyped clients:
+@;
+@;@exact{\smallskip}
+@;@untyped-codeblock['(
+@;  "(require/untyped-contract"
+@;  "  [check-array-shape"
+@;  "   (-> (Vectorof Integer) (Vectorof Natural))])")]
+For the convenience of typed programmers,
+the type checker uses the original (super) type and the unwrapped value
+if an identifier exported via @tt{require/untyped-contract} flows
+back to @|sdeep|-typed code.
+Unfortunately, @|sshallow|-typed code cannot use the unwrapped identifier
+safely, and therefore must adhere to the refined subtype.
+Because of the refinement, some well-typed @|sDeep| programs can raise type
+errors after a one-line switch to @|sShallow| Racket.
 
 
-@section[#:tag "sec:racket-users"]{Mailing List Questions}
+@; define-typed/untyped-identifier
+@; TODO more extreme version of untyped-contract
 
+The second problematic form is @tt{define-typed/untyped-identifier},
+ which creates an identifier from two others.
+The following example defines @tt{f} from two other names:
+
+@exact{\smallskip}
+@tt{(define-typed/untyped-identifier f tf uf)}
+@;@typed-codeblock['(
+@;  "(define-typed/untyped-identifier f tf uf)")]
+
+@|noindent|The meaning of @tt{f} depends on the context in which it appears.
+In @|sdeep|-typed code, @tt{f} expands to @tt{tf}.
+In untyped code, an @tt{f} is a synonym for @tt{uf}.
+@|sShallow| Racket code cannot be trusted with the @tt{tf}
+identifier because of its weak soundness guarantee.
+Thus, the form should take a third identifier to fine-tune the
+types and behaviors for @|sshallow|-typed code.
+
+
+@section[#:tag "sec:racket-users"]{Expressiveness by @|sShallow|: Example Programs}
+
+@subsection{Less-strict Top Type}
 
 @user-inspiration["sec:evaluation:expr:any" '(
  ("Denis Michiels"
@@ -1352,6 +1268,64 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
   "https://groups.google.com/g/racket-users/c/jtmVDFCGL28/m/jwl4hsjtBQAJ"))]
 
 
+@figure[
+  "fig:evaluation:any-wrap"
+  @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}
+  fig:any-wrap-y]
+
+@|sDeep| Racket enforces the top type with a wrapper
+that prevents clients from inspecting the enclosed value.
+This wrapper is a surprise for developers who expect programs such
+ as @figure-ref{fig:both:any-wrap} to run without error.
+This program defines a mutable box in typed code,
+ assigns the @tt{Any} type to the box,
+ and sends it to untyped code.
+The untyped module attempts to set the box.
+@|sDeep| Racket raises an exception when untyped code tries to modify the box.
+Unfortunately for the programmer, this error is essential for soundness.
+If untyped code put an integer in the box, then typed uses of the
+ box would give a result that is inconsistent with its type.
+@|sShallow| Racket runs the program without error because of its delayed
+ checking strategy.
+If @|sshallow|-typed code tries to read a symbol from the
+ box, then that access will raise an error.
+
+Other top types for higher-order values can lead to similar programs.
+For example, @|sShallow| Racket can import a function at the general @tt{Procedure} type,
+cast it to a more specific type, and try an application.
+The application may succeed if the specific type is correct.
+A @|sDeep| cast simply adds a second wrapper on top of the
+restrictive wrapper for the @tt{Procedure} type.
+@; Indeed, because
+@; @|sdeep| program can do so little with a @tt{Procedure} value, library authors
+@; must use clever types to define generic utility functions for procedures.
+@; Until recently, the @tt{object-name} function had a useless type
+@; (@github-commit["racket" "typed-racket" "47a5ab3e2f335e6956aea4b98700d22a359ad6b2"]).
+
+
+@subsection{No Missing Wrappers}
+
+@figure[
+  "fig:evaluation:no-wrap"
+  @elem{@|sDeep| lacks wrappers for mutable pairs and a few other uncommon datatypes}
+  fig:no-wrap-y]
+
+@(let* ((missing-wrapper* '(
+          "(Async-Channel T)" "(Custodian-Box T)" "(C-Mark-Key T)" "(Evt T)"
+          "(Ephemeron T)" "(Future T)" "(MPair T T')" "(MList T)"
+          "(Prompt-Tag T T')" "(Syntax T)" "(Thread-Cell T)" "(Weak-Box T)"))
+        (num-missing (length missing-wrapper*)))
+  @elem{
+Several little-used types in @|sDeep| Racket
+lack wrappers (@~a[num-missing] in total).
+@Figure-ref{fig:evaluation:no-wrap} demonstrates the issue with a mutable pair
+(@tt{MPairof}) type.
+@|sDeep| Racket raises a run-time error when untyped code tries to call the @tt{add-mpair}
+ function. @|sShallow| can run the program.
+})
+
+@subsection{Uniform Behavior}
+
 @user-inspiration["sec:evaluation:expr:uniform" '(
  ("Bertrand"
   "Typed code from untyped code"
@@ -1361,6 +1335,25 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
   "index-of + TR ... parametricity problem?"
   "2019-12-15"
   "https://groups.google.com/g/racket-users/c/ZbYRQCy93dY/m/kF_Ek0VvAQAJ"))]
+
+@figure[
+  "fig:evaluation:index-of"
+  @elem{@|sDeep| contracts can change the behavior of code}
+  fig:index-of-y]
+
+@Figure-ref{fig:evaluation:index-of} presents a typed module
+that imports an untyped function, @tt{index-of}, with a precise
+ polymorphic type.
+The wrapper that enforces this type
+ creates a new wrapper for every input to the function---to enforce parametric
+ polymorphism@~cite{gmfk-dls-2007}.
+Unfortunately, these input wrappers change the behavior of @tt{index-of};
+ it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
+ a ``not found'' result (@tt{#f}) instead of the correct position (@tt{0}).
+@|sShallow| Racket avoids all such changes in behavior,
+ including the well-know object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},
+ because the @|stransient| semantics does not use wrappers to enforce types.
+
 
 
 

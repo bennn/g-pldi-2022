@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt"
    (only-in scriblib/footnote note)
    (only-in "pict.rkt"

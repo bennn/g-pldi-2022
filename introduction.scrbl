@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @10pt @screen
+#lang scribble/acmart
 @(require "main.rkt" "bib.rkt" (only-in scriblib/footnote note))
 
 @; THESIS Deep + Shallow is better than Deep or Shallow
