@@ -59,15 +59,16 @@ static types and @|sshallow| types aim only for local type soundness.
 
 @Figure-ref{fig:ds-example} presents a three-module program to illustrate
 the gap between @|sdeep| and @|sshallow| types.
-The untyped module on the left contains a stub definition for a function
+The untyped module on top contains a stub definition for a function
 @|untyped-fn| that expects two arguments.
 This module is a simplified picture of the Racket @tt{images/icons/symbol}
 module, which incorporates thousands of lines of rendering and raytracing code---a
 module that is easiest left untyped.
-The typed module in the middle is an interface for the untyped function.
-The types correctly state that @|untyped-fn| expects a string and a font
+The typed module in the middle is an interface for the untyped function,
+which passes in a higher-order manner to clients who might rely on the type.
+The type correctly states that @|untyped-fn| expects a string and a font
 object and computes a bitmap object.
-Finally, the untyped client module on the right mistakenly calls @|untyped-fn|
+Finally, the untyped client module on the bottom mistakenly calls @|untyped-fn|
 with two strings instead of one string and one object.
 
 @figure[

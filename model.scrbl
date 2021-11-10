@@ -1581,7 +1581,7 @@ label: @${(\ewrap{\stype_0}{\svalue_0})},
 @${(\escan{\sshape_0}{\svalue_0})}, @${(\enoop{\svalue_0})}, and @${(\emon{\stype_0}{\svalue_0})}.
 @linebreak[]}
 @item{
-To minimize parenthesis and superscripts, the abbrevation @${\obbars{\cdot}{\cdot}}
+To reduce parenthesis and superscripts, the abbrevation @${\obbars{\cdot}{\cdot}}
 captures a sequence of labels.
 For example, the value @${\obars{\obars{\obars{4}{\sowner_0}}{\sowner_1}}{\sowner_2}}
 matches the pattern @${\obbars{\svalue_0}{\sownerlist_0}}

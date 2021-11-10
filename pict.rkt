@@ -77,7 +77,7 @@
 (define error-color "Firebrick")
 
 (define (code-arrowhead angle)
-  (cellophane (colorize (arrowhead 12 angle) black) 0.7))
+  (cellophane (colorize (arrowhead 10 angle) black) 0.7))
 
 (define right-arrow
   (vl-append 6 (blank) (code-arrowhead 0)))
