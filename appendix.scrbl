@@ -17,11 +17,9 @@
 @; - [X] lemmas for progress, preservation, and compilation (deferred to the @appendixref{appendix:lemmas}).
 @; - [X] 3way macro issues @appendixref{appendix:macro}
 @; - [X] 3-way boundary in TR examples and more details @appendix{appendix:boundary-api}
-@; - [ ] Refer to the @appendixref{appendix:expressiveness} for example programs.
+@; - [X] Refer to the @appendixref{appendix:expressiveness} for example programs.
 
 @section[#:tag "appendix:rules"]{Surface Typing, Completion, Evaluation Typing}
-
-
 
 @Figure-ref{fig:appendix:surface-types} presents the full typing judgment
 for the surface language.
@@ -184,7 +182,7 @@ Three other figures present the evaluation typing judgments:
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfun{\stype_0}{\stype_1}
-    \\
+    \\\\
     \stypeenv \sST \sexpr_1 : \stype_0
   }{
     \stypeenv \sST \eapp{\sexpr_0}{\sexpr_1} : \stype_1
@@ -192,7 +190,7 @@ Three other figures present the evaluation typing judgments:
 
   \inferrule*{
     \stypeenv \sST \sexpr_0 : \tfloor{\tfun{\stype_0}{\stype_1}}
-    \\
+    \\\\
     \stypeenv \sST \sexpr_1 : \tfloor{\stype_0}
   }{
     \stypeenv \sST \eapp{\sexpr_0}{\sexpr_1} : \tfloor{\stype_1}
@@ -310,7 +308,7 @@ Three other figures present the evaluation typing judgments:
     \\
     \fshape{\stype_0} = \sshape_0
   }{
-    \stypeenv \sST \efun{\tann{\svar_0}{\tfloor{\stype_0}}}{\sexpr_0} : \tfloor{\tfun{\stype_0}{\stype_1}} \scompile \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_1}
+    \stypeenv \sST \efun{\tann{\svar_0}{\tfloor{\stype_0}}}{\sexpr_0} : \tfloor{\tfun{\stype_0}{\stype_1}} \scompile \esfun{\svar_0}{\sshape_0}{\sexpr_1}
   }
 
   \inferrule*{
@@ -533,7 +531,7 @@ Three other figures present the evaluation typing judgments:
     \stypeenv \sWTS \sexpr_0 : \sshape_0
     \\
     \stypeenv \sWTS \sexpr_1 : \sshape_1
-    \\
+    \\\\
     \sDelta(\sbinop, \sshape_0, \sshape_1) = \sshape_2
   }{
     \stypeenv \sWTS \ebinop{\sexpr_0}{\sexpr_1} : \sshape_2
@@ -998,7 +996,7 @@ When reading an example, accept the transitions
 @;      and\ $~\vdash \svalue_0 : \tdyn$
 @;      then\ $~\vdash \esubst{\sexpr_0}{\svar_0}{\svalue_0} : \tdyn$
 @;    \item
-@;      If\ $~\vdash \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0} : \tdyn$
+@;      If\ $~\vdash \esfun{\svar_0}{\sshape_0}{\sexpr_0} : \tdyn$
 @;      and\ $~\vdash \svalue_0 : \tdyn$
 @;      and\ $\fshapematch{\sshape_0}{\svalue_0}$
 @;      then\ $~\vdash \esubst{\sexpr_0}{\svar_0}{\svalue_0} : \tdyn$
@@ -1007,7 +1005,7 @@ When reading an example, accept the transitions
 @;      and\ $~\vdash \svalue_0 : \sshape_0$
 @;      then\ $~\vdash \esubst{\sexpr_0}{\svar_0}{\svalue_0} : \tdyn$
 @;    \item
-@;      If\ $~\vdash \efun{\tann{\svar_0}{\sshape_0}}{\sexpr_0} : \kfun$
+@;      If\ $~\vdash \esfun{\svar_0}{\sshape_0}{\sexpr_0} : \kfun$
 @;      and\ $~\vdash \svalue_0 : \sshape_1$
 @;      and\ $\fshapematch{\sshape_0}{\svalue_0}$
 @;      then\ $~\vdash \esubst{\sexpr_0}{\svar_0}{\svalue_0} : \kany$
