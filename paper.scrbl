@@ -42,12 +42,12 @@
 @; -----------------------------------------------------------------------------
 
 @abstract{
-Sound gradual types come in many forms and offer varying levels of type
+Sound gradual types come in many forms and offer varying levels of
 soundness.
-Two extremes are @emph{deep} types and @emph{shallow} types.
+Two extremes are deep types and shallow types.
 Deep types offer compositional guarantees but depend on
 expensive higher-order contracts.
-Shallow types offer only a soundness guarantee, but can be implemented
+Shallow types enforce only local properties, but can be implemented
 with first-order checks.
 This paper presents a language design that supports both deep and shallow
 types to utilize their complementary strengths.
