@@ -828,7 +828,7 @@ eos
             "  [index-of"
             "   (All (T)"
             "    (-> (Listof T) T"
-            "        (U #f Natural)))])"
+            "        (U #false Natural)))])"
             ""
             "(index-of '(a b) 'a)")))
          (uu (vc-append caption-shim uu (code-text "Untyped: 0")))
@@ -836,7 +836,7 @@ eos
                         tt
                         (vc-append (* 1/2 caption-shim)
                           (code-text "Shallow: 0")
-                          (code-text "Deep: #f")))))
+                          (code-text "Deep: #false")))))
     (values
       (ht-append (* 8 hshim) uu tt)
       (vc-append (* 2 vshim) uu tt))))

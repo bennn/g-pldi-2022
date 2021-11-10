@@ -240,14 +240,15 @@
           (apply itemlist
                  (for/list ((ui (in-list data*)))
                    (item
-                     (elem (emph (ui-title ui))
+                     (elem #:style (make-style "sloppypar" '())
+                           (emph (ui-title ui))
                            ", sent by "
                            (ui-name ui)
                            " on "
                            (ui-date ui)
                            ". ")
                      ;; (linebreak)
-                     (exact "{\\footnotesize" (format-url (ui-url ui)) " (Accessed 2020-12-15)}" )))))))
+                     (exact "{\\footnotesize" (format-url (ui-url ui)) " accessed 2020-12-15}" )))))))
 
 (define (nested-inset . content)
   (nested #:style 'inset content))
