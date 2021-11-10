@@ -34,22 +34,23 @@
 
 Taken broadly, the research area of gradual typing presents several
 @emph{type-enforcement strategies} that enforce static types against
-untyped code.
+untyped code to varying levels of fidelity.
 Among strategies that are compatible with an untyped
 host language and provide a basic type soundness guarantee, two promising
 alternatives are @|sNatural|@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006}
 and @|sTransient|@~cite{vss-popl-2017}.
-The @|sNatural| strategy uses higher-order contracts to enforce the @|sdeep|
+The @|sNatural| strategy uses higher-order contracts to enforce the
 behavioral claims implied by higher-order types.
-The @|sTransient| strategy uses first-order checks to enforce @|sshallow| aspects
+The @|sTransient| strategy uses first-order checks to enforce basic aspects
 of types in type-annotated code.
 Unsurprisingly, these two methods of enforcing types come with
 different benefits and drawbacks.
-Contracts in @|sNatural| enable strong type soundness
-and complete monitoring guarantees@~cite{gfd-oopsla-2019},
-but can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
-First-order checks in @|sTransient| enable only a weak soundness guarantee,
-but rarely dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
+Contracts in @|sNatural| enable @emph{@|sdeep|} types
+that satisfy type soundness and complete monitoring@~cite{gfd-oopsla-2019}.
+These contracts, however, can impose a huge performance cost@~cite{gtnffvf-jfp-2019}.
+First-order checks in @|sTransient| enable only @emph{@|sshallow|} types,
+which promise a weak soundness guarantee,
+but these checks rarely dominate the running time of a program@~cite{vss-popl-2017,gm-pepm-2018,rmhn-ecoop-2019}.
 
 The question thus arises as to whether the two enforcement strategies can
 interoperate, giving programmers @|sdeep| types
@@ -91,7 +92,7 @@ Studying these questions yields three contributions:
 Generally put, these contributions strongly suggest that combining
 type-sound gradual typing strategies gives programmers control over the
 protection/performance tradeoff.  The combination is coarse and the
-two typed semantics do little to cooperate (@section-ref{sec:future}),
+two strategies do little to cooperate (@section-ref{sec:future}),
 but the evaluation suggests that interoperability can effectively
 address tradeoffs without restricting the source language or replacing
 the compiler.

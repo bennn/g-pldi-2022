@@ -26,7 +26,7 @@
   "../with-cache/with-cache.rkt"
   (only-in "../main.rkt" glob-first stransient default-rkt-version transient-rkt-version bm)
   (only-in math/number-theory factorial)
-  (only-in math/statistics mean)
+  (only-in math/statistics mean median)
   (only-in scribble/base bold centered hyperlink tabular hspace tt linebreak)
   (only-in gtp-util rnd pct string->value time-string->cpu-time natural->bitstring))
 
@@ -586,7 +586,13 @@
 
 (module+ main
   #;(quick-table (glob (build-path "nsa-2020-12-30" "*.out")))
-  (biggest-3d-gap* '(forth fsm fsmoo mbta morsecode zombie dungeon
+  #;(biggest-3d-gap* '(forth fsm fsmoo mbta morsecode zombie dungeon
                      jpeg zordoz lnm suffixtree kcfa snake take5
                      acquire tetris ))
+  (let ((worst* '(2.97 5.43 1.91 4.25 1.71 1.3 31 3.16 1.56 2.58 1.17 5.8 1.24
+                  7.61 2.97 1.42 5.44 4.2 1.51 7.23 7.45)))
+    (printf "med ~a avg ~a~n"
+            (median < worst*)
+            (mean worst*)))
+
   (void))
