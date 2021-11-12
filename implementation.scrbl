@@ -21,13 +21,17 @@
 We have implemented three-way interactions atop Typed Racket.
 The extension combines the standard ``@|sDeep|'' Typed Racket, which implements the
 @|snatural| semantics@~cite{tf-popl-2008}, with the ``@|sShallow| Racket''
-implementation of @|stransient|@~cite{glfd-pj-2021}.
+implementation of @|stransient|@~cite{gldf-pj-2021}.
 Programmers can access these options via module
 languages: @tt{typed/racket} for @|sdeep| types and
 @tt{typed/racket/shallow} for @|sshallow|.
 Switching between options is a one-line change.
 
 For the most part, the model was an effective guide for the implementation.
+@|sDeep| and @|sShallow| Racket share a common surface syntax, type checker,
+and evaluation syntax.
+The question was how to modify these compiler back-ends to produce code
+with context-dependent runtime checks.
 Unexpected challenges arose regarding separate compilation and
 the enforcement of @|sdeep| types with wrapping higher-order contracts.
 Metaprogramming also raised issues, but these are deferred to an @appendixref{appendix:macro}

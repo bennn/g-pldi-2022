@@ -1538,7 +1538,7 @@ assume full responsibility of numbers that reach a well-typed boundary.
     \mid \efun{\tann{\svar}{\stype}}{\sexpr}
     \mid \esfun{\svar}{\sshape}{\sexpr} \mid
   \\ & &
-    \emon{(\tfun{\stype}{\stype}}{\obars{\svalue}{\sowner}} \mid
+    \emon{(\tfun{\stype}{\stype})}{\obars{\svalue}{\sowner}} \mid
    \obars{\svalue}{\sowner}
   \\
   \sctx & \slangeq &
