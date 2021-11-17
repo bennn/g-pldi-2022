@@ -9,7 +9,7 @@
 @;  - more imagined ideas in JFP submission
 @;  - side benefit, explore two extremes (wrappers / none)
 
-@; - don't justify TR, we are simply using it
+@; - don't justify TR
 @; - keep this short, get to the model asap
 
 @title[#:tag "sec:background"]{Background}
@@ -119,14 +119,14 @@ that all clients, typed or untyped, can rely on.
   \node (D) [right of=S,xshift=1.4cm,yshift=8mm] {\bigicon{\sD}};
   \node (U) [right of=D,xshift=1.4cm,yshift=-8mm] {\bigicon{\sU}};
 
-  \draw [>=latex,<->] (S) edge [bend left=7] node [above,xshift=-1mm] {\(\swrap\)} (D);
+  \draw [>=latex,<->,very thick] (S) edge [bend left=7] node [above,xshift=-1mm] {\(\swrap\)} (D);
   %\draw [>=latex,<->] (D) edge [bend left=7] (S);
 
-  \draw [>=latex,<->] (D) edge [bend left=7] node [above,xshift=2mm] {\(\swrap\)} (U);
+  \draw [>=latex,<->,very thick] (D) edge [bend left=7] node [above,xshift=2mm] {\(\swrap\)} (U);
   %\draw [>=latex,->] (U) edge [bend left=7] (D);
 
-  \draw [>=latex,->] ([yshift=-0.5mm] S.east) edge [bend right=7] node [above,yshift=-1mm] {\(\snoop\)} ([yshift=-0.5mm] U.west);
-  \draw [>=latex,->] ([yshift=-2mm] U.west) edge [bend left=7] node [below] {\(\sscan\)} ([yshift=-2mm] S.east);
+  \draw [>=latex,->,very thick] ([yshift=-0.5mm] S.east) edge [bend right=7] node [above,yshift=-1mm] {\(\snoop\)} ([yshift=-0.5mm] U.west);
+  \draw [>=latex,->,very thick] ([yshift=-2mm] U.west) edge [bend left=7] node [below] {\(\sscan\)} ([yshift=-2mm] S.east);
 
   %\draw [->] (S) edge [loop, min distance=2mm,in=240,out=200,looseness=3] node [below] {\(\snoop\)} (S);
   %\draw [->] (D) edge [loop, min distance=2mm,in=110,out=70,looseness=3] node [above] {\(\snoop\)} (D);

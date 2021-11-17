@@ -13,15 +13,6 @@
      #:country "USA"
    ])
 
-@(define NWU
-   @affiliation[
-     #:institution "PLT @ Northwestern University"
-     @;#:city "Evanston"
-     @;#:state "Illinois"
-     @;#:postcode "xyzuv"
-     #:country "USA"
-   ])
-
 @author["Ben Greenman"
         #:email "benjaminlgreenman@gmail.com"
         #:orcid "0000-0001-7078-9287"
@@ -34,7 +25,7 @@
 
 @; -----------------------------------------------------------------------------
 
-@keywords{gradual typing, migratory typing, complete monitoring}
+@keywords{gradual typing, migratory typing, complete monitoring, type-enforcement strategies}
 @; TODO is there really no new vocabulary that we earned along the way???!
 
 @; TODO CCSXML
@@ -61,18 +52,6 @@ several orders of magnitude down to 3x relative to untyped.
 Where an exhaustive search is feasible, 40% of all configurations run fastest
 with a mix of deep and shallow types.
 }
-
-@; Research on sound gradual typing has identified several techniques for mixing
-@; typed and untyped code.
-@; These strategies have complementary strengths in terms of type system guarantees
-@; and performance.
-@; Two compelling extremes are the Natural and Transient strategies.
-@; Natural offers strong @emph{deep} types but depends on expensive higher-order contracts.
-@; Transient offers weak @emph{shallow} types, but can be implemented with
-@; unobtrusive first-order checks.
-
-@; Programmers would benefit from the ability to mix and match different
-@; type-enforcement strategies within the same program.
 
 @; -----------------------------------------------------------------------------
 

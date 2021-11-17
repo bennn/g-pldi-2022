@@ -1348,10 +1348,7 @@ The wrapper that enforces this type
 Unfortunately, these input wrappers change the behavior of @tt{index-of};
  it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
  a ``not found'' result (@tt{#false}) instead of the correct position (@tt{0}).
-@|sShallow| Racket avoids all such changes in behavior,
- including the well-know object identity issues@~cite{stff-oopsla-2012,kt-icfp-2015,vksb-dls-2014,vm-ecoop-2013},
+@|sShallow| Racket avoids all such changes in behavior
  because the @|stransient| semantics does not use wrappers to enforce types.
-
-
 
 

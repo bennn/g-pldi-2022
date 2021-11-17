@@ -5,7 +5,7 @@
 @; THESIS Deep and Shallow can interoperate
 @; - don't worry about CM extension, for self-edges and S/U
 @;   - (2021-04-25) that means, don't present the self-loops? or don't focus on them?
-@; - don't worry about false-start designs ... point to dissertation for now
+@; - don't worry about false-start designs ... point to dissertation
 
 @title[#:tag "sec:model"]{Model and Metatheory}
 

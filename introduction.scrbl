@@ -13,14 +13,14 @@
 
 @; - gradual typing ... tradeoff guarantees expr perf ...
 @; - incompatible designs ... some cannot coexist ... others can lets try
-@; - competing strengths
+@; - complementary strengths
 @; - sound familiar?
 @;   - gt = static issues
 @;   - now, runtime issues
 @;   - ps like types
 @; - obvious starting point = Nat + Trans
 @; - contributions = theory + impl + benefits guarantees expressiveness perf
-@; ... question is benefits and synergy ... more to do later
+@; ... question is benefits and synergy ... future work
 
 
 @; Some of these strategies place restrictions on untyped code.
