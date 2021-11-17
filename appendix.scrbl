@@ -1247,7 +1247,7 @@ In @|sdeep|-typed code, @tt{f} expands to @tt{tf}.
 In untyped code, an @tt{f} is a synonym for @tt{uf}.
 @|sShallow| Racket code cannot be trusted with the @tt{tf}
 identifier because of its weak soundness guarantee.
-Thus, the form should take a third identifier to fine-tune the
+Thus, the form should accept a third identifier to fine-tune the
 types and behaviors for @|sshallow|-typed code.
 
 

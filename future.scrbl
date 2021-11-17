@@ -44,8 +44,8 @@ Anecdotal experience suggests the following strategy:
   If performance becomes an issue, switch to @|sshallow|.
 }
 @item{
-  Once all high-traffic boundaries
-  are typed, switch back to @|sdeep| to maximize performance.
+  Once all critical boundaries are typed, use @|sdeep| to maximize
+  the effect of type-driven optimizations.
 }
 ]
 @|noindent|The challenge is to systematically test the effectiveness of this

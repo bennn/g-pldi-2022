@@ -1429,7 +1429,7 @@ The left half of @figure-ref{fig:model:rr} presents a notion of reduction for
 the evaluation syntax.
 (@Secref{sec:model:model:ownership} discusses the right half.)
 Each rule relates two expressions @${(\sexpr \snr \sexpr)}.
-Rules that share a syntactically-equal domain come with additional test
+Rules that share a syntactically-equal domain come with a test
 for the domain expression.
 These tests use basic set theory to pattern-match on expressions;
 for example, the test @${(\svalue_0 \in \efun{\svar}{\sexpr})} holds when
@@ -1446,8 +1446,8 @@ For binary operations, @${\sdelta} performs arithmetic.
 The rules for function application check that the first expression is a
 function and try to substitute the argument expression into the function
 body.
-If the function has a type-shape annotation (@${\sshape}), then an additional
-shape check (@figure-ref{fig:model:extra-rr}) validates the argument before substitution.
+If the function has a type-shape annotation (@${\sshape}), then a shape check
+(@figure-ref{fig:model:extra-rr}) validates the argument before substitution.
 If the function is enclosed in a guard wrapper, then the application
 unfolds into two @${\swrap} checks: one for the argument and one for
 the result.
@@ -1495,7 +1495,7 @@ To help readers gain an intuition for appropriate labeling, the @appendixref{app
 presents our guidelines for the @figure-ref{fig:model:rr} rules.
 }
 By design, the reduction rules are identical to the basic rules from
-@figure-ref{fig:model:rr} except for superscript labels and additional parentheses.
+@figure-ref{fig:model:rr} except for superscript labels and parentheses.
 Labels are metadata; they do not change the underlying behavior of a reduction rule.
 The labels on the left-hand expression of each rule give names to the
 parties responsible for any relevant subexpressions.

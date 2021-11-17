@@ -7,7 +7,7 @@
 @; {On Language Design}
 @; {Let the Programmer Choose}
 
-@; MF conclusion
+@; spectrum? fine-grained?
 
 This is the first implementation of a gradual type system where
 programmers can explicitly choose to trade performance for guarantees
@@ -18,8 +18,8 @@ can avoid the bottleneck and may even be good enough to deploy.
 The guarantees from @|sdeep| types can always be used for debugging
 the inevitable failure, and can be applied sparingly to defend
 a critical module.
-In the future, implementors may wish to explore additional ways to trade
-performance for guarantees, making the trade-off even programmable.
+In the future, implementors may wish to explore other ways to trade
+performance for guarantees, making the trade-off even more programmable.
 
 
 @; Gradual typing resolves the impasse between static and dynamic typing by
