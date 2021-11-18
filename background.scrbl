@@ -30,7 +30,9 @@ True gradually-typed languages include a universal @tt{Dynamic} type that
 helps to blur the distinction between typed and untyped code@~cite{svcb-snapl-2015}.
 Migratory typing systems add
 idiomatic types to an existing language@~cite{tfffgksst-snapl-2017}.
-Other methods include the development of novel languages@~cite{wzlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
+Other mixed-typed methods include the development of
+novel
+languages@~cite{wzlov-popl-2010,mt-oopsla-2017,kas-pldi-2019,rmhn-ecoop-2019}
 and compilers@~cite{rat-oopsla-2017,bbst-oopsla-2017}.
 
 With these various end-goals in mind, our formal development
@@ -55,7 +57,7 @@ Sound gradual language designs do not agree on how types should guide the
 behavior of a program.
 Two leading alternatives for run-time properties are @|sdeep| and @|sshallow| types.
 To a first approximation, @|sdeep| types aim for the same guarantees as conventional
-static types and @|sshallow| types aim only for local type soundness.
+static types and @|sshallow| types aim for only local type soundness.
 
 @Figure-ref{fig:ds-example} presents a three-module program to illustrate
 the gap between @|sdeep| and @|sshallow| types.
@@ -65,7 +67,7 @@ This module is a simplified picture of the Racket @tt{images/icons/symbol}
 module, which incorporates thousands of lines of rendering and raytracing code---a
 module that is easiest left untyped.
 The typed module in the middle is an interface for the untyped function,
-which passes in a higher-order manner to clients who might rely on the type.
+which passes on (in a higher-order manner) to clients who might rely on the type.
 The type correctly states that @|untyped-fn| expects a string and a font
 object and computes a bitmap object.
 Finally, the untyped client module on the bottom mistakenly calls @|untyped-fn|
@@ -102,9 +104,9 @@ In typed code, these predictions are often specific and useful.
 For example, an expression with a function type cannot evaluate to a number.
 In untyped code, these predictions are trivial;
  soundness merely ensures a well-formed result.
-The property that distinguishes @|sdeep| types from @|sshallow| is
+A property that distinguishes @|sdeep| types from @|sshallow| is
 complete monitoring@~cite{dtf-esop-2012,gfd-oopsla-2019}.
-A semantics that satisfies complete monitoring enforces types as invariants
+Semantics that satisfy complete monitoring enforce types as invariants
 that all clients, typed or untyped, can rely on.
 
 
@@ -148,17 +150,17 @@ Theoretical results about @|sNatural| hold for these semantics-preserving varian
 For example, base types are enforced with predicate checks,
 types for immutable data are enforced with first-order traversals,
 and types for higher-order data such as arrays and functions are enforced with
-higher-order contracts.
+higher-order @emph{wrapper} contracts.
 Because each contract fully enforces a type, these contracts need only guard
 the boundaries between typed and untyped code.
 Within typed modules, code can run efficiently and employ type-directed
-optimizations in the same manner as a fully-typed language@~cite{tscff-pldi-2011}.
+optimizations@~cite{tscff-pldi-2011}.
 
 
 @subsection{@|sTransient| Semantics}
 
 The @|sTransient| semantics is an implementation of @|sshallow| types that
-does not require higher-order wrappers@~cite{vss-popl-2017}.
+does not require wrappers@~cite{vss-popl-2017}.
 @|sTransient| enforces types by injecting first-order
 checks throughout typed pieces of code:
 typed, public functions must check their inputs;
@@ -167,7 +169,7 @@ typed expressions must check the results computed during a function call,
 the elements extracted from a data structure, and the outcome of any type-level
 downcasts.
 Thus every line of typed code may add a cost, but the checks
-run quickly and impose none of the allocation and indirection
+do not traverse data and impose none of the allocation and indirection
 costs that come with higher-order contracts.
 
 

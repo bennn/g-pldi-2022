@@ -703,7 +703,7 @@ Three other figures present the evaluation typing judgments:
 
 @subsection{Background on Complete Monitoring}
 @; --- begin CUT???
-The idea behind complete monitoring is to test whether a mixed-typed semantics
+The idea behind complete monitoring is to test whether a semantics
 has control over every interaction between typed and untyped code.
 If the property holds, then a programmer can rely on the language to insert
  checks at the right places, for example, between the library and client
@@ -711,7 +711,7 @@ If the property holds, then a programmer can rely on the language to insert
 As a concrete example, if a value passes through the type @${(\tfun{\tint}{\tint})}
  then complete monitoring guarantees that the language has control over
  every input to the function and every result that the function computes,
- regardless of whether these interactions occur in a typed or untyped context.
+ regardless of what context these interactions occur in.
 
 Because all such interactions originate at the boundaries
  between typed and untyped code,
@@ -759,20 +759,22 @@ deal with labeled expressions and boundary terms:
 
 @exact|{
 \smallskip
-\lbl{\fbox{$\sownerenv; \sowner \sWL \sexpr$}}{\begin{mathpar}
+\(\begin{array}[t]{ll@{~~}l}
+\raisebox{6mm}{\fbox{$\sownerenv; \sowner \sWL \sexpr$}}
+&
     \inferrule*{
       \sownerenv_0; \sowner_0 \sWL \sexpr_0
     }{
       \sownerenv_0; \sowner_0 \sWL \obars{\sexpr_0}{\sowner_0}
     }
-
+&
     \inferrule*{
       \sownerenv_0; \sowner_1 \sWL \sexpr_0
     }{
-      \sownerenv_0; \sowner_0 \sWL \edynb{\obnd{\sowner_0}{\stype_0}{\sowner_1}}{\sexpr_0}
+      \sownerenv_0; \sowner_0 \sWL \edynb{\obnd{\sowner_0}{\stype_0}{\sowner_1}}{\sexpr_0} \vphantom{\obars{\sexpr_0}{\sowner_1}}
     }
-
-\end{mathpar}}
+\end{array}
+\)
 }|
 
 @|noindent|Values such as @${\obbars{42}{\fconcat{\sowner_0}{\sowner_1}}}
@@ -1183,7 +1185,7 @@ A programmer can only enable reuse by unsafely providing a macro.
 @;that matches their use own of @|sDeep| and @|sShallow|.
 
 
-@section[#:tag "appendix:boundary-api"]{Implementation: Typed Racket Boundary Utilities}
+@section[#:tag "appendix:boundary-api"]{Implementation: Typed Racket Boundary API}
 
 Typed Racket has a small API by Neil Toronto to let programmers control boundaries
  between @|sdeep| and @|suntyped| code.
@@ -1241,6 +1243,7 @@ The following example defines @tt{f} from two other names:
 @tt{(define-typed/untyped-identifier f tf uf)}
 @;@typed-codeblock['(
 @;  "(define-typed/untyped-identifier f tf uf)")]
+@exact{\smallskip}
 
 @|noindent|The meaning of @tt{f} depends on the context in which it appears.
 In @|sdeep|-typed code, @tt{f} expands to @tt{tf}.
@@ -1286,13 +1289,12 @@ If untyped code put an integer in the box, then typed uses of the
 @|sShallow| Racket runs the program without error because of its delayed
  checking strategy.
 If @|sshallow|-typed code tries to read a symbol from the
- box, then that access will raise an error.
+ box, that access will raise an error.
 
-Other top types for higher-order values can lead to similar programs.
+Other top types for higher-order values have similar behavior.
 For example, @|sShallow| Racket can import a function at the general @tt{Procedure} type,
-cast it to a more specific type, and try an application.
-The application may succeed if the specific type is correct.
-A @|sDeep| cast simply adds a second wrapper on top of the
+cast to a more specific type, and apply the function.
+A @|sDeep| cast only adds a second wrapper atop the
 restrictive wrapper for the @tt{Procedure} type.
 @; Indeed, because
 @; @|sdeep| program can do so little with a @tt{Procedure} value, library authors
@@ -1346,7 +1348,7 @@ The wrapper that enforces this type
  creates a new wrapper for every input to the function---to enforce parametric
  polymorphism@~cite{gmfk-dls-2007}.
 Unfortunately, these input wrappers change the behavior of @tt{index-of};
- it ends up searching the list for a wrapped version of the symbol @tt{'a} and returns
+ it searches the list for a wrapped version of the symbol @tt{'a} and returns
  a ``not found'' result (@tt{#false}) instead of the correct position (@tt{0}).
 @|sShallow| Racket avoids all such changes in behavior
  because the @|stransient| semantics does not use wrappers to enforce types.

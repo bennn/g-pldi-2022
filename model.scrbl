@@ -24,9 +24,9 @@ and @|suntyped| code can safely interoperate.
 A secondary goal of the model is to outline an implementation.
 For this reason, the three syntaxes compile to one kernel language
 that can express a variety of standard run-time checks:
-a @emph[swrap] term applies a contract and
-a @emph[sscan] performs a first-order (predicate) check.
-A third @emph[snoop] term represents a boundary that any value may cross.
+a @emph[swrap] term applies a contract,
+a @emph[sscan] term performs a first-order (predicate) check,
+and a @emph[snoop] term represents a boundary that any value may cross.
 @Figure-ref{fig:model:base-interaction} sketches the plan for applying these terms
 at type boundaries.
 
@@ -74,7 +74,7 @@ Surface expressions @${\ssurface} consist of function applications (@${\eappu{\s
 An @|suntyped| function has no annotation (@${\efun{\svar}{\ssurface}}),
  a @|sdeep|-typed function has a plain type annotation (@${\efun{\tann{\svar}{\stype}}{\ssurface}}),
  and a @|sshallow|-typed function has an underlined type annotation (@${\efun{\tann{\svar}{\tfloor{\stype}}}{\ssurface}}).
-The underline is a hint that only the top-level shape of this type is
+The underline is a syntactic hint that only the top-level shape of this type is
 guaranteed at run-time.
 Types @${\stype} express natural numbers (@${\tnat}),
  integers (@${\tint}),
@@ -85,8 +85,8 @@ The label @${\slang} is either @${\sD} for @|sdeep|-typed code,
  @${\sS} for @|sshallow|-typed code, or @${\sU} for @|suntyped| code.
 For example, the term @${(\emod{\sD}{\ssurface_0})} says that @${\ssurface_0}
 is a @|sdeep|-typed expression.
-Any module expressions within @${\ssurface_0} are free to use either the same
-typing style or a different one.
+Module expressions within @${\ssurface_0} are free to use any
+typing style (@${\sD}, @${\sS}, or @${\sU}).
 
 
 @section[#:tag "sec:model:model:types"]{Three-way Surface Typing}
@@ -110,7 +110,7 @@ For instance, an @|suntyped| expression may appear within a @|sdeep|
 expression provided that the @|suntyped| code is well-formed.
 There are nine such rules to ensure that the module language (@${\slang_0})
 matches the type of the subexpression (@${\stspec_0}); @figure-ref{fig:model:surface-type}
-compresses these rules into a table.
+presents these rules as one template rule (in [brackets]) and a table.
 @Figureref{fig:model:surface-type} also defines a subtyping judgment (@${\ssubt})
 and a type-assignment for primitive operations (@${\sDelta}).
 Subtyping declares that the natural numbers are a subset of the integers
@@ -495,7 +495,7 @@ integers.
 Evaluation expressions @${\sexpr} consist of variables, values, primitive
 applications, function applications, errors, and boundary terms.
 Unlike the surface syntax, there are no module terms.
-Instead, three @emph{boundary terms} describe run-time checks.
+Instead, the three @emph{boundary terms} describe run-time checks.
 A @|swrap| boundary asks for the full enforcement of a type, either with a comprehensive first-order
 check or a higher-order wrapper.
 A @|sscan| boundary asks for a first-order type-shape (@${\sshape}) check.
@@ -560,9 +560,9 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 
 The evaluation syntax comes with three typing judgments that describe the
 invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
-The @|sdeep| typing judgment (@${\sWTD}) validates full types.
-The @|sshallow| judgment (@${\sWTS}) checks top-level type shapes.
-And the @|suntyped| judgment (@${\sWTU}) checks that all variables
+The @|sdeep| typing judgment (@${\sWTD}) validates full types,
+the @|sshallow| judgment (@${\sWTS}) checks top-level type shapes,
+and the @|suntyped| judgment (@${\sWTU}) checks that all variables
 are bound.
 
 Both the @|sdeep| and @|suntyped| rules are similar to the corresponding
@@ -570,7 +570,7 @@ surface-language rules because they support equally-strong conclusions
 (full types and the uni-type).
 The @|sshallow| judgment is rather different because it validates type
 shapes instead of full (underlined @${\tfloor{\stype}}) types.
-When inspecting a pair, for example, the judgment concludes with the @${\kpair}
+When inspecting a pair, for example, the @|sshallow| judgment concludes with the @${\kpair}
 shape no matter what shapes the elements have.
 Consequently, a pair elimination form such as @${(\efstu{\svar_0})} has the
 @${\kany} shape because the pair may contain any sort of value.
@@ -1139,8 +1139,8 @@ Applications in @|sdeep| (and @|suntyped|) code recur on their subexpressions.
 Applications in @|sshallow| code additionally use a @|sscan| check to validate
 computed results.
 Pair elimination forms (@${\sfst}, @${\ssnd}) use @|sscan|s in a similar way.
-Lastly, six rules for module boundaries are represented by one parameterized rule and a table.
-These rules correspond to edges in @figure-ref{fig:model:base-interaction}.
+Finally, six rules for module boundaries are represented by one template rule and a table.
+These six rules correspond to arrows in @figure-ref{fig:model:base-interaction}.
 
 
 @figure*[
@@ -1492,7 +1492,7 @@ The design of a labeled reduction relation is like any other
 definition in that it requires ingenuity to create and careful reading
 to understand.
 To help readers gain an intuition for appropriate labeling, the @appendixref{appendix:laws}
-presents our guidelines for the @figure-ref{fig:model:rr} rules.
+presents the guidelines that underlie @figure-ref{fig:model:rr}.
 }
 By design, the reduction rules are identical to the basic rules from
 @figure-ref{fig:model:rr} except for superscript labels and parentheses.
@@ -1512,7 +1512,7 @@ to the function.
 
 Labels typically accumulate without bound.
 The only way that labels may disappear is after a successful run-time check
-(or after an error).
+or after an error.
 For example, the @${\swrap} rule for base types says that party @${\sowner_1} may
 assume full responsibility of numbers that reach a well-typed boundary.
 
@@ -1593,7 +1593,7 @@ and @${\sownerlist_0\!=\!\fcons{\sowner_0}{\fcons{\sowner_1}{\sowner_2}}}.
 @Figure-ref{fig:model:ownership-consistency} presents a consistency
 judgment for labeled expressions.
 The judgment allows any mix of @|sshallow| (@${\sS}) and @|suntyped| (@${\sU})
-labels around an expression, but restricts the use of @|sdeep| (@${\sD}) labels.
+labels around an expression, but restricts the use of @|sdeep| labels (@${\sD}).
 Concretely, the judgment analyzes an expression relative to a context label
 and an environment (@${\sownerenv}).
 Variables must have a binding in the label environment that matches the
@@ -1602,9 +1602,9 @@ Most expressions simply need consistent subterms.
 Boundary expressions and guarded values are switch points; these terms
 are consistent if their subterm matches the context label that appears
 inside the boundary.
-Lastly, the rules for labeled expressions specify the allowed mixtures.
+The rules for labeled expressions specify the allowed mixtures.
 @|sShallow| and @|suntyped| labels can mix together around an expression,
-but a @|sdeep|-labeled expression can only have @|sdeep| labels.
+but a @|sdeep|-labeled expression must have only @|sdeep| labels around it.
 @; Hence the name @emph{@|sdeep|-label consistency} describes what the judgment
 @; checks for.
 
@@ -1762,7 +1762,7 @@ Because the surface language allows three kinds of typed expression
 (@|sdeep|, @|sshallow|, and @|suntyped|), the definition is
 parameterized over both a language kind @${\slang} and a characterization
 function @${\stypemap} that maps a surface type @${\stspec} to an evaluation-language
-type @${(\stype \cup \sshape \cup \tdyn)}.
+type (either @${\stype}, @${\sshape}, or @${\tdyn}).
 
 @exact|{
 \begin{definition}[$\fTS{\sWTlang}{\stypemap}$]\label{def:ts}
@@ -1789,10 +1789,10 @@ type @${(\stype \cup \sshape \cup \tdyn)}.
 @; @citet{gf-icfp-2018} demonstrate the second.
 
 There are three important characterization functions @${\stypemap} for the analysis:
- @${\stypemapzero} maps every surface type to @${\tdyn};
+ @${\stypemapone} is the identity function on types;
  @${\stypemapshape} maps types to shapes (same as @${\sshapecheck} from @figure-ref{fig:model:shallow-type})
  and the uni-type @${\tdyn} to itself;
- and @${\stypemapone} is the identity function on types.
+ and @${\stypemapzero} maps every surface type to @${\tdyn}.
 
 @exact{
 \begin{theorem}[type soundness]\leavevmode
@@ -1814,7 +1814,7 @@ Unlike a standard ``closed world'' soundness theorem@~cite{m-jcss-1978,wf-ic-199
 expression cannot go wrong by throwing a tag error.
 Such a claim would be false in general because typed expressions may contain
 modules with untyped code.
-It is true, however, that the reduction of a well-typed @emph{redex} cannot yield
+It is true, however, that the reduction of a well-typed redex cannot yield
 a tag error:
 
 @exact|{
@@ -1822,7 +1822,7 @@ a tag error:
   If\ $\sexpr_0$ is typed
   (either\ $~\sWTD \sexpr_0 : \stype_0$ or\ $~\sWTS \sexpr_0 : \sshape_0$)
   and\ $\sexpr_0 \snr \sexpr_1$
-  then\ $\sexpr_1 \not\in \stagerror$
+  then\ $\sexpr_1 \not\in \stagerror$\/.
 \end{lemma}
 }|
 
@@ -1927,7 +1927,7 @@ that arise in evaluation are consistent according to the @${\sWL} judgment
     \item
       $\sowner_2; \cdot \sWL \svalue_1$, again by \sdeep{}-label consistency
     \item
-      $\sownerlist_1$ is either all \sdeep{} or a mix of \sshallow{} and \suntyped{}, again by the redex
+      $\sownerlist_1$ is either all \sdeep{} or a mix of \sshallow{} and \suntyped{}, again by the consistency of the redex
     \item
       by the definition of $\sWL$
     \end{enumerate}
@@ -1967,7 +1967,7 @@ that arise in evaluation are consistent according to the @${\sWL} judgment
 
   \item[Case:]
   \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snr \obars{\svalue_0}{\sowner_1}\)
-  \\ where $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$
+  \\\hbox{}\qquad where $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$
   \item[]
     by the definition of $\sWL$
 

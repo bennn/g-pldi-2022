@@ -60,11 +60,11 @@ benefits over either one alone:
 @section[#:tag "sec:evaluation:guarantees"]{Guarantees by @|sDeep|}
 
 By design, @|sdeep| types enforce stronger guarantees than @|sshallow|.
-A @|sdeep| type is a behavioral claim that is substantiated with comprehensive
+A @|sdeep| type is a behavioral claim that is substantiated by comprehensive
 run-time checks.
 No matter where a @|sdeep|-typed value ends up, the type constrains its behavior.
 A @|sshallow| type is valid only in a limited scope.
-If a value escapes to untyped or less-precisely typed code e.g. via subtyping,
+If a value escapes to untyped or less-precisely typed code, e.g., via subtyping,
 then its original type gets forgotten (@section-ref{sec:background:deep-shallow}).
 
 Prior work suggests that the relative weakness of @|sshallow| types can lead to
@@ -94,8 +94,8 @@ It turns out that @|sdeep| types can be overly restrictive; in such programs,
 delayed @|sshallow| checks work better in practice.
 In other programs, the gap between @|sDeep| and @|sShallow| Racket is due
 to implementation issues.
-Refer to the @appendixref{appendix:expressiveness} for example programs
-submitted by Typed Racket users.
+Refer to the @appendixref{appendix:expressiveness} for motivating example programs
+that were submitted by Typed Racket users.
 @; Language designers should be aware of these issues when building a new
 @; @|sdeep| semantics.
 
@@ -114,6 +114,8 @@ The @|sshallow| top type imposes no such restrictions.
 @; on its clients.
 Untyped code may invoke a @|sshallow| function exported via the top type,
 and may even write to a top-typed array.
+These freedoms can be useful, and do not undermine the weak @|sshallow|
+soundness guarantee.
 
 
 @subsection[#:tag "sec:evaluation:expr:wrap"]{No Missing Wrappers}
@@ -142,7 +144,7 @@ less engineering.
 
 Although the purpose of @|sdeep| wrappers is to reject type-incorrect
 operations without otherwise changing behaviors,
-wrappers in @|sDeep| Racket do cause subtle changes.
+certain wrappers in @|sDeep| Racket do cause subtle changes.
 The most problematic ones are the wrappers for polymorphic types.
 @|sDeep| Racket enforces types such as @tt{(All (A) (-> A A))} with
 a function contract that seals inputs and unseals outputs@~cite{gmfk-dls-2007}.
@@ -219,9 +221,9 @@ far less severe.
 The third column shows, however, that toggling between @|sDeep| and @|sShallow|
 Racket can do even better.
 Numbers in this third column are typeset in @bold{bold} if they
-are the lowest (best) in their row.
-The @tt{sieve} and @tt{tetris} benchmarks are the best successes.
-The @tt{zombie} benchmark is a notable failure; @|sShallow| Racket pays a high
+are the best (lowest) in their row.
+The @tt{sieve} and @tt{tetris} benchmarks are notable successes.
+The @tt{zombie} benchmark fares the worst; @|sShallow| Racket pays a high
 cost because one module has a large number of operations
 and @|sDeep| Racket pays even more at its boundaries.
 @; Although some benchmarks have overlapping bottlenecks,
@@ -314,9 +316,8 @@ performance.
 Such configurations are common in the GTP benchmarks.
 Out of the @${2^N} configurations in @integer->word[num-DDD] of the smaller
 benchmarks, a median of @$[@~a[DDD-median] "\\%"] run fastest with a mix of
-@|sdeep| and @|sshallow| types (@figure-ref{fig:both:3way}).@note{The improvements
-are relatively low. The worst-case in @bm{zombie} has the greatest improvement:
-from 31x to 29x.}
+@|sdeep| and @|sshallow| types (@figure-ref{fig:both:3way}).@note{The speedups
+are relatively low. The worst-case in @bm{zombie} improves the most: from 31x to 29x.}
 @; These results are especially encouraging because @${N\!+\!1} configurations in
 @; each benchmark cannot mix @|sdeep| and @|sshallow| because they contain fewer
 @; than @${2} typed modules.
@@ -333,7 +334,7 @@ The encouraging numbers are the result, however, of an exhaustive search through
 @${3^N} configurations.
 To test whether fast-running configurations can be found without a search,
 we manually explored @|sdeep| and @|sshallow| combinations in the following
-programs:
+three programs:
 }
 @figure[
   "fig:both:3way"

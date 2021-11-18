@@ -36,14 +36,14 @@ Taken broadly, the research area of gradual typing presents several
 @emph{type-enforcement strategies} that enforce static types against
 untyped code to varying levels of fidelity.
 Among strategies that are compatible with an untyped
-host language and provide a basic type soundness guarantee, two promising
+host language and provide a type soundness guarantee, two promising
 alternatives are @|sNatural|@~cite{mf-toplas-2009,tf-dls-2006,st-sfp-2006}
 and @|sTransient|@~cite{vss-popl-2017}.
 The @|sNatural| strategy uses higher-order contracts to enforce the
 behavioral claims implied by higher-order types.
 The @|sTransient| strategy uses first-order checks to enforce basic aspects
-of types in type-annotated code.
-Unsurprisingly, these two methods of enforcing types come with
+of types.
+Unsurprisingly, these two strategies come with
 different benefits and drawbacks.
 Contracts in @|sNatural| enable @emph{@|sdeep|} types
 that satisfy type soundness and complete monitoring@~cite{gfd-oopsla-2019}.
@@ -83,7 +83,7 @@ Studying these questions yields three contributions:
 
 @item{A practical evaluation of the performance, guarantees, and
   expressiveness of the revised Typed Racket implementation
-  (@secref{sec:evaluation}).  The performance study of the novel three-way
+  (@secref{sec:evaluation}).  The performance study of this novel three-way
   Typed Racket demonstrates significant improvements on the GTP
   benchmark suite@note{@|gtp-url|} over the two-way versions.}
 

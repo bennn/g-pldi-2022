@@ -42,6 +42,7 @@ Shallow types enforce only local properties, but can be implemented
 with first-order checks.
 This paper presents a language design that supports both deep and shallow
 types to utilize their complementary strengths.
+
 In the mixed language, deep types satisfy a strong complete monitoring guarantee
 and shallow types satisfy a first-order notion of type soundness.
 The design serves as the blueprint for an implementation

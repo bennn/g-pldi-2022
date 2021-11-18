@@ -4,7 +4,7 @@
 @title[#:tag "sec:related"]{Related Work}
 
 Thorn@~cite{wzlov-popl-2010} and StrongScript@~cite{rzv-ecoop-2015} support
-a combination of sound concrete types and erased @emph{like} types.
+a combination of sound \emph{concrete} types and erased @emph{like} types.
 Thorn is a scalable scripting language that compiles to the JVM@~cite{bfnorsvw-oopsla-2009}.
 StrongScript extends TypeScript@~cite{bat-ecoop-2014} with concrete types.
 Both languages are supported by formal models with proofs of type soundness.
@@ -27,9 +27,9 @@ a completion pass to make run-time type checks explicit.
 
 There is a great deal of related work that addresses the performance of
 @|sdeep| or @|sshallow| types@~cite{bbst-oopsla-2017,kas-pldi-2019,vsc-dls-2019,rat-oopsla-2017,mt-oopsla-2017,rmhn-ecoop-2019,mt-oopsla-2021,mntv-popl-2021}.
-This research is orthogonal; these implementation techniques should apply
+This research is orthogonal to a combined language; these implementation techniques should apply
 to a three-way language as well as any normal gradual language.
-Our language benefits from one such technique: collapsible contracts@~cite{fgsfs-oopsla-2018}.
+In fact, our three-way Typed Racket benefits from one such technique: collapsible contracts@~cite{fgsfs-oopsla-2018}.
 
 @; similar acks for implementation (Sam, TR) and evaluation (Takikawa) ?
 
