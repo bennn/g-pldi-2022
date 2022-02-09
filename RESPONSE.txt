@@ -45,64 +45,49 @@ checker for each.
 Section 5.2 is therefore significant because it shows that two languages with
 the same notion of "well-typed" cannot run the same set of programs.
 
-Ground types would not suffice for the model because the surface type checker
-uses the full type, not just the outer shape.
+Ground types would not suffice because the surface type checker uses the full
+type.
 
-> **#31D**
->   - the formalism is excessive, occasionally hard to follow, and
->     doesn't match the text
-
-The question here about whether the formalism matches the text seems to center
-on a misunderstanding of the `Any` type.  In the model and in Typed Racket,
-`Any` is a top type, similar to `Object` in Java.
-
-> **#31C**
-> -- Each element (particularly, in the meta-theory) seems
-> rather straightforward and implementations/evaluations are
-> based on the existing set-ups [18,19].
->
 > **#31C**
 > Q2 The notion of complete monitors is already presented in [19], and
 >    the notion of spectrum together with a similar set of benchmarks are
 >    presented in [18]. What's are the challenges and the relationship
 >    with those works? Is it just a nice integration of both?
 
-The main contribution of this paper is a new language design, not the methods
-used to validate it. Complete monitoring is a tool in the same sense as type
-soundness.
+Prior meta-theory work was about finding tools to characterize the difference
+between approaches to type enforcement. The prior implementation in [18]
+(Greenman and Felleisen ICFP'18) covered Transient for a small functional
+kernel in a separate, incompatible fork of Typed Racket.
 
-Relative to [18] (Greenman and Felleisen ICFP'18), this paper: adds major Typed
-Racket features needed to support the benchmarks (e.g. first-class classes);
-enables type-directed optimizations for transient; allows sound interactions
-between natural and transient; and implements the above in one compiler (rather
-than as two parallel forks).
-
+This paper presents a practical and comprehensive language design. The
+implementation covers modules, first-class classes & objects, meta-programming,
+and other sophisticated Racket features. Complete monitoring, type soundness,
+and the benchmarks are all tools that validate the design rather than primary
+contributions.
 
 > **#31E**
-> On the other hand, the (especially theoretical) results seem incremental and not
-> surprising to me.  The theoretical model seems to be a straightforward
-> combination of the models offered by the previous work [15].  The properties
-> stated in the paper are standard, and I can't find challenges to prove them
-> (except for the development of label consistency in which only interaction
-> between untyped and shallow-typed code is allowed without monitoring).  I think
-> more investigation of the theoretical model would be possible.  For example,
-> variants of Blame Theorem and the dynamic gradual guarantee property [42] for
-> the three-way language might be worth considering.  In particular, I expect
-> dynamic gradual guarantee formally proves the benefits of integrating Deep and
-> Shallow Typed Racket, which are spelled out at the beginning of Section 5.
+> I think more investigation of the theoretical model would be possible.  For
+> example, variants of Blame Theorem and the dynamic gradual guarantee property
+> [42] for the three-way language might be worth considering.  In particular, I
+> expect dynamic gradual guarantee formally proves the benefits of integrating
+> Deep and Shallow Typed Racket, which are spelled out at the beginning of
+> Section 5.
 
 The dynamic gradual guarantee (DGG) and the blame theorem are not part of the
 validation because they study a separate dimension: the semantics of the
-dynamic type. (Because of this different focus, even unsound optional types can
-satisfy the DGG.)
+dynamic type. (Both Deep and Shallow can satisfy the DGG for the simple
+types in the model.)
 
-Whether the DGG could be adapted to Deep and Shallow mixes is an interesting
-question for future work. However, Deep types are well-characterized by
-complete monitoring and Shallow types are well-characterized by type soundness.
-Adding a new relational property to the toolbox might help to reason about
-changes in specific programs, but seems unlikely to offer insights about the
-fundamental design questions.
+Whether the DGG (and term precision) could be adapted to Deep and Shallow mixes
+is an interesting question for future work. However, Deep types are
+well-characterized by complete monitoring and Shallow types are
+well-characterized by type soundness.  Adding a new _relational_ property to the
+toolbox may help to reason about changes in specific programs, but seems
+unlikely to offer insights about the fundamental design questions.
 
+
+
+### Other Clarifications
 
 > **#31C**
 > Q1 Why did you exclude dynamic types to meet the end-goal (lines 136-137)?
@@ -121,6 +106,9 @@ fundamental design questions.
 > **#31F**
 > l135: What influence does losing dynamic type give to the design?
 
+First off, `Any` is a top type in the model and in Typed Racket. It is similar
+to `Object` in Java. It is not the dynamic type.
+
 The main reason for excluding the dynamic type is that there are several
 realistic gradual languages that do not support it in the theoretically-ideal
 way. Typed Racket and Dart are two prominent examples.
@@ -128,15 +116,7 @@ way. Typed Racket and Dart are two prominent examples.
 The minor reason for excluding the dynamic type is that it would complicate
 the model in ways that do not shed light on typed/untyped interactions (i.e.
 by adding a type precision judgment, modifying the typing rules, and adding
-a wrapper for that get type-cast to dynamic).
-
-Adding a dynamic type and confirming that it is orthogonal would be an
-interesting question for future work.
-
-(Again, `Any` is a top type. It is not the dynamic type.)
-
-
-### Other Clarifications
+a wrapper for values that get type-cast to dynamic).
 
 > **#31A**
 > I do wish the main paper had found room to include a bit of detail about the
@@ -145,7 +125,7 @@ interesting question for future work.
 > concerns, while important, wouldn't be as relevant to something like
 > Typescript).
 
-Section 4.1 is about separate compilation (though it could be much clearer).
+Section 4.1 is about separate compilation (though, it could be much clearer).
 
 
 > **#31B**
@@ -153,15 +133,15 @@ Section 4.1 is about separate compilation (though it could be much clearer).
 > mixed, and if so do you think your work hints at a recipe for such
 > mixes?
 
-This work provides a baseline for future mixes by combining two extreme designs.
-Future mixes can apply the same strategy as a first step, and then look for ways
-to improve their interactions.
+This work provides a baseline for future mixes by combining two extreme
+designs.  Other systems can apply the strategy from this work as a first step
+and then look for ways to improve the interactions.
 
 > **#31B**
 > In the table in figure 4, why does every row have the same $T_1$?
 
 This is a mistake. In the first two rows (for Deep and Shallow), there are only
-3 possible choices for $T_1$: $\tau_0$, $\floor{\tau_0}$, and U.
+3 possible choices for $T_1$. They are: $\tau_0$, $\lfloor \tau_0 \rfloor$, and $U$.
 
 
 > **#31D**
@@ -300,7 +280,7 @@ be used for lambda checks without significantly complicating the model.
 > the framework of Lazarek et al. [26] in the three-mix setting.
 
 User experience is a great topic for future work, but out of scope for this
-language design paper.
+design paper.
 
 > **#31F**
 > fig 4: Please consider showing all the nine rules for the module constructor.
@@ -309,7 +289,7 @@ language design paper.
 > supplementary material would not hold (as the corresponding rule in fig 18
 > allows only $(D, \tau_0, \tau_0)$).
 
-Thank you. Figure 4 is indeed too compressed.
+You are right. Figure 4 is too compressed.
 
 > **#31F**
 > fig 10, right-hand side: Why are happening errors equipped with labels?  When
@@ -317,8 +297,8 @@ Thank you. Figure 4 is indeed too compressed.
 
 Figure 10 keeps the context label around an error term to stay
 visually-consistent with the other rules. It could be omitted because the model
-is not interested in the owners of an error term --- the key question is
-whether owners are consistent during evaluation.
+is not interested in the owners of an error term (the question is
+whether owners are consistent during evaluation).
 
 > **#31F**
 > Theorem 3.2: Does the bold 1 map only $\tau$ to $\tau$?  Then, why does language
