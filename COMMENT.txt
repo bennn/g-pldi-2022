@@ -1,0 +1,904 @@
+
+- - -
+
+Inline Comments
+===
+
+????
+If we got nothing to say, cut this?
+TODO how many pages in final version?
+
+> Review #31A
+> ===========================================================================
+>
+> Overall merit
+> -------------
+> 4. Accept
+>
+> Reviewer expertise
+> ------------------
+> 2. Some familiarity
+>
+> Paper summary
+> -------------
+> This paper describes an approach to integrating *both* established flavors of
+> gradual typing (here referred to as deep and shallow semantics) in the same
+> system, resulting in a language with support for modules with deeply-typed,
+> shallowly-typed, or untyped (unityped) code, all of which (a) interact sensibly
+> and (b) satisfy their expected safety theorems. The main novelty here is
+> specifying the interactions between deep and shallow typed code and showing
+> that their integration does not violate either kind of code's expected
+> properties. The paper then describes an implementation of this three-way
+> gradual semantics in Racket, describing details of the implementation itself
+> and a positive performance evaluation.
+>
+> Comments for author
+> -------------------
+> This paper is nicely written, and aside from a few places like the discussion
+> of Figure 13 in Section 3.7, does a nice job being self-contained, even for a
+> reader who hasn't read deeply on gradual typing semantics for a few years. (For
+> me, the paper's early section worked as a nice "catch up" summary on what I'd
+> missed.) The novel technical material (e.g., Theorem 3.4) is clearly presented,
+> and sound. The performance evaluation has some intriguing results (Figure 14)
+> with real practical implications (which the paper starts to hint at with the
+> experiments in 5.3.3).
+>
+> And the design itself is just cool --- even setting aside performance, from a
+> developer perspective not needing to make a hard choice between shallow and
+> deep semantics, and getting to mix and match the two (plus untyped code) as
+> seems sensible is just a great design to enable.
+>
+> I do wish the main paper had found room to include a bit of detail about the
+> separate compilation issues, which I think are fairly important issues for
+> implementations in general (whereas I agree with the paper that metaprogramming
+> concerns, while important, wouldn't be as relevant to something like
+> Typescript).
+
+EDIT small
+Ah --- section 4.1 is about a separate compilation issue. We will clarify.
+
+
+> Likewise, I wish Section 5.2 had had room for even a single concrete example
+> (even in prose!) of some of the subtle issues it refers to the appendix for.
+
+EDIT small
+We'll add an example.
+
+(Based on review #31C, the less-strict top type seems like the most important
+one to illustrate (sec. 5.2.1).)
+
+
+> My only real disappointment in this paper is that it seems like the appendix
+> has a bunch of interesting material in it (which I haven't had a chance to
+> read), but the paper is space-limited and I'd agree that everything that *is*
+> in the main paper is probably higher-priority than the things pushed to the
+> appendices.
+>
+> Minor note: The first paragraph of related work has a LaTeX fragment that seems
+> to have been escaped (a use of \emph) instead of interpreted.
+
+
+> Review #31B
+> ===========================================================================
+>
+> Overall merit
+> -------------
+> 3. Weak accept
+>
+> Reviewer expertise
+> ------------------
+> 1. No familiarity
+>
+> Paper summary
+> -------------
+> This paper introduces a gradual typing mechanism where so-called
+> deep-typed code, shallow-typed code, and untyped code coexist.
+> Deep types can enforce higher-order behavioral contracts, but they are
+> also very expensive at typed–untyped boundaries that see high traffic of
+> higher-order data.
+> Shallow types offer weaker guarantees, but they are often cheaper than
+> deep types, adding a small cost to each line of typed code.
+> The paper develops a three-way semantics and establishes soundness
+> properties for shallow-typed code and deep-typed code.
+> The authors implement the mechanism in Typed Racket.
+> Experiments on the GTP benchmark suite suggest mixing deep-typed code
+> and shallow-typed code leads to better performance.
+>
+> Comments for author
+> -------------------
+> Integrating deep types, shallow types, and no types in a single
+> gradual-typing mechanism is a useful advancement of the state of the
+> art; it helps the programmer to better navigate the trade-off between
+> performance and safety guarantees.
+>
+> It is unfortunate that as a language design paper, this paper is thin on
+> code examples.
+> In particular, I found section 3 to be a little demanding to someone who
+> has not followed the recent literature on gradual typing.
+> Would it be reasonable to use examples to convey intuition and to
+> illustrate the workings of the three-way semantics?
+> (The example in figure 1 is good actually, but unfortunately it is not
+> used beyond section 2.)
+
+Good point. We will at least translate figure 1 to compare deep and shallow
+types in the model.
+
+
+> It is somewhat disappointing that the mechanism requires deep-typed code
+> to treat data from shallow-typed code and data from untyped code in the
+> same way, always requiring wrap checks on data from shallow-typed code.
+>
+> It is slightly disappointing that to strike a good balance between
+> performance and safety guarantees using the three-way language, there is
+> still less of a science but more of trial and error.
+
+Agreed on both counts. These are important topics for future work: using
+a different shallow semantics to cut down on wrap checks and helping
+programmers navigate a three-way language.
+
+
+> Can you comment on if there are other gradual type systems that can be
+> mixed, and if so do you think your work hints at a recipe for such
+> mixes?
+
+This work is a baseline for future mixes. The two gradual semantics share a
+common type system but nothing else. Future mixes can apply the same strategy
+(with no sharing at runtime) or look for ways to cooperate.
+
+
+> In the table in figure 4, why does every row have the same $T_1$?
+
+This is a mistake. In the first two rows (for Deep and Shallow), there
+are only 3 possible $T_1$: $\tau_0$, $\floor{\tau_0}$, or U.
+
+
+> Figure 2: I would have appreciated an intuitive justification of why
+> wrap checks are required when deep-typed data crosses into shallow or
+> untyped land.
+
+Wraps protect higher-order data (e.g. functions). We will clarify.
+
+
+> Looking at figure 4 alone, I cannot tell what makes shallow types
+> shallow. Consider giving an example where code type-checks with shallow
+> types but not deep types.
+
+MISCOM
+EDIT small
+By design, figure 4 (surface syntax) doesn't show a difference between deep
+and shallow. The two have similar static semantics --- they differ only at
+run-time. We will clarify.
+
+
+> Review #31C
+> ===========================================================================
+>
+> Overall merit
+> -------------
+> 4. Accept
+>
+> Reviewer expertise
+> ------------------
+> 2. Some familiarity
+>
+> Paper summary
+> -------------
+> Two of the main forms of gradual types are *deep types* (flexible but
+> expensive) and *shallow types* (local but limited to the
+> first-order). This paper studies how to mix these two notions of
+> gradual types smoothly. For this, this paper develops the design for
+> the user can switch from one to another and takes several benchmarks to
+> investigate pros and cons for one of them or their mix. To do this in
+> a sound manner, the paper also studies the meta-theory to mix both and
+> proved Monitor Completeness, which requires to define and  prove consistency of
+> labels (Figure 13), which is the key theoretical formulation for this
+> paper.
+>
+> # Positive Points
+>
+> -- Very readable, convincing and carefully written. Each statement is
+> explained with the intuitive words.
+>
+> -- Each element (the design choice, the meta theory and
+> benchmarks/case studies) is well-chosen and all elements are
+> plugged into one good product. 
+>
+> -- Useful work for the Gradual Typing Community
+>
+> # Weak Points
+>
+> -- Each element (particularly, in the meta-theory) seems
+> rather straightforward and implementations/evaluations are
+> based on the existing set-ups [18,19].
+
+Although this work uses established tools, it applies them to a new language.
+In particular, building the three-way implementation for Typed Racket was a
+significant undertaking that goes well beyond the prior work.
+
+
+> -- Related work is thin.
+>
+> Comments for author
+> -------------------
+> -- The paper is readable but I found Related Work is thin and very
+> rushed ('\emph{concrete}' in Line 1240) and cut off.
+>
+> -- My suggestion is to cut off the proofs (as you do not state even some of
+> the main lemmas such as progress, preservation and compilation for
+> Theorem 3.2) and discuss more about the recent related work in the
+> field. 
+
+EDIT
+We will expand on the related work and will consider moving the proofs to the
+appendix.
+
+> -- Questions
+>
+> Q1 Why did you exclude dynamic types to meet the end-goal (lines 136-137)?
+>    Just simplicity of the presentation or avoiding some unimportant
+>    and tricky points?
+
+The main reason for excluding the dynamic type is that there are realistic
+gradual languages that don't support it; at least, not in the ideal way.
+Typed Racket and Dart are two examples.
+
+But it's also becoming clear that there are really two big questions for
+gradual semantics:
+
+ 1. How to enforce the dynamic type
+ 2. How to enforce other static types
+
+The (dynamic) gradual guarantee is about point 1 and says nothing about
+point 2. This paper is focused on point 2. We suspect that adding the dynamic
+type requires a new kind of cast wrapper (to hide a value behind the dynamic
+type) and nothing more. This is an interesting question for future work.
+
+
+> Q2 The notion of complete monitors is already presented in [19], and
+>    the notion of spectrum together with a similar set of benchmarks are
+>    presented in [18]. What's are the challenges and the relationship
+>    with those works? Is it just a nice integration of both?
+
+Implementing three-way interactions for the full Typed Racket language
+was a major undertaking. (Section 4 keeps the discussion very brief.)
+The "spectrum" paper [18] did not allow deep and shallow code to mix,
+and supported only basic functional benchmarks. The current implementation
+covers the whole of Typed Racket, in particular its support for first-class
+objects and classes.
+
+We do not claim complete monitoring as a contribution. Like type soundness,
+it is a tool that we use to validate the language design.
+
+
+> Review #31D
+> ===========================================================================
+>
+> Overall merit
+> -------------
+> 2. Weak reject
+>
+> Reviewer expertise
+> ------------------
+> 4. Expert
+>
+> Paper summary
+> -------------
+> The "gradual typing" approach aims to reconcile dynamic langauges with
+> static type checking by allowing a relaxed notion of type annotations;
+> such approaches are "sound" when types that aren't fully statically
+> checked are checked dynamically.
+>
+> This work shows how two combine two approaches to gradual typing in
+> one language. They allow programs to mix the classical, "natural"
+> semantics---wrapping functions with proxies that do runtime
+> checks---with the more performant but less thorough "shallow"
+> semantics (a/k/a transient), which instruments code with first-order
+> checks and no wrapping.
+>
+> The paper gives a calculus as a model and describes the results of an
+> implementation in Typed Racket.
+>
+> Comments for author
+> -------------------
+> This paper describes worthwhile technical work, but I don't think it's
+> suitable for PLDI as is. I have a few criticisms:
+>
+>   - the paper is torn between generality and describing Typed Racket
+>
+>   - there are no interesting interactions between deep (natural) and
+>     shallow checking
+
+MISCOM
+The fact that there are no interactions between natural and transient
+is a very interesting surprise. We hope this result inspires implementation
+work on shallow semantics that are not transient, such as the one described
+by Castagna & Lanvin in ICFP'17.
+
+>   - there's not enough information about the Racket runtime to put the
+>     evaluation in perspective
+>
+>   - the formalism is excessive, occasionally hard to follow, and
+>     doesn't match the text
+>
+> I've organized the rest of the review following this outline, with
+> some minor notes at the very end.
+>
+> ## Generality vs. Racket
+>
+> The paper positions itself as a general reconciliation of these two
+> approaches, but I'm not certain the ideas here apply beyond Racket's
+> "macro"/module-based approach to instrumentation (as opposed to the
+> "micro"/expression-based approach seen in theoretical work or
+> Grift). I think the paper could be strengthened by taking a deep
+> engineering dive to making this system work in Typed Racket, or to a
+> more thorough study of the general formalism. Either way, I would hope
+> for more interactions between deep and shallow checking.
+
+MISCOM ... use the transient paper to explain features
+This paper is the result of a deep engineering dive in Typed Racket.
+
+There are few interactions between natural and transient because transient has
+no place to store metadata about the checks it has run. A shallow semantics
+that uses wrappers would have more chances to interact with natural, but
+building such a semantics is a major undertaking and out of scope.
+
+
+> In principle the model is similar enough, but the interactions are
+> confusing---for example, Figure 1 seems to me to be a Racket
+> phenomenon (types mediating between two entirely untyped modules); I
+> would expect a transient typing here to involve a module that had some
+> first-order/shallow checks inserted.
+
+Figure 1 has little to do with Racket. A transient module can sit between two
+untyped ones. In terms of figure 1, transient would use one first-order check
+to ensure that `text` is a function.
+
+
+> Why does the paper choose to omit the dynamic type (line 137)? It's
+> particular confusing because the surface language omits the dynamic
+> type, but includes it in the "common evaluation syntax" (Figure
+> 5). Typed Racket has the `Any` type... why doesn't the surface
+> language here? It's particularly confusing because shallow types can
+> be thought of has having implicit `Any` wherever first-order checks
+> aren't inserted.
+
+MISCOM
+The `Any` type in the evaluation syntax is a top type. It is not a dynamic
+type.
+
+The `Any` type in Typed Racket is also a top type. Typed Racket does not
+implicitly cast values with type `Any` to more-precise types. Just like
+with `Object` in Java, programmers have to insert casts.
+
+In the same way, shallow code with type `Any` cannot be used by code
+that expects a more-precise type without a cast. An application
+`(app f x)` where `f` has type `Any` would be a type error.
+
+
+> Another example of the Racket focus is setting $\mathsf{Nat} <:
+> \mathsf{Int}$ and allowing overloading (line 328) to simulate a
+> numeric tower. Overloading is an interesting feature to add, but
+> raises questions that the paper does not answer (e.g., do the typed
+> modes statically resolve overloading, or do all programs pay the price
+> of dispatch?). I'd be more interested to see type tests and occurrence
+> typing, to better study the interactions between deep and shallow
+> checking.
+
+The point of the subtyping judgment is to show its implications for type
+enforcement, especially in the transient semantics. Prior work on transient
+did not include subtyping, therefore it was not clear that a value could
+cross a boundary with the type `(List Nat)` and then get used as a `(List Int)`
+without any transient check discovering the error.
+
+We use `Nat` and `Int` to keep the examples simple. Union types and objects
+would perhaps make the point clearer, but they would also complicate the model.
+
+The paper does not discuss overloading, dispatch, or the numeric tower because
+their details fall outside of our focus on type-enforcement.
+
+Allowing occurrence types at a boundary is a difficult question for future work.
+
+
+> I found the discussion in 4.1 to be overly specific. Typed compilers
+> need to keep typed information around, no doubt, but I don't know that
+> the Typed Racket details are relevant to most readers.
+
+Ok. We will revise the discussion.
+
+
+> Relatedly, the discussion in 4.3 should cite Nguyen and Van Horn's
+> series of papers on static analysis for eliminating contracts, not
+> just their work on size-change termination checking. Here "difficult"
+> is a severe understatement! To be more general, 4.3 should talk about
+> various RTTI forms, like `Data.Typeable` in Haskell or C++ name
+> mangling or Java reflection or typecodes (used in serialization, but
+> serving a similar purpose).
+
+We will revise section 4.3 to keep it focused on the specific APIs that
+needed to change. We will mention these related works in section 6.
+
+
+> ## Interactions between deep and shallow
+>
+> I would be much more excited about this paper if it explicitly thought
+> about interactions between deep and shallow checking.
+
+This paper claims to have a design that works for deep and shallow interaction.
+
+
+> The paper cites Greenman's dissertation as a way to say that such a
+> connection couldn't be made stronger. Alternative approaches to
+> shallow checking could have a tighter relationship---rather than only
+> inserting checks at elimination forms and returns, you could _always_
+> insert first-order checks (but no more). Such an approach has its
+> roots in Findler, Guo, and Rogers's (IFL 2007) approach to lazy
+> contract checking.
+
+We agree that exploring other implementations of shallow types, beyond
+transient, is an important topic for future work.
+
+
+> ## Hard to interpret evaluation
+>
+> Early work on transient semantics in Reticulated Python showed
+> efficiency gains, especially when in PyPy... because the transient
+> checks were just reproducing the checks that Python was going to do
+> anyway. Is that happening here? That is, will the Racket runtime
+> identify optimize duplicate checks (during compilation or in
+> bytecode)?
+
+The Racket runtime is not optimizing transient checks to the same extent
+that PyPy would. We will clarify.
+
+
+> Section 5.2 was unconvincing for me: couldn't we say that untyped
+> gains at least as much expressiveness over deep as shallow does? In
+> 5.2.1, I was confused as to what the "top type" was. Is it `Any`? If
+> so, I'm confused by line 1055... in Typed Racket, one can use
+> occurrence typing to narrow the type.
+
+MISCOM
+Section 5.2 argues that shallow code can run more well-typed programs than
+deep. This is significant because both use the same type checker.
+
+Of course untyped code can run even more programs, but it uses a different
+(weaker) type system.
+
+The top type is written `Any` in Typed Racket. Occurrence typing cannot
+narrow the `Any` type down to a higher-order type. This would be unsound;
+higher-order types need a wrapper to check their behavior.
+
+
+> I didn't understand what toggling (line 1130) was. Is The Worst D||S
+> column indicating the worse runtime overhead for the best-possible mix
+> of Deep and Shallow checking? I wish there an intuition for why there
+> was a speedup. The idea that the sources of slowdown are complementary
+> (line 1086) makes some sense, but I still don't get it. Is the idea
+> that having shallow intermediate between deep and untyped avoids the
+> worst of the slowdowns? Something else? Showing performance lattices
+> might improve the situation, as would describing Figure 14 in more
+> detail (is this the worst-case slowdown on a migration to a fully
+> typed configuration, or something else?).
+
+Toggling means using either Deep types or Shallow types. It does not
+allow for mixes of Deep and Shallow.
+
+Figure 14 is looking over each lattice three times: once to find the worst-case
+of Deep types, once to find the worst-case of Shallow types, and once to find
+the worst-case when each configuration uses all-Deep or all-Shallow depending
+on which of the two is faster.
+
+Another way to phrase the intuition is: the worst-case points in a Deep lattice
+are probably not the same as in a Shallow lattice.
+
+
+> The claim in the conclusion for novelty is slightly weakened by the
+> existence of options contracts (OOPSLA 2013), which serves a very
+> similar purpose: it relaxes the contract (okay, not gradual typing)
+> system in exchange for performance.
+
+HMPH
+The paper's claim is that it reports on the first gradual type systems
+where programmers can choose between sound types to trade guarantees for
+performance.
+
+Thank you for pointing out that the key word "sound" is missing from the
+conclusion, and for reminding us to discuss option contracts as related work.
+
+
+> ## Formalism issues
+>
+> I found the formalism hard to follow, due to both specific issues with
+> the formalism as well as more general issues with presentation.
+>
+> ### Specific issues
+>
+> Prior work has used a separate category of ground types; writing
+> $\lfloor \tau \rfloor$ is somewhat confusing, as it keeps $\tau$
+> syntactically but ignores most of it semantically.
+
+MISCOM
+Ground types are not enough for the surface type system. Statically, no
+part of the type $\lfloor \tau \rfloor$ gets ignored. It's only at run-time,
+in the evaluation syntax, that ground types would work.
+
+We use shapes ($\sigma$) instead of ground types to avoid confusion with
+the dynamic type. A shape `Fun` is clearly a simple atom; the corresponding
+ground type `* -> *` looks like a compound term.
+
+
+> Is the rule in Figure 4 for shallow functions missing the
+> $\lfloor-\rfloor$ on its argument in the conclusion? In Figure 4, why
+> is subtyping only allowed at shallow types?
+
+Yes! The rule for shallow functions needs a floor annotation.
+
+Subtyping is allowed for all types. Figure 4 showed only the rule
+for shallow types because the deep rule is straightforward. We will
+reconsider this choice.
+
+
+> Some examples of source programs in Section 3 would be very
+> helpful. For example, the description of modules is unclear (line
+> 318): every switch between checking modes demands a `module`
+> form... right?
+
+EDIT
+Yes, every switch demands a `module` form.
+
+
+> In Figure 5, the type annotation on deep lambdas is just for the
+> static checking of Figure 6; the type annotation on shallow lambdas is
+> for both static _and_ dynamic checking. There's also a separate scan
+> form, used for the results. There should be just one way to induce a
+> shallow check, just as there's only one form of a guard.
+
+The rule is that the `scan` keyword always corresponds to a shallow check.
+
+The `scan` form for results cannot be used for lambda checks without
+significantly complicating the model.
+
+
+> Which of the label consistency rules in Figure 13 are interesting?  (I
+> would say that _maybe_ the last 5 are?) Which parts of Theorem 3.4's
+> proof are interesting? (I would say... none? Interested readers can
+> look at the proofs of the POPL 2011/ESOP 2012 papers.)
+
+We are delighted to see this comment and hope that others can reach the same
+conclusion with the clear presentation in section 3.  (In the past, we've found
+that presenting **only** the interesting parts gave readers the impression that
+complete monitoring was somehow mysterious and difficult to prove.)
+
+We will try to streamline the presentation.
+
+
+> ### Presentational issues
+>
+> It would be good if the figures named the metavariables. Similarly,
+> rules are much easier to talk and think about when they have
+> names. Making it clear which parts of the formalism/notation are
+> important, unusual, or interesting would be helpful.
+
+We will keep this in mind for revisions.
+
+
+> Why use $\Rightarrow$ for function types when $\rightarrow$ is more
+> conventional?
+
+Good point, we can change to $\rightarrow$.
+
+
+> ## Other comments
+>
+> (throughout) capitalize Figure and Section? only some are (e.g., line 488)
+
+CMOS 488 is typo
+
+> line 930 "Deep and Shallow [Typed] Racket"?
+
+Yes, but space!
+
+> line 1241 `\emph` got escaped somehow
+
+Thanks!
+
+
+> Review #31E
+> ===========================================================================
+>
+> Overall merit
+> -------------
+> 4. Accept
+>
+> Reviewer expertise
+> ------------------
+> 4. Expert
+>
+> Paper summary
+> -------------
+> This paper presents a language design that combines so-called "deep"
+> and "shallow" gradual types.  Deep gradual types (e.g. Typed Racket)
+> use contracts to wrap behavioral values, offering string monitoring
+> guarantees and improved feedback when errors occur, but come with a
+> high cost at runtime for behavioral values that cross boundaries
+> between typed and untyped components.  Shallow types (e.g. Reticulated
+> Python) use first-order assertions within typed code to enforce a
+> local safety property, avoiding the need for wrapping behavioral
+> values at boundaries, but coming at the cost of the stronger
+> guarantees, better error feedback, and still having some run-time
+> overhead, even when typed code interacts with typed code.
+>
+> The paper presents a formal model of the "three-way" language that
+> allows components to be written in untyped, deeply typed, or shallowly
+> typed sublanguages.  The surface syntax is compiled to a unified
+> evaluation syntax whose metatheory is developed in the paper.  The key
+> results are that the language is type sound: types soundly predict the
+> results of well-typed expressions and "complete monitoring" which
+> states roughly that the type abstractions of deeply typed components
+> are enforced in all channels of communication with other components
+> (this is the guarantee shallow types foregoes).
+>
+> The language is implemented in Racket and a performance evaluation in
+> the style of "Is Sound Gradual Typing Dead?".  The results offer
+> evidence that a combined approach to gradual typing offers benefits
+> over both deep and shallow typing alone.
+>
+> Comments for author
+> -------------------
+> This is a very nice paper.  It's well written and clear.  The formal
+> model is well done.  The metatheory results appear correct.  The take
+> away message of the paper is that (1) these approaches can coherently
+> be combined and (2) rather than trying to settle the debate between
+> which gradual typing approach is the "right" one, languages should
+> support both in order to access their combined strengths (it's a very
+> GT-style resolution to the tension after all).  The empirical
+> evaluation nicely provides evidences in support of this perspective.
+>
+> To me, the most interesting aspect of the paper are the empirical
+> results and the implementation issues.  I appreciate that the
+> technical development is very nicely done and clear, but as a reader
+> going through the several pages of the formal model, I kept waiting to
+> see the key insight or mechanism that makes the whole thing work and I
+> don't know that I ever did.  I came away with the impression that
+> putting deep and shallow types together is fairly straightforward.
+> Straightforward is fine, good even.  But if combining deep and shallow
+> types in a language model is as straightforward as I perceived from
+> reading the paper, perhaps there shouldn't be 7 pages devoted to it
+> and more of the paper could be devoted to more interesting aspects of
+> the work.  Or: there's something I've missed and the formal model does
+> involve some insight, in which case I think the paper could do a
+> better job drawing attention to the key pieces on which the results
+> hinge.  (I actually found the discussion in the appendix to be much
+> more interesting than the text in the main body of the paper.)
+
+TODO
+Great to hear!
+ (what helped, the laws? no way, finally)
+Happy to condense formal parts,
+ can't replace --- based on experience with other readers
+ it's very helpful for getting to the realization that it's all simple
+
+
+> If more space were allocated to discussing the experimental results, I
+> would like to see further analysis and discussion devoted to
+> explaining *why* some of the benchmarks are not better than their
+> shallow counterparts.  In particular, why is Zombie so bad compared to
+> everything else?
+
+EDIT
+Yes, we'll surely do that.
+
+
+> Overall, I think this paper advances our understanding of the design
+> and implementation of gradually typed programming languages and I'm
+> supportive of its acceptance.
+>
+> Small remarks
+>
+> "To a first approximation, deep types aim for the same guarantees 145
+> as conventional static types..."
+>
+> This is probably OK as a first approximation, and this is certainly
+> consistent with how other researchers have described this approach to
+> gradual typing, although it is misleading.  Static types guarantee a
+> "for all" property of the expression, whereas the contract-based
+> enforcement of the type enforces it only for the executions of the
+> witnessed when run.
+
+Yes, you are exactly right. We can tone down by saying "deep types mimic
+the guarantees of conventional static types"
+
+
+> A minor note on notation: This paper does a common thing of using
+> metavariables as part of the ``name'' of the judgment or relation
+> being defined.  For example, the surface typing judgment is named
+> $\vdash_s$.  This is confusing since the metavariable $s$ is also used
+> as a metavariable in the definition of the judgment.  One has to know
+> from context and norms that the $s$ in the name is a literal $s$ and
+> not actually a metavariable, i.e. it's a three-place relation, not a
+> four-place relation, two of which are surface syntax expressions.
+> This is also done for things like the deep typing judgment, but here
+> the name is a terminal symbol in the grammar so is less confusing.
+> Using a different font or some other syntactic convention would help
+> avoid this confusion.
+
+Yes, font would help.
+
+
+> Fig 10: in the definition of $s \longrightarrow^* e$, the $s_0$ should
+> be $s$ and $e_0$ should be $e$.
+
+No, inconsistent with rest.
+
+
+> "...relative to the evaluation contexts from figure 5."  Small
+> thing, but worth noting that $E$ is the grammar of evaluation
+> contexts.  AFAICT this isn't actually mentioned.
+
+Yes!
+
+> Footnote 5: "ssecond"
+
+Thank you.
+
+> Line 989: "an typed"
+
+Thank you.
+
+> Line 1240: "\emph{concrete}"
+
+Thank you.
+
+
+> Review #31F
+> ===========================================================================
+>
+> Overall merit
+> -------------
+> 3. Weak accept
+>
+> Reviewer expertise
+> ------------------
+> 4. Expert
+>
+> Paper summary
+> -------------
+> This paper aims at designing, implementing, and evaluating a mix-typed language
+> in which untyped, deep-typed, and shallow-typed code can interact with each
+> other.  The paper's contributions include building a theoretical model for such
+> a mix-typed language and proving standard properties, such as type soundness and
+> complete monitoring.  The paper also implements the mix-typed language on top of
+> Typed Racket and evaluates its design qualitatively and performance
+> quantitatively.
+>
+> * Strengths
+>
+> - Theoretical model and results of the three-way language
+> - The implementation atop Racket
+> - The experiments show the performance is promising.
+> - Well-written paper
+>
+> * Weaknesses
+>
+> - The results seem incremental and more evaluation is needed.
+>
+> Comments for author
+> -------------------
+> I think integrating deep and shallow types crucial to make mix-typed languages
+> accessible to broader users because the performance issue incurred by deep types
+> is a critical bottleneck to employing mix-typed languages in a large codebase,
+> while shallow types ensure less static guarantees than deep types.  The provided
+> theoretical model clarifies the interaction among differently typed code and
+> proves their interaction safe in that static types can predict run-time behavior
+> appropriately.
+>
+> I also appreciate the implementation of the model in Racket.  The pros and cons
+> of deep and shallow types are also interesting; I think they become visible
+> thanks to the solid implementation.
+>
+> The experimental result of the performance is promising.  It proves the
+> three-way language beneficial, at least from the perspective of the performance.
+>
+>
+> On the other hand, the (especially theoretical) results seem incremental and not
+> surprising to me.  The theoretical model seems to be a straightforward
+> combination of the models offered by the previous work [15].  The properties
+> stated in the paper are standard, and I can't find challenges to prove them
+> (except for the development of label consistency in which only interaction
+> between untyped and shallow-typed code is allowed without monitoring).  I think
+> more investigation of the theoretical model would be possible.  For example,
+> variants of Blame Theorem and the dynamic gradual guarantee property [42] for
+> the three-way language might be worth considering.  In particular, I expect
+> dynamic gradual guarantee formally proves the benefits of integrating Deep and
+> Shallow Typed Racket, which are spelled out at the beginning of Section 5.
+
+[15] is ICFP, major advance
+
+EDIT why no blame theorem + DGG?
+DGG is about dynamic type, not about meaning of static types.
+Would need so many changes that it's basically a new property.
+
+BT trivial.
+
+
+Adapting the DGG to deep and shallow with a new kind of precision relation
+is an interesting thought for future work.
+
+But it can't talk about performance. Models just don't know.
+
+Relational properties are always tougher to prove and to understand.
+Unless CM and TS leave something to be desired, much better off not needing them!
+
+
+> Considering the current theoretical development, I would like to see more
+> evaluation of practical aspects of the three-way language.  While the paper
+> evaluates the performance, I am also curious whether it affects the user
+> experience such as debugging process.  One possible direction would be to apply
+> the framework of Lazarek et al. [26] in the three-mix setting.
+
+Great question for future work.
+Totally out of scope.
+
+
+> Another concern is the lack of proofs except for Theorem 3.4; the supplementary
+> material only provides statements.  It concerns me about a few points (see
+> below).
+
+Great catches, but as you say there ain't no major challenges.
+
+
+> # Other comments / questions
+>
+> l135: What influence does losing dynamic type give to the design?
+
+Conjecture, only need a wrapper.
+
+
+> fig 4: Please consider showing all the nine rules for the module constructor.
+> In the current form, for example, any $T_1$ is allowed when $(L_0, T_0) = (D,
+> \tau_0)$, but I think $T_1$ must be $\tau_0$, because otherwise Lemma A.1 in the
+> supplementary material would not hold (as the corresponding rule in fig 18
+> allows only $(D, \tau_0, \tau_0)$).
+
+EDIT
+right! thank you ... we were too eager compressing
+
+
+> fig 5: Evaluation contexts for pairs are missing.
+
+yes you are right
+
+
+> fig 10, right-hand side: Why are happening errors equipped with labels?  When
+> errors happen, are other labels in an evaluation context discarded?
+
+Fig 10 keeps the context label around an error for readability.
+That label gets dropped; the model isn't interested in the owners of an error term.
+
+
+> Theorem 3.2: Does the bold 1 map only $\tau$ to $\tau$?  Then, why does language
+> D satisfies $TS(\vdash_D, 1)$ even for $s_0$ that is typed at $U$ or $\lfloor
+> \tau \rfloor$?  I'm confusing because Theorem 3.2 ensures, even if $s_0$ is
+> typed at $U$ (resp. $\lfloor \tau \rfloor$), and if $s_0 \rightarrow^* v_0$,
+> then $\vdash_D v_0 : 1(U)$ (resp. $1(\lfloor \tau \rfloor)$), but $1(U)$
+> (resp. $1(\lfloor \tau \rfloor)$) may not be defined.  If it is defined, which
+> types are assigned to them?  The typing judgment $\vdash_D$ requires the types
+> to be some $\tau_0$, not $U$ nor $\lfloor \tau \rfloor$.
+
+EDIT
+Ah, need stronger premise or something.
+
+
+> sec 4.3: The current form is only for experts of Racket.  Please consider gently
+> explaining the APIs and tools in more detail.
+
+Ok, will rephrase.
+Sure add more details
+
+> l1226-1236: I don't think this paragraph shows a story to find fast-running
+> configurations because it seems the entire script only runs in either Deep or
+> Shallow Racket.
+
+EDIT
+yes you are right
+

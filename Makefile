@@ -18,6 +18,15 @@ compile:
 clean: 
 	rm -Rf paper.pdf
 
+fast: tex
+	git checkout -- acmart.cls
+	pdflatex paper
+
+full: fast
+	bibtex paper
+	pdflatex paper
+	pdflatex paper
+
 mf: paper
 	mutool poster -y 2 paper.pdf draft.pdf
 	rmapi mkdir /experience-draft
