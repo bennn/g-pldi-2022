@@ -16,21 +16,50 @@ Reviewer expertise
 
 Paper summary
 -------------
-This paper describes an approach to integrating *both* established flavors of gradual typing (here referred to as deep and shallow semantics) in the same system, resulting in a language with support for modules with deeply-typed, shallowly-typed, or untyped (unityped) code, all of which (a) interact sensibly and (b) satisfy their expected safety theorems. The main novelty here is specifying the interactions between deep and shallow typed code and showing that their integration does not violate either kind of code's expected properties. The paper then describes an implementation of this three-way gradual semantics in Racket, describing details of the implementation itself and a positive performance evaluation.
+This paper describes an approach to integrating *both* established flavors of
+gradual typing (here referred to as deep and shallow semantics) in the same
+system, resulting in a language with support for modules with deeply-typed,
+shallowly-typed, or untyped (unityped) code, all of which (a) interact sensibly
+and (b) satisfy their expected safety theorems. The main novelty here is
+specifying the interactions between deep and shallow typed code and showing
+that their integration does not violate either kind of code's expected
+properties. The paper then describes an implementation of this three-way
+gradual semantics in Racket, describing details of the implementation itself
+and a positive performance evaluation.
 
 Comments for author
 -------------------
-This paper is nicely written, and aside from a few places like the discussion of Figure 13 in Section 3.7, does a nice job being self-contained, even for a reader who hasn't read deeply on gradual typing semantics for a few years. (For me, the paper's early section worked as a nice "catch up" summary on what I'd missed.) The novel technical material (e.g., Theorem 3.4) is clearly presented, and sound. The performance evaluation has some intriguing results (Figure 14) with real practical implications (which the paper starts to hint at with the experiments in 5.3.3).
+This paper is nicely written, and aside from a few places like the discussion
+of Figure 13 in Section 3.7, does a nice job being self-contained, even for a
+reader who hasn't read deeply on gradual typing semantics for a few years. (For
+me, the paper's early section worked as a nice "catch up" summary on what I'd
+missed.) The novel technical material (e.g., Theorem 3.4) is clearly presented,
+and sound. The performance evaluation has some intriguing results (Figure 14)
+with real practical implications (which the paper starts to hint at with the
+experiments in 5.3.3).
 
-And the design itself is just cool --- even setting aside performance, from a developer perspective not needing to make a hard choice between shallow and deep semantics, and getting to mix and match the two (plus untyped code) as seems sensible is just a great design to enable.
+And the design itself is just cool --- even setting aside performance, from a
+developer perspective not needing to make a hard choice between shallow and
+deep semantics, and getting to mix and match the two (plus untyped code) as
+seems sensible is just a great design to enable.
 
-I do wish the main paper had found room to include a bit of detail about the separate compilation issues, which I think are fairly important issues for implementations in general (whereas I agree with the paper that metaprogramming concerns, while important, wouldn't be as relevant to something like Typescript).
+I do wish the main paper had found room to include a bit of detail about the
+separate compilation issues, which I think are fairly important issues for
+implementations in general (whereas I agree with the paper that metaprogramming
+concerns, while important, wouldn't be as relevant to something like
+Typescript).
 
-Likewise, I wish Section 5.2 had had room for even a single concrete example (even in prose!) of some of the subtle issues it refers to the appendix for.
+Likewise, I wish Section 5.2 had had room for even a single concrete example
+(even in prose!) of some of the subtle issues it refers to the appendix for.
 
-My only real disappointment in this paper is that it seems like the appendix has a bunch of interesting material in it (which I haven't had a chance to read), but the paper is space-limited and I'd agree that everything that *is* in the main paper is probably higher-priority than the things pushed to the appendices.
+My only real disappointment in this paper is that it seems like the appendix
+has a bunch of interesting material in it (which I haven't had a chance to
+read), but the paper is space-limited and I'd agree that everything that *is*
+in the main paper is probably higher-priority than the things pushed to the
+appendices.
 
-Minor note: The first paragraph of related work has a LaTeX fragment that seems to have been escaped (a use of \emph) instead of interpreted.
+Minor note: The first paragraph of related work has a LaTeX fragment that seems
+to have been escaped (a use of \emph) instead of interpreted.
 
 
 
