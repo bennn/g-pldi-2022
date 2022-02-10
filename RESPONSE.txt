@@ -2,8 +2,8 @@ Thank you for the detailed reviews. I am especially glad to see two things:
 
   1. All reviews acknowledge this paper's core contribution to language design.
   2. The formal development in section 3 was clear.
-     (Earlier versions tried to show **only** the interesting
-     parts and came across as mysterious.)
+     (Earlier versions tried to show only the interesting parts and came
+     across as mysterious.)
 
 ### Major Misunderstandings and Questions
 
@@ -15,6 +15,7 @@ This paper **is** the result of a deep engineering dive to making the 3-way
 system work for all of Typed Racket. The combined system will be part of a
 Typed Racket release in the near future.
 
+
 > **#31D**
 > - there are no interesting interactions between deep (natural) and
 >   shallow checking
@@ -23,6 +24,7 @@ On the contrary, it is very interesting that natural and transient can coexist
 but cannot cooperate further. This fact was not at clear at the start of this
 research, and helps to motivate future work on shallow semantics that
 use wrappers (such as in Castagna and Lanvin ICFP'17).
+
 
 > **#31B**
 > Looking at figure 4 alone, I cannot tell what makes shallow types
@@ -48,6 +50,7 @@ the same notion of "well-typed" cannot run the same set of programs.
 Ground types would not suffice because the surface type checker uses the full
 type.
 
+
 > **#31C**
 > Q2 The notion of complete monitors is already presented in [19], and
 >    the notion of spectrum together with a similar set of benchmarks are
@@ -65,6 +68,7 @@ and other sophisticated Racket features. Complete monitoring, type soundness,
 and the benchmarks are all tools that validate the design rather than primary
 contributions.
 
+
 > **#31E**
 > I think more investigation of the theoretical model would be possible.  For
 > example, variants of Blame Theorem and the dynamic gradual guarantee property
@@ -75,8 +79,8 @@ contributions.
 
 The dynamic gradual guarantee (DGG) and the blame theorem are not part of the
 validation because they study a separate dimension: the semantics of the
-dynamic type. (Both Deep and Shallow can satisfy the DGG for the simple
-types in the model.)
+dynamic type. Both Deep and Shallow can satisfy the DGG for the simple
+types in the model.
 
 Whether the DGG (and term precision) could be adapted to Deep and Shallow mixes
 is an interesting question for future work. However, Deep types are
@@ -84,7 +88,6 @@ well-characterized by complete monitoring and Shallow types are
 well-characterized by type soundness.  Adding a new _relational_ property to the
 toolbox may help to reason about changes in specific programs, but seems
 unlikely to offer insights about the fundamental design questions.
-
 
 
 ### Other Clarifications
@@ -118,6 +121,7 @@ the model in ways that do not shed light on typed/untyped interactions (i.e.
 by adding a type precision judgment, modifying the typing rules, and adding
 a wrapper for values that get type-cast to dynamic).
 
+
 > **#31A**
 > I do wish the main paper had found room to include a bit of detail about the
 > separate compilation issues, which I think are fairly important issues for
@@ -125,7 +129,16 @@ a wrapper for values that get type-cast to dynamic).
 > concerns, while important, wouldn't be as relevant to something like
 > Typescript).
 
-Section 4.1 is about separate compilation (though, it could be much clearer).
+Section 4.1 is about a separate compilation issue (though, it could be much
+clearer).
+
+
+> **#31B**
+> Would it be reasonable to use examples to convey intuition and to illustrate
+> the workings of the three-way semantics? (The example in figure 1 is good
+> actually, but unfortunately it is not used beyond section 2.)
+
+Yes, that's a very reasonable suggestion.
 
 
 > **#31B**
@@ -137,11 +150,13 @@ This work provides a baseline for future mixes by combining two extreme
 designs.  Other systems can apply the strategy from this work as a first step
 and then look for ways to improve the interactions.
 
+
 > **#31B**
 > In the table in figure 4, why does every row have the same $T_1$?
 
 This is a mistake. In the first two rows (for Deep and Shallow), there are only
-3 possible choices for $T_1$. They are: $\tau_0$, $\lfloor \tau_0 \rfloor$, and $U$.
+3 possible choices for $T_1$. They are: $\tau_0$, $\lfloor \tau_0 \rfloor$, and
+$U$.
 
 
 > **#31D**
@@ -149,9 +164,10 @@ This is a mistake. In the first two rows (for Deep and Shallow), there are only
 > entirely untyped modules); I would expect a transient typing here to involve a
 > module that had some first-order/shallow checks inserted.
 
-Figure 1 has little to do with Racket; a transient module can sit between two
-untyped ones. In transient, figure 1 would have one first-order check to ensure
-that `text` is a function.
+Types mediating between two entirely untyped modules is a gradual typing
+phenomenon. It is not specific to Racket. In transient, figure 1 would have one
+first-order check to ensure that `text` is a function.
+
 
 > **#31D**
 > Another example of the Racket focus is setting $\mathsf{Nat} <:
@@ -167,7 +183,7 @@ The point of the subtyping judgment is to show its implications for type
 enforcement, especially in the transient semantics. Prior work on transient
 did not include subtyping, therefore it was not clear that a value could
 cross a boundary with the type `(List Nat)` and then get used as a `(List Int)`
-without any error.
+without any error after an upcast via subtyping.
 
 The specific choice of `Nat` and `Int` keeps the examples simple. Union types
 and objects would perhaps be clearer, but they would also complicate the model.
@@ -175,8 +191,9 @@ and objects would perhaps be clearer, but they would also complicate the model.
 The paper does not discuss overloading, dispatch, or the numeric tower because
 their details fall outside of the focus on type-enforcement.
 
-Allowing occurrence types across a boundary is a difficult question for future
-work.
+Allowing occurrence types across a boundary (any boundary) is a difficult
+question for future work.
+
 
 > **#31D**
 > The paper cites Greenman's dissertation as a way to say that such a
@@ -200,8 +217,9 @@ transient is an important topic for future work.
 > bytecode)?
 
 The Racket runtime is not optimizing transient checks to the same extent that
-PyPy would. Shallow Racket thus has the potential to run even faster in the
+PyPy would. Shallow Racket thus has the potential to run much faster in the
 future.
+
 
 > **#31D**
 > I didn't understand what toggling (line 1130) was. Is The Worst D||S
@@ -218,13 +236,13 @@ future.
 Toggling means using either Deep types or Shallow types. It does not allow for
 mixes of Deep and Shallow.
 
-Figure 14 is looking over each lattice three times: once to find the worst-case
-of Deep types, once to find the worst-case of Shallow types, and once to find
-the worst-case when each configuration uses all-Deep or all-Shallow depending
-on which of the two is faster.
+Figure 14 is the result of looking over each lattice three times: once to find
+the worst-case of Deep types, once to find the worst-case of Shallow types, and
+once to find the worst-case when each configuration uses all-Deep or
+all-Shallow depending on which of the two is faster.
 
-Another way to phrase the intuition is: the worst-case points in a Deep lattice
-are usually not the same as in a Shallow lattice.
+Another way to phrase the intuition is that the worst-case points in a Deep
+lattice are usually not the same as in a Shallow lattice.
 
 
 > **#31D**
@@ -233,12 +251,13 @@ are usually not the same as in a Shallow lattice.
 > similar purpose: it relaxes the contract (okay, not gradual typing)
 > system in exchange for performance.
 
-This paper contributes the first language design where programmers can choose
-between two semantics for sound types.
+The paper's main claim is that it contributes the first language design where
+programmers can choose between two semantics for sound types.
 
 Option contracts are indeed related (and belong in the related work!), but they
 depend critically on wrappers. By contrast, natural uses wrappers and transient
 is wrapper-free.
+
 
 > **#31D**
 > Is the rule in Figure 4 for shallow functions missing the
@@ -248,8 +267,9 @@ is wrapper-free.
 Yes! The rule for shallow functions needs a floor annotation.
 
 Subtyping is allowed for all types. Figure 4 showed only the rule
-for shallow types because the deep rule is straightforward. We will
-reconsider this choice.
+for shallow types because the deep rule is straightforward. Thank
+you for pointing out the confusion here.
+
 
 > **#31D**
 > Some examples of source programs in Section 3 would be very
@@ -258,6 +278,7 @@ reconsider this choice.
 > form... right?
 
 Yes, every switch demands a `module` form.
+
 
 > **#31D**
 > In Figure 5, the type annotation on deep lambdas is just for the
@@ -269,7 +290,7 @@ Yes, every switch demands a `module` form.
 The rule is that the `scan` keyword always corresponds to a shallow check.
 
 Although it would be nice to use only one form, the `scan` for results cannot
-be used for lambda checks without significantly complicating the model.
+easily be used for function-domain checks.
 
 
 > **#31F**
@@ -282,6 +303,7 @@ be used for lambda checks without significantly complicating the model.
 User experience is a great topic for future work, but out of scope for this
 design paper.
 
+
 > **#31F**
 > fig 4: Please consider showing all the nine rules for the module constructor.
 > In the current form, for example, any $T_1$ is allowed when $(L_0, T_0) = (D,
@@ -291,14 +313,16 @@ design paper.
 
 You are right. Figure 4 is too compressed.
 
+
 > **#31F**
 > fig 10, right-hand side: Why are happening errors equipped with labels?  When
 > errors happen, are other labels in an evaluation context discarded?
 
 Figure 10 keeps the context label around an error term to stay
 visually-consistent with the other rules. It could be omitted because the model
-is not interested in the owners of an error term (the question is
-whether owners are consistent during evaluation).
+is not interested in the owners of an error term (the question is whether
+owners are consistent during evaluation).
+
 
 > **#31F**
 > Theorem 3.2: Does the bold 1 map only $\tau$ to $\tau$?  Then, why does language
@@ -313,6 +337,7 @@ whether owners are consistent during evaluation).
 Good catch. The bold 1 indeed maps only $\tau$ to $\tau$, which means that type
 soundness needs another premise to rule out $s_0$ that are typed at $U$ and at
 shallow types.
+
 
 > **#31F**
 > l1226-1236: I don't think this paragraph shows a story to find fast-running
