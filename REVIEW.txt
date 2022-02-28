@@ -603,3 +603,35 @@ explaining the APIs and tools in more detail.
 l1226-1236: I don't think this paragraph shows a story to find fast-running
 configurations because it seems the entire script only runs in either Deep or 
 Shallow Racket.
+
+
+Review #31G
+===========================================================================
+
+Overall merit
+-------------
+5. Strong Accept
+
+Reviewer expertise
+------------------
+4. Expert
+
+Comments after Author Response
+------------------
+
+# Meta Review
+
+We thank the authors for their response. This paper was discussed extensively
+among the reviewers, with much of the discussion centering on the evaluation in
+the paper. In particular, reviewers were confused by the focus on Figures 14
+and 15 in the paper. These figures don't measure the technical contribution of
+the work, namely the interoperation between deep, shallow, and untyped code.
+Instead, these figures show that neither deep nor shallow is uniformly better
+than the other, not that the interoperation of deep and shallow leads to
+improved efficiency. While this aspect is covered in Figure 16 and is discussed
+in the paper, a more detailed and through evaluation of the "D+S" lattice would
+improve the paper and support the paper's claims. Reviewers also wanted more
+discussion of the engineering efforts required to make D+S work in practice.
+Ultimately, we felt these improvements could be made before the final version
+of the paper and agreed to accept the paper
+
