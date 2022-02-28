@@ -6,7 +6,9 @@ Goal: move chapter 6 of Ben G. dissertation to a paper
 Target: PLDI 2022
 - deadline 2021-11-19
 - cfp <https://pldi22.sigplan.org/track/pldi-2022-pldi#Call-for-Papers>
-- 12 pages 10pt
+- 12 pages 10pt excluding references
+  - can buy 2 extras for $200 each
+  - total page count with references <= 16
 - pldi.zip format
 
 
