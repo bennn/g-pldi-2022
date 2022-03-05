@@ -7,7 +7,7 @@
      median)
    (only-in gtp-plot/performance-info
      performance-info->num-units)
-   (only-in "data/analyze.rkt"
+   (only-in "../data/analyze.rkt"
      benchmark-name->performance-info
      find-lowest-3dpath-D
      find-lowest-3dpath-D*

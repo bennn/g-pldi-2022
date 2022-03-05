@@ -26,8 +26,7 @@ For the latest news on Deep and Shallow types for Typed Racket, visit the follow
 ### Getting Started
 
 1. Look over the files provided with this artifact:
-   - `paper.scrbl` is the entry point for the paper's source. Most other files
-     in the toplevel directory of this repo implement the paper.
+   - `g-pldi-2022/paper.scrbl` is the entry point for the paper's source.
    - `data/` contains performance data for section 5 of the paper. See
      `data/README.md` for more information.
    - `code/` contains benchmarks and info for git submodules.

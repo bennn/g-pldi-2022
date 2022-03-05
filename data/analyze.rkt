@@ -24,7 +24,7 @@
   gtp-plot/performance-info
   gtp-plot/typed-racket-info
   "../src/with-cache/with-cache.rkt"
-  (only-in "../main.rkt" glob-first stransient default-rkt-version transient-rkt-version bm)
+  (only-in "../g-pldi-2022/main.rkt" glob-first stransient default-rkt-version transient-rkt-version bm)
   (only-in math/number-theory factorial)
   (only-in math/statistics mean median)
   (only-in scribble/base bold centered hyperlink tabular hspace tt linebreak)
