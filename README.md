@@ -30,12 +30,11 @@ For the latest news on Deep and Shallow types for Typed Racket, visit the follow
    - `data/` contains performance data for section 5 of the paper. See
      `data/README.md` for more information.
    - `code/` contains benchmarks and info for git submodules.
-   - `src/` contains other code and old code.
 2. Run `make init` to install Git submodules for the `code/` directory.
    Afterward, check that `code/` contains the following:
    - A version of Typed Racket with support for Deep and Shallow types.
      In particular, the file
-     [`src/typed-racket/typed-racket-lib/typed-racket/defender/defender.rkt`](./src/typed-racket/typed-racket-lib/typed-racket/defender/defender.rkt)
+     [`code/typed-racket/typed-racket-lib/typed-racket/defender/defender.rkt`](./code/typed-racket/typed-racket-lib/typed-racket/defender/defender.rkt)
      should exist and contain a function `defend-top` that rewrites typed code
      to defend itself with transient run-time checks.
    - Several libraries: `gtp-measure`, `gtp-plot`, `gtp-util`, and `require-typed-check`
