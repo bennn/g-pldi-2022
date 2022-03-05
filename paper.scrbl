@@ -18,10 +18,6 @@
         #:orcid "0000-0001-7078-9287"
         #:affiliation NEU]
 
-@; @author["Matthias Felleisen"
-@;         #:email "matthias@ccs.neu.edu"
-@;         #:affiliation NEU]
-
 
 @; -----------------------------------------------------------------------------
 

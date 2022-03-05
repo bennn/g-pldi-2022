@@ -1,0 +1,20 @@
+[submodule "code/typed-racket"]
+	path = code/typed-racket
+	url = https://github.com/bennn/typed-racket
+	branch = pldi-deep-shallow
+[submodule "code/require-typed-check"]
+	path = code/require-typed-check
+	url = https://github.com/bennn/require-typed-check
+	branch = pldi-deep-shallow
+[submodule "code/gtp-measure"]
+	path = code/gtp-measure
+	url = https://github.com/bennn/gtp-measure
+	branch = pldi-deep-shallow
+[submodule "code/gtp-util"]
+	path = code/gtp-util
+	url = https://github.com/bennn/gtp-util
+	branch = pldi-deep-shallow
+[submodule "code/gtp-plot"]
+	path = code/gtp-plot
+	url = https://github.com/bennn/gtp-plot
+	branch = pldi-deep-shallow

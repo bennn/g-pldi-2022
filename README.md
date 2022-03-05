@@ -1,91 +1,67 @@
-deep and shallow
+g-pldi-2022
 ===
 
-Goal: move chapter 6 of Ben G. dissertation to a paper
+Sources & code for a conditionally-accepted PLDI 2022 paper: _Deep and Shallow
+Types for Gradual Languages_
 
-Target: PLDI 2022
-- deadline 2021-11-19
-- cfp <https://pldi22.sigplan.org/track/pldi-2022-pldi#Call-for-Papers>
-- 12 pages 10pt excluding references
-  - can buy 2 extras for $200 each
-  - total page count with references <= 16
-- pldi.zip format
+```
+@inproceedings{g-pldi-2022,
+  author={Greenman, Ben},
+  title={Deep and Shallow Types for Gradual Languages},
+  booktitle={{TBD}},
+  pages={TBD},
+  year={2022}
+}
+```
 
+The code here is a version of Deep and Shallow types for Typed Racket that was used
+for its evaluation in the paper (section 5). It is provided as-is for archival
+and reproducibility purposes.
 
-MF outline:
+For the latest news on Deep and Shallow types for Typed Racket, visit the following link:
 
-> I thought about your unpublished research contribution in your thesis and came up with a thesis approach. 
->
-> Instead of tackling it from a “performance” angle, which may get attacked by
-> “performance knights” on a PC, you could try the idea of “let’s generalize
-> along a different dimension”.  And then we can ask the question “are there
-> benefits” and you can explain both “more programs run” and “you don’t die when
-> you migrate”.  
->
-> I sketched it out via a 2-slide diagram. The PDF is attached. You could try to
-> write an introduction like I did for the ICFP experience paper. Your best bet
-> is to work toward POPL in July. But get started soon. Time will fly once you
-> work with Shriram. 
+  <https://github.com/racket/typed-racket/pull/948>
 
 
-### 2021-06-27 talk idea
+### Getting Started
 
-- you've heard of GT / MT / .... cottage industry
-  - simple idea, mixed-typed
-  - disagree on details
-  - my ground rules = migratory, non-dyn (general baseline)
-- among systems that meet ground rules, lots of variety,
-  particular about _extent_ of types, for lack of better word
-  - example program, Deep vs Shallow, keep it simple
-  - shallow types = sound. And soundless says nothing in untyped code.
-  - deep types = type obligations interpose all behaviors. Characterized by CM.
-    ... closer to my intuition
-- why two styles? complementary strengths
-  - stay vague: S, good mix ; D, good typed
-- esp. when comes to implementation, Natural vs Transient
-  - Natural = contract at boundary
-  - Transient = first-order everywhere
-
-- in this paper, show htat D + SN can interoperate and implement it
-  - key idea D--S--U triangle,
-    slowly label the edges,
-    maybe begin with 6 edges, then simplify?
-    notation for sketch / imagine vs. finalize edge
-  - properties (on same finalize slide)
-    1 2 3 soundness
-    monitoring property, deep single-owner
-
-- implemented by extending TR compiler
-  - some excitement at DS interface, see paper (? save to end)
-- benefits, from dissertation = guarantees + expr + perf ... or perf + expr
-  - maybe reuse the heavy CM example
-  - show 3way numbers
-
-- in conclusion, analogy to GT
-  - got started on this road by putting T/U knob in programmers hands
-    turns out tradeoffs from types call for another knob
-  - survey, recall "worst of both"
-  - the end ... if recorded try to stop sooner don't worry about questions
+1. Look over the files provided with this artifact:
+   - `paper.scrbl` is the entry point for the paper's source. Most other files
+     in the toplevel directory of this repo implement the paper.
+   - `data/` contains performance data for section 5 of the paper. See
+     `data/README.md` for more information.
+   - `code/` contains benchmarks and info for git submodules.
+   - `src/` contains other code and old code.
+2. Run `make init` to install Git submodules for the `code/` directory.
+   Afterward, check that `code/` contains the following:
+   - A version of Typed Racket with support for Deep and Shallow types.
+     In particular, the file
+     [`src/typed-racket/typed-racket-lib/typed-racket/defender/defender.rkt`](./src/typed-racket/typed-racket-lib/typed-racket/defender/defender.rkt)
+     should exist and contain a function `defend-top` that rewrites typed code
+     to defend itself with transient run-time checks.
+   - Several libraries: `gtp-measure`, `gtp-plot`, `gtp-util`, and `require-typed-check`
+3. Install a modern version of Racket from <https://download.racket-lang.org/>.
+   Make sure that its `racket` and `raco` executables are on your PATH.
+4. Run `make install` to add Deep and Shallow support to your Racket, to
+   install the related libraries, and to compile the paper.
 
 
-### 2021-02-10 outline + intro
+### Building the Code: Step-by-Step Instructions
 
-- from 2 to 3 and why
-- background and constraints
-- why TR
-- why Natural, why Transient ... which semantics cannot fit? migratory
-  - behavioral, cm
-  - proxy free
-- model and proofs
-- implementation, compiler reuse (brief), boundary challenges
-  + unclear what's of general interest here
-- benefits catalog
-- taking stock
-  + can be done
-  + surprising benefits, esp. expressiveness, call for user studies
-  + surprising lack of N T synergy
-    . look for new compromise semantics (seems unlikely)
-    . find better combo
-  + ... any more?
-
+1. Run `make pdf` to build `paper.pdf`
+2. Test Deep and Shallow types for Typed Racket:
+   -  Go to the directory [`code/typed-racket/typed-racket-test/transient/pass`](./code/typed-racket/typed-racket-test/transient/pass).
+      All tests here should compile and run: `raco make -v FILE.rkt && racket FILE.rkt`
+   - Go to the directory [`code/typed-racket/typed-racket-test/transient/error`](./code/typed-racket/typed-racket-test/transient/error).
+     All tests here should raise a run-time exception; `raco make -v FILE.rkt`
+     should succeed and `racket FILE.rkt` should error.
+   - Use these tests to try writing your own.
+4. Run a small benchmark such as `morsecode`:
+   - Open [`code/run-info.rkt`](code/run-info.rkt) in a text editor
+   - Replace `PATH-TO-YOUR-RACKET-INSTALL` with an absolute path to the Racket you installed above
+   - Replace `PATH-TO-REPO` with an absolute path to this repo
+   - Uncomment the line for `morsecode` (or for another benchmark)
+   - Change to the `code/` directory, run `sh run-benchmarks.sh`, watch and wait for it to finish
+   - Inspect the new `*.out` files under `run-output/*/`
+   - Refer to the `gtp-measure` docs for help (`raco docs gtp-measure`)
 

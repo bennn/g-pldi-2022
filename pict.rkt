@@ -43,13 +43,13 @@
   racket/match
   racket/runtime-path
   racket/string
-  "with-cache/with-cache.rkt")
+  "src/with-cache/with-cache.rkt")
 
 ;; -----------------------------------------------------------------------------
 
 (define-runtime-path HERE ".")
 (define data-dir (build-path HERE "data"))
-(define cache-dir (build-path HERE "with-cache"))
+(define cache-dir (build-path HERE "src/with-cache"))
 (define blame "blame")
 
 (define turn revolution)

@@ -10,7 +10,9 @@ pdf: compile
 	open paper.pdf 
 
 install:
-	raco pkg install --auto scribble-abbrevs pict-abbrevs gtp-plot gtp-util with-cache
+	cd code; raco pkg update --link ./source-syntax/ ./typed-racket-compatibility/ ./typed-racket-doc/ ./typed-racket-lib/ ./typed-racket-more/ ./typed-racket-test/ ./typed-racket/
+	cd code; raco pkg install ./gtp-measure ./gtp-plot ./gtp-util ./require-typed-check
+	#raco pkg install
 
 compile:
 	raco make -v paper.scrbl
@@ -31,4 +33,7 @@ mf: paper
 	mutool poster -y 2 paper.pdf draft.pdf
 	rmapi mkdir /experience-draft
 	rmapi put draft.pdf /experience-draft/
+
+init:
+	git submodule update --init code/gtp-measure/ code/gtp-plot/ code/gtp-util/ code/require-typed-check/ code/typed-racket/
 
