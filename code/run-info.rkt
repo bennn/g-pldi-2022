@@ -6,7 +6,7 @@
 ;; - Run the companion script: run-benchmarks.sh
 
 #:config #hash(
-  (bin . "/PATH-TO-YOUR-RACKET-INSTALL/racket/bin/")
+  (bin . "/PATH-TO-YOUR-RACKET-INSTALL/bin/")
   (cutoff . 20)
   (entry-point . "main.rkt")
   (iterations . 8)

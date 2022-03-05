@@ -47,7 +47,7 @@ For the latest news on Deep and Shallow types for Typed Racket, visit the follow
 
 ### Building the Code: Step-by-Step Instructions
 
-1. Run `make pdf` to build `paper.pdf`
+1. Run `make pdf` to build `g-pldi-2022/paper.pdf`
 2. Test Deep and Shallow types for Typed Racket:
    -  Go to the directory [`code/typed-racket/typed-racket-test/transient/pass`](./code/typed-racket/typed-racket-test/transient/pass).
       All tests here should compile and run: `raco make -v FILE.rkt && racket FILE.rkt`
