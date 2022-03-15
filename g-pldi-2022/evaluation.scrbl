@@ -25,6 +25,17 @@
      typed-codeblock)
    (only-in scriblib/footnote note))
 
+@(define mix-best-D*
+   (let ((*bb (box #f)))
+     (lambda ()
+       (or (unbox *bb)
+           (let ((v
+                  (find-lowest-3dpath-D*
+                    '(forth fsm fsmoo mbta morsecode zombie dungeon
+                      jpeg zordoz lnm suffixtree kcfa snake take5))))
+             (set-box! *bb v)
+             v)))))
+
 @; THESIS Deep + Shallow > Deep | Shallow
 @; - sections for guarantees, performance, and expressiveness
 @; - is expressiveness incidental?
@@ -184,9 +195,154 @@ Each data point is the result of running one program configuration nine times in
  and averaging the speed of the final eight runs.
 
 
-@subsection[#:tag "sec:evaluation:perf:either-or"]{Worst-Case Overhead}
+@subsection[#:tag "sec:evaluation:perf:together"]{Deep and Shallow Combined}
+@; three-way excellence ?
+
+@(let* ((DDD (get-3d-table '(forth fsm fsmoo mbta morsecode zombie dungeon
+                             jpeg zordoz lnm suffixtree kcfa snake take5
+                             acquire tetris )))
+        (num-DDD (length DDD))
+        (DDD-n* (map (lambda (x) (string->number (cadr x))) DDD))
+        (DDD-mean (mean DDD-n*))
+        (DDD-median (median < DDD-n*))
+        (S (benchmark-name->performance-info 'fsm default-rkt-version))
+        (fsm-num-modules (performance-info->num-units S))
+        (fsm-num-configs (expt 2 fsm-num-modules))
+        (fsm-non-mixed (+ 1 fsm-num-modules))
+        (fsm-mixed (- fsm-num-configs fsm-non-mixed))
+        [path-3d-D 1.2]
+        [path-3d
+         (for/list ((bmx (in-list (mix-best-D*)))
+                    #:when (and (cdr bmx) (<= (cdr bmx) path-3d-D)))
+           (bm (car bmx)))]
+       )
+@list[
+@elem{
+Mixing @|sdeep| and @|sshallow| types within one program configuration can improve its
+performance.
+Such configurations are common in the GTP benchmarks.
+Out of the @${2^N} configurations in @integer->word[num-DDD] of the smaller
+benchmarks, a median of @$[@~a[DDD-median] "\\%"] run fastest
+with a mix of @|sdeep| and @|sshallow| types (@figure-ref{fig:both:3way}).
+@; These results are especially encouraging because @${N\!+\!1} configurations in
+@; each benchmark cannot mix @|sdeep| and @|sshallow| because they contain fewer
+@; than @${2} typed modules.
+@; In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
+@; @Integer->word[fsm-non-mixed] of these have at most one typed module.
+@; Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a
+@; combination of @|sdeep| and @|sshallow| types.
+These mixtures also increase the number of @emph{@ddeliverable{D} migration
+paths} (defined in @secref{sec:evaluation:perf:path}).
+All paths in @oxfordize[path-3d] are @ddeliverable[path-3d-D]
+when configurations can mix @|sdeep| and @|sshallow| types.
+
+These encouraging numbers are the result, however, of an exhaustive search through
+@${3^N} configurations.
+The following three subsections therefore investigate whether Deep and Shallow
+mixtures can offer benefits without an infeasibly-large search.
+}
+@figure[
+  "fig:both:3way"
+  ;; TODO nicer symbol than + for the mix? ... || is great for either-or ... \cup vs \uplus ???
+  @elem{
+    Percent of configurations that run fastest with a mix of @|sDeep| and @|sShallow| modules.
+  }
+  (render-3d-table-y DDD)]
+])
+
+
+@subsection[#:tag "sec:evaluation:perf:case"]{Case Studies}
+
+To test whether fast-running configurations can be found without a search,
+we manually explored @|sdeep| and @|sshallow| combinations in the following
+programs:
+
+@parag{MsgPack}
+@hyperlink["https://gitlab.com/HiPhish/MsgPack.rkt"]{MsgPack} is a Typed Racket
+ library that converts Racket values into serialized
+ @hyperlink["http://msgpack.org/"]{MessagePack} data.@note{@shorturl["https://" "gitlab.com/HiPhish/MsgPack.rkt"]}
+The author of this library
+ @hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]{reported poor performance}
+ due to @|sdeep| type boundaries.
+Changing one bridge module from @|sdeep| to @|sshallow| types
+(a one-line change), however,
+reduces the time needed to run all tests from @${320} seconds to @${204} seconds
+(@${40\%} speedup).
+
+@; Migrating the rest of the library to @|sShallow| Racket added only a slight
+@;  improvement (down to 202 seconds).
+@; Can do even better after changing the code:
+@;  Deep, no pack casts = 117 seconds
+@;  Shallow, no pack casts = 67 seconds
+@;  untyped = 24 seconds!!!
+
+@parag{Synth}
+@(let* ((synth-short-url "github.com/stamourv/synth")
+        (synth-url (string-append "http://" synth-short-url))
+        (synth-data
+         (hash
+           'd-lib-d-client '(809 821 834 771 733)
+           'd-lib-u-client '(11440 11040 11004 11923 11672)
+           's-lib-u-client '(1645 1664 1558 1576 1539)
+           's-lib-d-client '(7823 7885 9002 7955 8279)))
+        (deep-delta (exact-round (/ (mean (hash-ref synth-data 'd-lib-u-client))
+                                    (mean (hash-ref synth-data 'd-lib-d-client)))))
+        (shallow-delta (exact-round (/ (mean (hash-ref synth-data 's-lib-d-client))
+                                       (mean (hash-ref synth-data 's-lib-u-client)))))
+        (ds-fast (exact-round (/ (mean (hash-ref synth-data 's-lib-u-client))
+                                 (mean (hash-ref synth-data 'd-lib-d-client)))))
+        (ds-slow-sec (quotient
+                       (- (mean (hash-ref synth-data 'd-lib-u-client))
+                          (mean (hash-ref synth-data 's-lib-d-client)))
+                       1000))
+        (ds-slow (rnd (/ (mean (hash-ref synth-data 'd-lib-u-client))
+                         (mean (hash-ref synth-data 's-lib-d-client))))))
+  @elem{
+The @bm{synth} GTP benchmark is based on @hyperlink[synth-url]{an untyped program}
+that interacts with a @|sdeep|-typed math library to synthesize music.@note{@shorturl["https://" synth-short-url]}
+This untyped program runs @~a[deep-delta]x slower than a @|sdeep|-typed
+version because of the library boundary.
+When the library uses @|sshallow| types instead, the gap between an
+untyped and @|sdeep|-typed client improves to @~a[shallow-delta]x.
+@; This fast untyped configuration is roughly @~a[ds-fast]x slower than the fast
+@; @|sdeep|--@|sdeep| configuration, but the worst-case is @~a[ds-slow]x
+@; faster (@~a[ds-slow-sec] seconds) than before.
+@; Overall, a @|sShallow| version of the math library is a better tradeoff.
+})
+
+
+@; @parag{External Data, JSON}
+@; @(let* ((script_name "QA/transient-expressive/json/custom.rkt")
+@;         (s* '(169 157 162 159 162))
+@;         (t* '(3007 2991 2920 3096 3308))
+@;         (t/s (/ (mean t*) (mean s*)))
+@;         (slowdown (if (< 10 t/s) "over 10x" (format "~ax" (rnd t/s)))))
+@;   @elem{
+@; Typed code that deals with data from an external source is often better off
+@;  in @|sShallow| Racket because it validates data lazily.
+@; By contrast, @|sDeep| Racket eagerly traverses a data structure as soon as it
+@; reaches a type boundary.@note{
+@;   In principle, @|sDeep| can avoid the slowdown with a custom parser
+@;    that validates data as it reads it.
+@;   Indeed, Phil Nguyen has written a @hyperlink["https://github.com/philnguyen/json-type-provider"]{library}
+@;    for JSON that mitigates the overhead of @|sdeep| types.
+@;   Such libraries are ideal, but until we have them for every data exchange
+@;    format (MessagePack, CSV, YAML, and so on) @|sShallow| offers a pragmatic solution.
+@; }
+@; If the boundary types allow mutable values, then the traversal is even more
+@;  expensive because it creates wrappers as it copies the dataset.
+@; To illustrate the pitfall, we wrote a typed script that reads a large dataset of
+@;  apartment data using on off-the-shelf JSON parser and accesses one field
+@;  from each object in the dataset.
+@; @|sDeep| Racket runs the script @|slowdown| slower than @|sShallow| Racket.
+@; })
+
+
+@subsection[#:tag "sec:evaluation:perf:either-or"]{Deep or Shallow, Worst-Case Overhead}
 
 @(let* ((WT (get-mixed-worst-table SHALLOW-CURRENT-BENCHMARK*))
+        (has-typed-lib-or-both* '(acquire fsm fsmoo gregor kcfa lnm mbta quadT quadU snake suffixtree synth take5 tetris zombie zordoz))
+        (num-typed-lib (length has-typed-lib-or-both*))
        )
 @list[
 @figure[
@@ -202,18 +358,11 @@ With @|sdeep| types, high-traffic boundaries can lead to huge
 costs@~cite{htf-hosc-2010,tfgnvf-popl-2016,gtnffvf-jfp-2019}.
 With @|sshallow| types, every line of typed code contributes a small
 cost@~cite{vss-popl-2017,gm-pepm-2018}.
-Fortunately, these bottlenecks are complementary.
-Consider a program with @${N} modules and therefore @${2^N} @emph{configurations}
-in which a subset of these modules are untyped and the rest are typed.
-@|sDeep| suffers in configurations that frequently send values across type boundaries,
-but can run efficiently when all @${N} modules have types.
-@|sShallow| performance degrades as the number of typed modules
-increases.
-Using @|sShallow| initially and @|sDeep| once all critical boundaries are
-typed may avoid the worst cases of each.
 
-@Figure-ref{fig:evaluation:mixed-worst-table} describes the benefits of
-switching between @|sDeep| and @|sShallow| Racket on the GTP benchmarks.
+By switching between @|sDeep| and @|sShallow| a programmer can often, however,
+avoid the worst-cases of each.
+@Figure-ref{fig:evaluation:mixed-worst-table} quantifies the benefits of
+this either-or strategy on the GTP benchmarks.
 The first column shows that, as expected, @|sdeep| types may have
 enormous costs.
 The second column shows that the worst configurations for @|sShallow| Racket are
@@ -223,17 +372,23 @@ Racket can do even better.
 Numbers in this third column are typeset in @bold{bold} if they
 are the best (lowest) in their row.
 The @tt{sieve} and @tt{tetris} benchmarks are notable successes.
-The @tt{zombie} benchmark fares the worst; @|sShallow| Racket pays a high
-cost because one module has a large number of operations
-and @|sDeep| Racket pays even more at its boundaries.
-@; Although some benchmarks have overlapping bottlenecks,
-@; most benefit from @|sDeep| in certain configurations and @|sShallow| in others.
+The @tt{zombie} benchmark is the worst.
+@|sDeep| Racket pays a huge cost in @tt{zombie} because functions
+repeatedly cross its module boundaries.
+@|sShallow| Racket also pays a relatively high cost because @tt{zombie}
+uses functions to simulate message-passing objects, and therefore contains
+a large number of elimination forms that incur shape checks.
+
+@bold{Note}: This either-or strategy is possible in general only because @|sDeep|
+and @|sShallow| can interoperate.
+Indeed, most of the benchmarks (@~a[num-typed-lib]/21) rely on @|sdeep|-typed
+code that lives outside their @${N} core migratable modules.
+Without interoperability, the outside code would require changes that are
+unrealistic to make in practice.
 }])
 
 
 @subsection[#:tag "sec:evaluation:perf:path"]{Migration Paths}
-
-@(define mix-best-D* #f)
 
 @(let* ([bm* '(sieve forth fsm fsmoo mbta morsecode
                zombie dungeon jpeg zordoz lnm suffixtree
@@ -248,11 +403,6 @@ and @|sDeep| Racket pays even more at its boundaries.
         [mix-best-D
          ;; TODO apply to more benchmarks?
          (find-lowest-3dpath-D mix-path-bm)]
-        [_
-        (set! mix-best-D*
-         (find-lowest-3dpath-D*
-           '(forth fsm fsmoo mbta morsecode zombie dungeon
-             jpeg zordoz lnm suffixtree kcfa snake take5)))]
         )
 @list[
 @figure[
@@ -286,142 +436,5 @@ With @|sShallow| alone, all paths in @integer->word[(length shallow-dead*)] benc
 With the either-or mix, only @integer->word[(length mix-dead*)] benchmark (@bm[(car mix-dead*)])
  has zero @ddeliverable[D] paths.
 }])
-
-
-@subsection[#:tag "sec:evaluation:perf:together"]{Three-way Case Studies}
-@; three-way excellence ?
-
-@(let* ((DDD (get-3d-table '(forth fsm fsmoo mbta morsecode zombie dungeon
-                             jpeg zordoz lnm suffixtree kcfa snake take5
-                             acquire tetris )))
-        (num-DDD (length DDD))
-        (DDD-n* (map (lambda (x) (string->number (cadr x))) DDD))
-        (DDD-mean (mean DDD-n*))
-        (DDD-median (median < DDD-n*))
-        (S (benchmark-name->performance-info 'fsm default-rkt-version))
-        (fsm-num-modules (performance-info->num-units S))
-        (fsm-num-configs (expt 2 fsm-num-modules))
-        (fsm-non-mixed (+ 1 fsm-num-modules))
-        (fsm-mixed (- fsm-num-configs fsm-non-mixed))
-        [path-3d-D 1.2]
-        [path-3d
-         (for/list ((bmx (in-list mix-best-D*))
-                    #:when (and (cdr bmx) (<= (cdr bmx) path-3d-D)))
-           (bm (car bmx)))]
-        )
-@list[
-@elem{
-Mixing @|sdeep| and @|sshallow| types within one program configuration can improve its
-performance.
-Such configurations are common in the GTP benchmarks.
-Out of the @${2^N} configurations in @integer->word[num-DDD] of the smaller
-benchmarks, a median of @$[@~a[DDD-median] "\\%"] run fastest with a mix of
-@|sdeep| and @|sshallow| types (@figure-ref{fig:both:3way}).@note{The speedups
-are relatively low. The worst-case in @bm{zombie} improves the most: from 31x to 29x.}
-@; These results are especially encouraging because @${N\!+\!1} configurations in
-@; each benchmark cannot mix @|sdeep| and @|sshallow| because they contain fewer
-@; than @${2} typed modules.
-@; In @bm{fsm}, for example, there are @integer->word[fsm-num-configs] mixed-typed configurations.
-@; @Integer->word[fsm-non-mixed] of these have at most one typed module.
-@; Of the remaining @~a[fsm-mixed] configurations, over half run fastest with a
-@; combination of @|sdeep| and @|sshallow| types.
-These mixtures also increase the number of @ddeliverable{D} migration
-paths.
-All paths in @oxfordize[path-3d] are @ddeliverable[path-3d-D]
-when configurations can mix @|sdeep| and @|sshallow| types.
-
-The encouraging numbers are the result, however, of an exhaustive search through
-@${3^N} configurations.
-To test whether fast-running configurations can be found without a search,
-we manually explored @|sdeep| and @|sshallow| combinations in the following
-three programs:
-}
-@figure[
-  "fig:both:3way"
-  ;; TODO nicer symbol than + for the mix? ... || is great for either-or ... \cup vs \uplus ???
-  @elem{
-    Percent of configurations that run fastest with a mix of @|sDeep| and @|sShallow| modules.
-  }
-  (render-3d-table-y DDD)]
-])
-
-@parag{MsgPack}
-@hyperlink["https://gitlab.com/HiPhish/MsgPack.rkt"]{MsgPack} is a Typed Racket
- library that converts Racket values into serialized
- @hyperlink["http://msgpack.org/"]{MessagePack} data.@note{@shorturl["https://" "gitlab.com/HiPhish/MsgPack.rkt"]}
-The author of this library
- @hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]{reported poor performance}
- due to @|sdeep| type boundaries.
-We found that changing one bridge module from @|sdeep| to @|sshallow| types
-(a one-line change),
-reduced the time needed to run all tests from @${320} seconds to @${204} seconds.
-Migrating the rest of the library to @|sShallow| Racket added only a slight
-improvement (down to 202 seconds).
-
-@; can do even better after changing the code:
-@;  Deep, no pack casts = 117 seconds
-@;  Shallow, no pack casts = 67 seconds
-@;  untyped = 24 seconds!!!
-
-@parag{Synth}
-@(let* ((synth-short-url "github.com/stamourv/synth")
-        (synth-url (string-append "http://" synth-short-url))
-        (synth-data
-         (hash
-           'd-lib-d-client '(809 821 834 771 733)
-           'd-lib-u-client '(11440 11040 11004 11923 11672)
-           's-lib-u-client '(1645 1664 1558 1576 1539)
-           's-lib-d-client '(7823 7885 9002 7955 8279)))
-        (deep-delta (exact-round (/ (mean (hash-ref synth-data 'd-lib-u-client))
-                                    (mean (hash-ref synth-data 'd-lib-d-client)))))
-        (shallow-delta (exact-round (/ (mean (hash-ref synth-data 's-lib-d-client))
-                                       (mean (hash-ref synth-data 's-lib-u-client)))))
-        (ds-fast (exact-round (/ (mean (hash-ref synth-data 's-lib-u-client))
-                                 (mean (hash-ref synth-data 'd-lib-d-client)))))
-        (ds-slow-sec (quotient
-                       (- (mean (hash-ref synth-data 'd-lib-u-client))
-                          (mean (hash-ref synth-data 's-lib-d-client)))
-                       1000))
-        (ds-slow (rnd (/ (mean (hash-ref synth-data 'd-lib-u-client))
-                         (mean (hash-ref synth-data 's-lib-d-client))))))
-  @elem{
-The @bm{synth} benchmark is based on @hyperlink[synth-url]{an untyped program}
-that interacts with a @|sdeep|-typed math library to synthesize music.@note{@shorturl["https://" synth-short-url]}
-This untyped program runs @~a[deep-delta]x slower than a @|sdeep|-typed
-version because of the library boundary.
-When the library uses @|sshallow| types instead, the gap between an
-untyped and @|sdeep|-typed client improves to @~a[shallow-delta]x.
-@; This fast untyped configuration is roughly @~a[ds-fast]x slower than the fast
-@; @|sdeep|--@|sdeep| configuration, but the worst-case is @~a[ds-slow]x
-@; faster (@~a[ds-slow-sec] seconds) than before.
-@; Overall, a @|sShallow| version of the math library is a better tradeoff.
-})
-
-
-@parag{External Data, JSON}
-@(let* ((script_name "QA/transient-expressive/json/custom.rkt")
-        (s* '(169 157 162 159 162))
-        (t* '(3007 2991 2920 3096 3308))
-        (t/s (/ (mean t*) (mean s*)))
-        (slowdown (if (< 10 t/s) "over 10x" (format "~ax" (rnd t/s)))))
-  @elem{
-Typed code that deals with data from an external source is often better off
- in @|sShallow| Racket because it validates data lazily.
-By contrast, @|sDeep| Racket eagerly traverses a data structure as soon as it
-reaches a type boundary.@note{
-  In principle, @|sDeep| can avoid the slowdown with a custom parser
-   that validates data as it reads it.
-  Indeed, Phil Nguyen has written a @hyperlink["https://github.com/philnguyen/json-type-provider"]{library}
-   for JSON that mitigates the overhead of @|sdeep| types.
-  Such libraries are ideal, but until we have them for every data exchange
-   format (MessagePack, CSV, YAML, and so on) @|sShallow| offers a pragmatic solution.
-}
-If the boundary types allow mutable values, then the traversal is even more
- expensive because it creates wrappers as it copies the dataset.
-To illustrate the pitfall, we wrote a typed script that reads a large dataset of
- apartment data using on off-the-shelf JSON parser and accesses one field
- from each object in the dataset.
-@|sDeep| Racket runs the script @|slowdown| slower than @|sShallow| Racket.
-})
 
 

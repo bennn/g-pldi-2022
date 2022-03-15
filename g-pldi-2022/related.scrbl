@@ -4,7 +4,7 @@
 @title[#:tag "sec:related"]{Related Work}
 
 Thorn@~cite{wzlov-popl-2010} and StrongScript@~cite{rzv-ecoop-2015} support
-a combination of sound \emph{concrete} types and erased @emph{like} types.
+a combination of sound @emph{concrete} types and erased @emph{like} types.
 Thorn is a scalable scripting language that compiles to the JVM@~cite{bfnorsvw-oopsla-2009}.
 StrongScript extends TypeScript@~cite{bat-ecoop-2014} with concrete types.
 Both languages are supported by formal models with proofs of type soundness.
