@@ -34,7 +34,7 @@ when declaring a module.
 Switching between the two is a one-line change.
 
 For the most part, the model was an effective guide for the implementation.
-@|sDeep| and @|sShallow| Racket share a common surface syntax, type checker,
+@|sDeep| and @|sShallow| share a common surface syntax, type checker,
 and evaluation syntax.
 The question was how to modify these compiler back-ends to produce code
 with context-dependent runtime checks.

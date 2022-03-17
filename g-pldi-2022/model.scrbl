@@ -1128,7 +1128,7 @@ expressions are well-typed in the evaluation syntax.
  and boundaries to @|sshallow| modules become @|sscan| checks.
 }
 ]
-@|noindent|The rules shown in @Figureref["fig:model:completion1"]
+@|noindent|The rules shown in @figureref["fig:model:completion1"]
 demonstrate compilation in detail.
 Variables compile to themselves.
 Functions in @|sdeep| (and @|suntyped|) code simply recur on the
@@ -1362,7 +1362,7 @@ These six rules correspond to arrows in @figure-ref{fig:model:base-interaction}.
 
 \multicolumn{3}{l}{\hspace{-1em}\begin{tabular}{l@{~}l}
 \fbox{\(\ssurface \srr \sexpr\)}\(~~\sdefeq\) & \(\fexists{\stspec, \sexpr_1}{}\)
-\\ & \quad\(\sST \ssurface_0 : \stspec \scompile \sexpr_1 \wedge \sexpr_1 \srr \sexpr_0\)
+\\ & \quad\(\sST \ssurface : \stspec \scompile \sexpr_1 \wedge \sexpr_1 \srr \sexpr\)
 \end{tabular}}
 
 \end{array}\)
