@@ -15,6 +15,10 @@
 @; - note awkardness at typed-untyped utils
 @;
 @; - for technical details, point to PR or dissertation
+@;
+@; OTHER CHALLENGES
+@; - submodule with default lang, need a way to get the "mode"
+@; - forms like `cast` are really functions, need to come in N flavors, and can be mixed via require
 
 @title[#:tag "sec:implementation"]{Implementation Challenges}
 
@@ -35,7 +39,7 @@ and evaluation syntax.
 The question was how to modify these compiler back-ends to produce code
 with context-dependent runtime checks.
 Unexpected challenges arose regarding separate compilation and
-the enforcement of @|sdeep| types with wrapping higher-order contracts.
+the enforcement of @|sdeep| types.
 Metaprogramming also raised issues, but these are deferred to an @appendixref{appendix:macro}
 to keep the paper widely-applicable.
 
@@ -49,28 +53,26 @@ protection because they let @|sdeep| modules share exports with no performance
 overhead.
 @; A @|sdeep| client may use an unwrapped identifier as long as @|suntyped| and
 @; @|sshallow| clients receive a wrapped one.
-They introduce a problem, however, because the type checker for @|sshallow|
-code must associate a type with these wrappers to understand uses of
+They introduce a problem with separate compilation, however, because the type checker for @|sshallow|
+code must find a type for these wrappers to understand uses of
 @|sdeep|-typed identifiers.
 
 In Typed Racket, all exports from @|sdeep| code statically resolve to either an
 unwrapped identifier or a wrapped one depending on the context in which they
 are used@~cite{ctf-sfp-2007,tscff-pldi-2011}.
-The wrappers do not have types due to the organization of
-compiled code,@note{
-Type environment information compiles to a submodule@~cite{f-gpce-2013}.
-Wrappers compile to a ssecond submodule to delay the cost of
-building them.}
-but they do come with a compile-time pointer to the unwrapped identifier.
+The wrappers do not have types due to the organization of compiled code; namely,
+types appear in one submodule@~cite{f-gpce-2013} while wrappers appear
+in a sibling submodule to delay the cost of building them.
+But because the wrappers are implemented as Racket contracts@~cite{ff-icfp-2002},
+they come with a compile-time pointer to the unwrapped identifier.
 @|sShallow| Racket follows these pointers to typecheck interactions.
 
 
-
-@section[#:tag "sec:implementation:ctc-gen"]{Where to Create @|sShallow|-to-@|sDeep| Contracts}
+@section[#:tag "sec:implementation:ctc-gen"]{@|sShallow|-to-@|sDeep| Contracts}
 @; TODO debug diary, use optional to introduce
 @; ... maybe another diary for prefabs
 
-@|sDeep|-typed code needs to validate imports from @|suntyped| and
+@|sDeep|-typed code needs to wrap imports from @|suntyped| and
 @|sshallow|-typed modules.
 Because @|suntyped| imports lack types, the straightforward solution
 is to ask programmers for a type-annotated import statement and
@@ -96,17 +98,54 @@ tools.
 Types enable proofs via static analysis.
 Contracts check behaviors dynamically.
 For certain types, such as a type for terminating functions@~cite{ngtv-pldi-2019},
-it is difficult to generate a precise contract.
+it is difficult to generate an approximating contract.
 A language may therefore wish to offer an API that lets programmers specify the
 contracts that enforce @|sdeep| types at a boundary.
-These APIs need to be generalized for a three-way implementation.
+These APIs must be adapted to support a three-way implementation.
 
-Typed Racket comes with two tools for manipulating type boundaries.
-One expects an typed identifier and a subtype of the identifier's actual type;
-it uses the subtype to generate a contract.
-@; With @|sshallow| types in the mix, the restriction can lead to type errors.
-The other tool combines two identifiers into a context-sensitive export.
-To support @|sshallow| types, the first tool must create a (sub-)typed and
-wrapped export and the second tool must accept a third identifier.
-Refer to the @appendixref{appendix:boundary-api} for additional details.
+Typed Racket comes with two tools for type boundaries.
+The first, @tt{require/untyped-contract}, expects a typed identifier and a subtype
+of the identifier's actual type; it uses the subtype to generate a contract.
+This behavior can make it somewhat harder to switch from @|sDeep| to @|sShallow| types.
+For example, the standard array library
+@; @render-lib[(make-lib "array library" "https://docs.racket-lang.org/math/array.html")]
+uses this tool to give untyped code access to an overloaded function that
+expects either an array of integers or an array of natural numbers.
+Instead of generating a contract based on the overloaded type, which would
+require a higher-order union contract, the library uses a subtype that
+expects arrays of integers.
+@|sShallow| code can access this array function as well, but only through the contract.
+Switching a module from @|sDeep| to @|sShallow| may therefore require
+casts to match the subtype.
+
+@;@bm{jpeg} benchmark (@section-ref{sec:evaluation:performance})
+@;depends on @render-lib[(make-lib "math/array" "https://docs.racket-lang.org/math/array.html")])
+@;@exact{\smallskip}
+@;@typed-codeblock['(
+@;  "(: check-array-shape"
+@;  "   (-> (U (Vectorof Natural) (Vectorof Integer))"
+@;  "       (Vectorof Natural)))")]
+@;@exact{\smallskip}
+@;@untyped-codeblock['(
+@;  "(require/untyped-contract"
+@;  "  [check-array-shape"
+@;  "   (-> (Vectorof Integer) (Vectorof Natural))])")]
+
+The second tool combines two identifiers into one.
+For example, the following defines a context-sensitive identifier @tt{f}
+that expands to @tt{tf} in @|sDeep| code and to @tt{uf} in untyped code:
+@tt{(define-typed/untyped-identifier f tf uf)}.
+@;
+@; @exact{\smallskip}
+@; @;@typed-codeblock['(
+@; @;  "(define-typed/untyped-identifier f tf uf)")]
+@; @exact{\smallskip}
+@;
+@|noindent|@|sShallow| cannot be trusted with @tt{tf}
+because of its weak soundness guarantee, and it may be unable
+to use @tt{uf} if this identifier lacks a type.
+Thus, the form should accept a third identifier for @|sShallow|
+contexts.
+
+
 

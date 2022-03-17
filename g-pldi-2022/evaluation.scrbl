@@ -338,7 +338,7 @@ untyped and @|sdeep|-typed client improves to @~a[shallow-delta]x.
 @; })
 
 
-@subsection[#:tag "sec:evaluation:perf:either-or"]{Deep or Shallow, Worst-Case Overhead}
+@subsection[#:tag "sec:evaluation:perf:either-or"]{Deep or Shallow, Worst-Case}
 
 @(let* ((WT (get-mixed-worst-table SHALLOW-CURRENT-BENCHMARK*))
         (has-typed-lib-or-both* '(acquire fsm fsmoo gregor kcfa lnm mbta quadT quadU snake suffixtree synth take5 tetris zombie zordoz))
