@@ -178,7 +178,7 @@ The seals change the outcome of basic operations.
 
 The three-way mix of @|sdeep| and @|sshallow| types improves performance
 across the board.
-On the GTP benchmark suite,@note{GTP Benchmarks version 6.0, @|gtp-url|}
+On the GTP benchmark suite v6.0@~cite{gtp-bench6},
 toggling between @|sdeep| and @|sshallow| avoids
 pathological cases.
 Mixing @|sdeep| and @|sshallow| modules can further improve performance,
@@ -186,11 +186,9 @@ up to 2x faster relative to untyped code.
 
 All data in this section was collected on a single-user Linux box
 with @~a[NSA-num-cores] physical @~a[NSA-core-name] @~a[NSA-core-speed] cores and @~a[NSA-RAM] RAM.
-The machine ran Racket v7.8.0.5
-(@github-commit["racket" "racket" "7c903871bd8cb4bd32ed7188c180b5124f9bc201"]).
-and a pre-release of Shallow Racket (@github-commit["bennn" "typed-racket" "c074c9333e467cb7cd2058511ac63a1d51b4948e"])
+The machine ran Racket v7.8.0.5+@~cite{rkts}
+and a pre-release of Typed Racket@~cite{trs}
 that extends Typed Racket v1.12.
-@; no need for a TR commit, sends the wrong message --- reproductions need not check that out
 Each data point is the result of running one program configuration nine times in a row
  and averaging the speed of the final eight runs.
 

@@ -1,22 +1,31 @@
-#lang scribble/acmart @sigplan @10pt @review @anonymous
+#lang scribble/acmart @sigplan @10pt @natbib[#f] @screen
 
 @(require "bib.rkt" (only-in "main.rkt" if-techrpt))
 
 @title{Deep and Shallow Types for Gradual Languages}
 
-@(define NEU
+@;@(define NEU
+@;   @affiliation[
+@;     #:institution "PLT @ Northeastern University"
+@;     @;#:city "Boston"
+@;     @;#:state "Massachusetts"
+@;     @;#:postcode "02115"
+@;     #:country "USA"
+@;   ])
+
+@(define Brown
    @affiliation[
-     #:institution "PLT @ Northeastern University"
-     @;#:city "Boston"
-     @;#:state "Massachusetts"
-     @;#:postcode "02115"
+     #:institution "Brown University"
+     @;#:city "Providence"
+     @;#:state "Rhode Island"
+     @;#:postcode "?????"
      #:country "USA"
    ])
 
 @author["Ben Greenman"
         #:email "benjaminlgreenman@gmail.com"
         #:orcid "0000-0001-7078-9287"
-        #:affiliation NEU]
+        #:affiliation Brown]
 
 
 @; -----------------------------------------------------------------------------

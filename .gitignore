@@ -13,3 +13,5 @@ paper.tex
 *.aux
 *.log
 *.out
+*.bcf
+*.run.xml

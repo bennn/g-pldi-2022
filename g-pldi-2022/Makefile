@@ -20,7 +20,7 @@ fast: tex
 	pdflatex paper
 
 full: fast
-	bibtex paper
+	biber paper
 	pdflatex paper
 	pdflatex paper
 

@@ -66,4 +66,9 @@ performance for guarantees, making the trade-off even more programmable.
 @; Greenman received support from NSF grant 2030859 to the CRA for the \href{https://cifellows2020.org}{CIFellows} project.
 
 
-@exact|{\bibliography{bg}}|
+@exact|{
+\begingroup
+\setlength{\emergencystretch}{8em}
+\printbibliography
+\endgroup
+}|

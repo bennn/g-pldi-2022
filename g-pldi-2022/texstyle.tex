@@ -3,8 +3,14 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes}
 \usetikzlibrary{positioning}
+
+\usepackage[style=acmnumeric,backend=biber,natbib=true,datamodel=software]{biblatex}
+\usepackage{software-biblatex}
+\ExecuteBibliographyOptions{ halid=true, swhid=true, swlabels=true, vcs=true, license=true}
+
 \settopmatter{printfolios=true,printccs=false,printacmref=false}
 
-\renewcommand{\preDoc}{\bibliographystyle{ACM-Reference-Format}}
+\renewcommand{\preDoc}{}
 
 \input{def.tex}
+\bibliography{bg}
