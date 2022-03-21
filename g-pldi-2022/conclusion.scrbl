@@ -9,7 +9,7 @@
 
 @; spectrum? fine-grained?
 
-This is the first implementation of a gradual type system where
+This is the first implementation of a sound gradual type system where
 programmers can explicitly choose to trade performance for guarantees
 as they add types.
 If a new set of type annotations brings unacceptable overhead,
@@ -62,8 +62,18 @@ performance for guarantees, making the trade-off even more programmable.
 @;After the release, I look forward to studying programmers' experience with
 @; the multi-faceted system.
 
-@; acks
-@; Greenman received support from NSF grant 2030859 to the CRA for the \href{https://cifellows2020.org}{CIFellows} project.
+@acks{
+  This work is supported by NSF grant 2030859 to the CRA for the
+  @hyperlink["https://cifellows2020.org"]{CIFellows} project.
+  Thanks to Matthias Felleisen for improving drafts of this paper and to
+  the rest of my thesis committee for supervising parts of this work:
+  Amal Ahmed,
+  Fritz Henglein,
+  Shriram Krishnamurthi,
+  Sam Tobin-Hochstadt,
+  and
+  Jan Vitek.
+}
 
 
 @exact|{

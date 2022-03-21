@@ -13,13 +13,13 @@
 @; - [X] {@|sShallow| typing (@appendixref{appendix:rules})}
 @; - [X] {Untyped typing judgment (@appendixref{appendix:rules})}
 @; - [X] {Surface-to-evaluation compilation (@appendixref{appendix:rules})}
-@; - [X] intiuition for labeling {appendix:laws}
+@; - [X] intiuition for labeling {appendix:guidelines}
 @; - [X] lemmas for progress, preservation, and compilation (deferred to the @appendixref{appendix:lemmas}).
 @; - [X] 3way macro issues @appendixref{appendix:macro}
 @; - [X] 3-way boundary in TR examples and more details @appendix{appendix:boundary-api}
 @; - [X] Refer to the @appendixref{appendix:expressiveness} for example programs.
 
-@section[#:tag "appendix:rules"]{Surface Typing, Completion, Evaluation Typing}
+@section[#:tag "appendix:rules"]{Surface Typing, Completion, Evaluation Typing, and Label Consistency Judgments}
 
 @Figure-ref{fig:appendix:surface-types} presents the full typing judgment
 for the surface language.
@@ -29,6 +29,8 @@ Three other figures present the evaluation typing judgments:
 @figure-ref{fig:appendix:deep-type} for @|sdeep| types,
 @figure-ref{fig:appendix:shallow-type} for @|sshallow| types, and
 @figure-ref{fig:appendix:untyped-type} for dynamic typing.
+@Figure-ref{fig:appendix:ownership-consistency} presents the consistency judgment for
+labeled expressions.
 
 @figure[
 "fig:appendix:surface-types"
@@ -224,8 +226,12 @@ Three other figures present the evaluation typing judgments:
 \right]\) &
 \(\begin{array}{llll}
   \slang_0 & \stspec_0 & \stspec_1 \\\hline
-  \sD & \stype_0 & \stspec_1 \\
-  \sS & \tfloor{\stype_0} & \stspec_1 \\
+  \sD & \stype_0 & \stype_0 \\
+  \sD & \stype_0 & \tfloor{\stype_0} \\
+  \sD & \stype_0 & \tdyn \\
+  \sS & \tfloor{\stype_0} & \stype_0 \\
+  \sS & \tfloor{\stype_0} & \tfloor{\stype_0} \\
+  \sS & \tfloor{\stype_0} & \tdyn \\
   \sU & \tdyn & \stspec_1
 \end{array}\) \end{tabular}
 }
@@ -697,8 +703,138 @@ Three other figures present the evaluation typing judgments:
 \end{mathpar}
 }}|]
 
+@figure[
+  "fig:model:ownership-consistency"
+  @elem{@|sDeep| label consistency}
 
-@section[#:tag "appendix:laws"]{How to Lift a Reduction Relation}
+@exact|{
+\lbl{\fbox{\(\sowner; \sownerenv \sWL \sexpr\)}}{
+\begin{mathpar}
+  \inferrule*{
+    \tann{\svar_0}{\sowner_0} \in \sownerenv_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \svar_0
+  }
+
+  \inferrule*{
+  }{
+    \sowner_0; \sownerenv_0 \sWL \sint_0
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+    \\
+    \sowner_0; \sownerenv_0 \sWL \sexpr_1
+  }{
+    \sowner_0; \sownerenv_0 \sWL \epair{\sexpr_0}{\sexpr_1}
+  }
+
+  \inferrule*{
+    \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \esfun{\svar_0}{\sshape_0}{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \fcons{\tann{\svar_0}{\sowner_0}}{\sownerenv_0} \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \efun{\svar_0}{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \eunop{\sexpr_0}
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+    \\
+    \sowner_0; \sownerenv_0 \sWL \sexpr_1
+  }{
+    \sowner_0; \sownerenv_0 \sWL \ebinop{\sexpr_0}{\sexpr_1}
+  }
+
+  \inferrule*{
+    \sowner_0; \sownerenv_0 \sWL \sexpr_0
+    \\
+    \sowner_0; \sownerenv_0 \sWL \sexpr_1
+  }{
+    \sowner_0; \sownerenv_0 \sWL \eappu{\sexpr_0}{\sexpr_1}
+  }
+
+  \inferrule*{
+  }{
+    \sowner_0; \sownerenv_0 \sWL \serror
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \enoop{\obars{\sexpr_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \escan{\sshape_0}{\obars{\sexpr_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \ewrap{\stype_0}{\obars{\sexpr_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \svalue_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \emon{\stype_0}{\obars{\svalue_0}{\sowner_1}}
+  }
+
+  \inferrule*{
+    \sdowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sdowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\sdowner_1}
+  }
+
+  \inferrule*{
+    \ssowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \ssowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\ssowner_1}
+  }
+
+  \inferrule*{
+    \suowner_0; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \ssowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\suowner_0}
+  }
+
+  \inferrule*{
+    \suowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \suowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\suowner_1}
+  }
+
+  \inferrule*{
+    \ssowner_0; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \suowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\ssowner_0}
+  }
+
+\end{mathpar}
+}
+}|]
+
+
+
+@section[#:tag "appendix:guidelines"]{How to Lift a Reduction Relation}
 @; 2021-06-12 TODO edit
 
 @subsection{Background on Complete Monitoring}
@@ -715,7 +851,7 @@ As a concrete example, if a value passes through the type @${(\tfun{\tint}{\tint
 
 Because all such interactions originate at the boundaries
  between typed and untyped code,
- a simplistic way to formalize complete monitoring is to ask whether each
+ a very simple way to formalize complete monitoring is to ask whether each
  boundary comes with a full run-time check when possible and an error otherwise.
 A language that meets this strict requirement certainly has full control.
 Other good designs fail, though.
@@ -754,25 +890,28 @@ Second, a single-ownership judgment @${\sWL} must test whether every value in an
  expression has a unique owner.
 To satisfy complete monitoring, reduction must preserve single-ownership.
 
-The key single-ownership rules (@figure-ref{fig:model:ownership-consistency})
-deal with labeled expressions and boundary terms:
+The key single-ownership rules (@figure-ref{fig:appendix:ownership-consistency})
+deal with labeled expressions and boundary terms.
+For example, every label in a deep-typed component must match a (possibly different)
+deep-typed component, and the subterm in every @${\sscan} boundary must match
+its server label:
 
 @exact|{
 \smallskip
 \(\begin{array}[t]{ll@{~~}l}
 \raisebox{6mm}{\fbox{$\sownerenv; \sowner \sWL \sexpr$}}
 &
-    \inferrule*{
-      \sownerenv_0; \sowner_0 \sWL \sexpr_0
-    }{
-      \sownerenv_0; \sowner_0 \sWL \obars{\sexpr_0}{\sowner_0}
-    }
+  \inferrule*{
+    \sdowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sdowner_0; \sownerenv_0 \sWL \obars{\sexpr_0}{\sdowner_1}
+  }
 &
-    \inferrule*{
-      \sownerenv_0; \sowner_1 \sWL \sexpr_0
-    }{
-      \sownerenv_0; \sowner_0 \sWL \edynb{\obnd{\sowner_0}{\stype_0}{\sowner_1}}{\sexpr_0} \vphantom{\obars{\sexpr_0}{\sowner_1}}
-    }
+  \inferrule*{
+    \sowner_1; \sownerenv_0 \sWL \sexpr_0
+  }{
+    \sowner_0; \sownerenv_0 \sWL \escan{\sshape_0}{\obars{\sexpr_0}{\sowner_1}}
+  }
 \end{array}
 \)
 }|
@@ -806,27 +945,27 @@ If labels do not transfer correctly, then a complete monitoring theorem becomes
 And if the lifted relation depends on labels to compute a result, then
  a complete monitoring theorem says nothing about the original reduction relation.
 
-The following informal guidelines, or natural (scientific) laws,
+The following informal guidelines
  explain how to lift a reduction relation.
 They convey the intuitions behind our formulation of complete monitoring
 and those of prior work@~cite{dfff-popl-2011,dtf-esop-2012,tsdtf-oopsla-2012,mdffc-oopsla-2016}.
-Each law describes a way that labels may be transferred or dropped
+Each guideline describes a way that labels may be transferred or dropped
  during evaluation.
-To convey the general idea, each law also comes with a brief illustration, namely,
+To convey the general idea, each guideline also comes with a brief illustration, namely,
  an example reduction and a short comment.
 The example reductions use a hypothetical @${\samplerrarrow} relation
  over the surface language.
 Recall that @${\sstat} and @${\sdyn} are boundary terms; they link two
  components, a context and an enclosed expression, via a type.
+
 When reading an example, accept the transitions
  @${\sexpr\!\samplerrarrow\!\sexpr} as axioms and focus on how the labels change
- in response.
+ in response:
 
 @exact|{
 {\begin{enumerate}
-    %% NOTE when editing laws, remember there is an 8th in technical.tex for transient
     \itemsep1ex
-    \item \label{law:base}
+    \item \label{guideline:base}
       If a base value reaches a boundary with a matching base type,
       then the value must drop its current labels as it crosses the boundary.
       %% NOTE before we said 'may drop' to avoid being too-restrictive,
@@ -839,8 +978,8 @@ When reading an example, accept the transitions
     \subitem\hfill
       \emph{The value\/ $0$ fully matches the type\/ $\tnat$.}
 
-    %[law of no-check transfer]
-    \item \label{law:cross}
+    %[guideline of no-check transfer]
+    \item \label{guideline:cross}
       Any other value that crosses a boundary must acquire the label of
       the new context.
     \subitem\hfill
@@ -850,7 +989,7 @@ When reading an example, accept the transitions
     \subitem\hfill
       \emph{The pair\/ $\epair{{-2}}{1}$ does not match the type\/ $\tnat$.}
 
-    \item \label{law:pos}
+    \item \label{guideline:pos}
       Every value that flows out of a value $\svalue_0$
       acquires the labels of $\svalue_0$ and the context.
     \subitem\hfill
@@ -859,7 +998,7 @@ When reading an example, accept the transitions
     \subitem\hfill
       \emph{The value\/ $2$ flows out of the pair\/ $\epair{1}{2}$.}
 
-    \item \label{law:neg}
+    \item \label{guideline:neg}
       Every value that flows into a function $\svalue_0$ acquires the label
       of the context and the reversed labels of $\svalue_0$.
     \subitem\hfill
@@ -872,11 +1011,11 @@ When reading an example, accept the transitions
     \subitem\hfill
       \emph{The argument value\/ $\epair{8}{6}$ is input to the function.} 
     \subitem\hfill
-      \emph{The substituted body flows out of the function, and}
+      \emph{The substituted body flows out of the function,}
     \subitem\hfill
-      \emph{by \lawref{law:pos} acquires the function's labels.}
+      \emph{and by \guidelineref{guideline:pos} acquires the function's labels.}
 
-    \item \label{law:new}
+    \item \label{guideline:new}
       A primitive operation ($\sdelta$) may remove labels on incoming base values.
     \subitem\hfill
       $\obars{\ssum~{\obars{2}{\sowner_0}}~{\obars{3}{\sowner_1}}}{\sowner_2}
@@ -884,12 +1023,12 @@ When reading an example, accept the transitions
     \subitem\hfill
       \emph{Assuming\/ $\sdelta(\ssum, 2, 3) = 5$.}
 
-    \item \label{law:dup}
+    \item \label{guideline:dup}
       Consecutive equal labels may be dropped.
     \subitem\hfill
       $\obbars{0}{\fconcat{\sowner_0}{\fconcat{\sowner_0}{\fconcat{\sowner_1}{\sowner_0}}}} \eeq \obbars{0}{\fconcat{\sowner_0}{\fconcat{\sowner_1}{\sowner_0}}}$
 
-    \item \label{law:error}
+    \item \label{guideline:error}
       Labels on an error term may be dropped.
     \subitem\hfill
       $\obars{\edynb{\obnd{\sowner_0}{\tint}{\sowner_1}}{(\ssum~{9}~{\obars{\divisionbyzeroerror}{\sowner_1}})}}{\sowner_0}
@@ -898,11 +1037,148 @@ When reading an example, accept the transitions
   \end{enumerate}}
 }|
 
-@|noindent|Although @exact{\lawref{law:neg}} talks about functions, it generalizes to
- reference cells and other higher-order values that accept input.
+@|noindent|Although @exact{\guidelineref{guideline:neg}} talks about functions, it generalizes to
+ reference cells and other higher-order values.
 
 
 @section[#:tag "appendix:lemmas"]{Lemmas for the Model}
+
+@exact|{
+\begin{theorem}[complete monitoring]
+  %% If\ $~\sST \ssurface_0 : \stspec$
+  If\ $~\sST \ssurface_0 : \stspec \scompile \sexpr_0$
+  and\ $\sowner_0; \cdot \Vdash \sexpr_0$
+  and\ $\sexpr_0 \srrlbl \sexpr_1$
+  then\ $\sowner_0; \cdot \Vdash \sexpr_1$.
+\end{theorem}
+\begin{proofsketch}
+  By a preservation argument.
+
+  \begin{description}
+  \item[Case:]
+    \(\obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\stagerror}{\sowner_1}\)
+  \item[]
+    by definition \(\sowner_1; \cdot \sWL \obars{\stagerror}{\sowner_1}\)
+
+  \item[Case:]
+    \(\obars{\eunop{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obbars{\sdelta(\sunop, \svalue_0)}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+    \begin{enumerate}
+    \item
+      $\sownerlist_0$ is either all \sdeep{} labels or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
+    \item
+      similarly, $\sowner_1$ must match $\sownerlist_0$
+    \item
+      $\svalue_0$ is a pair, because $\sdelta$ is defined on it
+    \item
+      both components of $\svalue_0$ are well-labeled, again by \sdeep{}-label consistency on the redex
+    \item
+      by the definition of $\sdelta$
+    \end{enumerate}
+
+  \item[Case:]
+    \(\obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2} \snrlbl \obars{\stagerror}{\sowner_2}\)
+  \item[]
+    by the definition of $\sWL$
+
+  \item[Case:]
+    \(\obars{\ebinop{\obbars{\svalue_0}{\sownerlist_0}}{\obbars{\svalue_1}{\sownerlist_1}}}{\sowner_2} \snrlbl \obars{\sdelta(\sbinop, \svalue_0, \svalue_1)}{\sowner_2}\)
+  \item[]
+    by the definition of $\sWL$ and $\sdelta$ (binary operators are not elimination forms in the model, thus the number
+    computed by $\sdelta$ does not acquire labels from $\svalue_0$ and $\svalue_1$)
+
+  \item[Case:]
+    \(\obars{\eappu{\obbars{\svalue_0}{\sownerlist_0}}{\svalue_1}}{\sowner_1} \snrlbl \obars{\stagerror}{\sowner_1}\)
+  \item[]
+    by the definition of $\sWL$
+
+  \item[Case:]
+    \(\obars{\eappu{\obbars{\efun{\svar_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \!\snrlbl\! \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\!\)
+    \begin{enumerate}
+    \item\label{step:model:cm:1}
+      $\sownerlist_0$ is all \sdeep{} or a mix of \sshallow{} and \suntyped{}, by \sdeep{}-label consistency of the redex
+    \item\label{step:model:cm:2}
+      $\sowner_1; \cdot \sWL \svalue_0$, also by \sdeep{}-label consistency of the redex
+    \item
+      let $\sowner_n$ be the rightmost label in the sequence $\sownerlist_0$
+    \item
+      $\sowner_n; \cdot \sWL \obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}$, by steps~\ref{step:model:cm:1} and~\ref{step:model:cm:2}
+    \item
+      $\sowner_n; \cdot \sWL \svar_0$ for each occurrence of $\svar_0$ in $\sexpr_0$, by \sdeep{}-label consistency of the redex
+    \item
+      by a substitution lemma
+    \end{enumerate}
+
+  \item[Case:]
+    \(\obars{\eappu{\obbars{\efun{\tann{\svar_0}{\stype_0}}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlblbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+  \item[]
+    similar to the previous case
+
+  \item[Case:]
+    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlbl \obars{\sscanerror}{\sowner_1}\)
+  \item[]
+    by the definition of $\sWL$
+
+  \item[Case:]
+    \(\obars{\eappu{\obbars{\esfun{\svar_0}{\sshape_0}{\sexpr_0}}{\sownerlist_0}}{\svalue_0}}{\sowner_1} \snrlblbreak \obbars{\esubst{\sexpr_0}{\svar_0}{\obbars{\svalue_0}{\fconcat{\sowner_1}{\frev{\sownerlist_0}}}}}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+  \item[]
+    similar to the other substitution cases
+
+  \item[Case:]
+    \(\obars{\eappu{\obbars{\emon{\tfun{\stype_0}{\stype_1}}{\obars{\svalue_0}{\sowner_0}}}{\sownerlist_1}}{\svalue_1}}{\sowner_2} \snrlblbreak
+      \obbars{\ewrap{\stype_1}{\obars{\eappu{\svalue_0}{(\ewrap{\stype_0}{\obbars{\svalue_1}{\fconcat{\sowner_2}{\frev{\sownerlist_1}}}})}}{\sowner_0}}}{\fconcat{\sownerlist_1}{\sowner_2}}\)
+    \begin{enumerate}
+    \item
+      $\sowner_0; \cdot \sWL \svalue_0$, by \sdeep{}-label consistency of the redex
+    \item
+      $\sowner_2; \cdot \sWL \svalue_1$, again by \sdeep{}-label consistency
+    \item
+      $\sownerlist_1$ is either all \sdeep{} or a mix of \sshallow{} and \suntyped{}, again by the consistency of the redex
+    \item
+      by the definition of $\sWL$
+    \end{enumerate}
+
+  \item[Case:]
+    \(\obars{\enoop{\obbars{\svalue_0}}{\sownerlist_0}}{\sowner_1} \snrlbl \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+  \item[]
+    by the definition of $\scompile$, because a $\snoop{}$ boundary connects either
+     two \sdeep{} components or a mix of \sshallow{} and \suntyped{} components
+     (self edges or ${\sS}$ to ${\sU}$)
+
+  \item[Case:]
+    \(\obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\sscanerror}{\sowner_1}\)
+  \item[]
+    by the definition of $\sWL$
+
+  \item[Case:]
+    \(\obars{\escan{\sshape_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obbars{\svalue_0}{\fconcat{\sownerlist_0}{\sowner_1}}\)
+  \item[]
+    by the definition of $\scompile$, because a $\sscan{}$ boundary links only \sshallow{} and/or \suntyped{} components
+
+  \item[Case:]
+    \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\swraperror}{\sowner_1}\)
+  \item[]
+    by the definition of $\sWL$
+
+  \item[Case:]
+    \(\obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\emon{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}\)
+  \item[]
+    by the definition of $\sWL$
+
+  \item[Case:]
+    \(\obars{\ewrap{(\tpair{\stype_0}{\stype_1})}{\obbars{\epair{\svalue_0}{\svalue_1}}{\sownerlist_0}}}{\sowner_1} \snrlblbreak
+      \obars{\epair{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\ewrap{\stype_1}{\obbars{\svalue_1}{\sownerlist_0}}}}{\sowner_1}\)
+  \item[]
+    by the definition of $\sWL$; the step makes a new pair
+
+  \item[Case:]
+  \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\svalue_0}{\sowner_1}\)
+  \\\hbox{}\qquad where $\stype_0 \in \tint \cup \tnat$ and $\fshapematch{\stype_0}{\svalue_0}$
+  \item[]
+    by the definition of $\sWL$
+
+  \end{description}
+\end{proofsketch}
+}|
 
 @exact|{
 \begin{lemma}[compilation]\label{lemma:model:completion}
@@ -1091,22 +1367,6 @@ When reading an example, accept the transitions
 @;}|
 
 
-@section[#:tag "appendix:macro"]{Implementation: Macros and Hidden Exports}
-
-Macro expansion may cause private identifiers from one
-module to appear in (the expansion of) another module@~cite{f-popl-2016,fcdf-jfp-2012}.
-If one module uses @|sdeep|-typed and the other uses @|sshallow|,
-this behavior is a threat to type soundness.
-The stowed identifiers must be protected like any other export.
-
-By default, Typed Racket prevents @|sDeep| Racket and @|sShallow| Racket
-modules from sharing macros.
-A programmer can only enable reuse by unsafely providing a macro.
-
-@; example: rackunit macros
-@; future: replace manual with a static analysis
-@; future: protect stowed exports
-
 
 @;@subsection[#:tag "sec:implementation:impl:syntax"]{Syntax Re-Use}
 @;
@@ -1200,17 +1460,12 @@ A programmer can only enable reuse by unsafely providing a macro.
   "https://groups.google.com/g/racket-users/c/jtmVDFCGL28/m/jwl4hsjtBQAJ"))]
 
 
-@figure[
-  "fig:evaluation:any-wrap"
-  @elem{@|sDeep| enforces the top type @tt{Any} with a restrictive contract}
-  fig:any-wrap-y]
-
 @|sDeep| Racket enforces the top type with a wrapper
 that prevents clients from inspecting the enclosed value.
 This wrapper is a surprise for developers who expect programs such
- as @figure-ref{fig:both:any-wrap} to run without error.
+ as @figure-ref{fig:evaluation:any-wrap} to run without error.
 This program defines a mutable box in typed code,
- assigns the @tt{Any} type to the box,
+ assigns the top type (@tt{Any}) to the box,
  and sends it to untyped code.
 The untyped module attempts to set the box.
 @|sDeep| Racket raises an exception when untyped code tries to modify the box.

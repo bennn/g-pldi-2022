@@ -197,7 +197,10 @@
   (define u-pict (untyped-codeblock u-str*))
   (define s-pict (code-text (string-append "Shallow: " s-str*)))
   (define d-pict (hc-append (code-text "Deep: ") (error-text d-str*)))
-  (define ur-pict (vc-append caption-shim u-pict (vc-append (* 1/2 caption-shim) s-pict d-pict)))
+  (define ur-pict (ppict-do
+                    u-pict
+                    #:go (coord 1 1 'rt #:abs-x 6 #:abs-y caption-shim)
+                    (vl-append (* 1/2 caption-shim) d-pict s-pict)))
   (ht-append hshim t-pict right-arrow ur-pict))
 
 (define (make-example-atom-pict-y t-str* u-str* s-str* d-str*)
@@ -205,7 +208,7 @@
   (define u-pict (untyped-codeblock u-str*))
   (define s-pict (code-text (string-append "Shallow: " s-str*)))
   (define d-pict (hc-append (code-text "Deep: ") (error-text d-str*)))
-  (define ur-pict (vc-append caption-shim u-pict (vc-append (* 1/2 caption-shim) s-pict d-pict)))
+  (define ur-pict (vl-append caption-shim u-pict (vl-append (* 1/2 caption-shim) s-pict d-pict)))
   (vc-append vshim t-pict down-arrow ur-pict))
 
 (define (make-example-pair-pict u-str* t-str* r-str*)
@@ -788,12 +791,12 @@ eos
 (define-values [fig:any-wrap fig:any-wrap-y]
   (let ()
     (define code
-      '("(define b : (Boxof Symbol)"
-        "  (box '$))"
+      '("(define b : (Boxof Char)"
+        "  (box #\\X))"
         ""
         "(define any : Any b)"))
     (define code2
-      '("(set-box! any 'qq)"))
+      '("(set-box! any #\\Y)"))
     (define out1
       "(void)")
     (define out2
@@ -834,7 +837,7 @@ eos
          (uu (vc-append caption-shim uu (code-text "Untyped: 0")))
          (tt (vc-append caption-shim
                         tt
-                        (vc-append (* 1/2 caption-shim)
+                        (vl-append (* 1/2 caption-shim)
                           (code-text "Shallow: 0")
                           (code-text "Deep: #false")))))
     (values

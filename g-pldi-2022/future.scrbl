@@ -10,17 +10,18 @@
 
 One drawback apparent in the model is that @|sdeep| and @|sshallow| cannot
 trust one another.
-@|sDeep| code must wrap inputs from @|sshallow| code because they may have
+@|sDeep| code always wraps inputs from @|sshallow| code because they may have
 originated in untyped code.
 @citet{g-thesis-2020} sketches two ideas for removing checks from
 @|sdeep|--@|sshallow| boundaries.
-One requires an escape analysis and the other asks @|sshallow| code to
-create wrappers.
-A third approach is to adapt confined gradual typing@~cite{afgt-oopsla-2014}.
+One requires an escape analysis.
+The other asks for a @|sshallow| semantics that creates wrappers
+(such as in @~cite{cl-icfp-2017})
+instead of the transient semantics.
+A third idea is to adapt confined gradual typing@~cite{afgt-oopsla-2014}.
 If the type system can prove that confined values originate in typed code and
 never escape to untyped, then @|sdeep| and @|sshallow| can freely share these
 values.
-These are all potential directions for future work.
 
 @; A second line of future work is to incorporate a dynamic type
 @; that satisfies the graduality properties@~cite{svcb-snapl-2015}.
@@ -48,12 +49,11 @@ Anecdotal experience suggests the following strategy:
   the effect of type-driven optimizations.
 }
 ]
-@|noindent|The challenge is to systematically test the effectiveness of this
-migration story.
-Meanwhile, there may be additional ways to leverage the spectrum of
-type enforcement.
-
-
+@|noindent|Adapting the notion of a @emph{rational
+programmer}@~cite{lgfd-icfp-2021} may provide a way to systematically test the
+usefulness of this migration plan.
+Meanwhile, there may be additional ways to leverage the spectrum of type
+enforcement.
 
 
 @; The reason is trat @|stransient| lacks a way of learning from past checks.

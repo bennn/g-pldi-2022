@@ -105,8 +105,8 @@ It turns out that @|sdeep| types can be overly restrictive; in such programs,
 delayed @|sshallow| checks work better in practice.
 In other programs, the gap between @|sDeep| and @|sShallow| Racket is due
 to implementation issues.
-Refer to the @appendixref{appendix:expressiveness} for motivating example programs
-that were submitted by Typed Racket users.
+Refer to the @appendixref{appendix:expressiveness} for motivating examples
+submitted by Typed Racket users.
 @; Language designers should be aware of these issues when building a new
 @; @|sdeep| semantics.
 
@@ -125,8 +125,20 @@ The @|sshallow| top type imposes no such restrictions.
 @; on its clients.
 Untyped code may invoke a @|sshallow| function exported via the top type,
 and may even write to a top-typed array.
-These freedoms can be useful, and do not undermine the weak @|sshallow|
+These behaviors can be useful and do not undermine the weak @|sshallow|
 soundness guarantee.
+
+@Figure-ref{fig:evaluation:any-wrap} presents an example in Typed Racket that
+uses a mutable box and the top type @tt{Any}, which is @emph{not} a dynamic
+type.
+When module in the left part of the figure uses @|sDeep| types, the untyped client
+cannot mutate the box.
+With @|sShallow|, untyped mutations are allowed.
+
+@figure[
+  "fig:evaluation:any-wrap"
+  @elem{@|sDeep| Racket enforces the top type (@tt{Any}) with a contract that rejects all inputs}
+  fig:any-wrap]
 
 
 @subsection[#:tag "sec:evaluation:expr:wrap"]{No Missing Wrappers}
@@ -182,7 +194,7 @@ On the GTP benchmark suite v6.0@~cite{gtp-bench6},
 toggling between @|sdeep| and @|sshallow| avoids
 pathological cases.
 Mixing @|sdeep| and @|sshallow| modules can further improve performance,
-up to 2x faster relative to untyped code.
+up to 2x faster than @|sdeep| or @|sshallow| alone (relative to untyped code).
 
 All data in this section was collected on a single-user Linux box
 with @~a[NSA-num-cores] physical @~a[NSA-core-name] @~a[NSA-core-speed] cores and @~a[NSA-RAM] RAM.
@@ -191,6 +203,9 @@ and a pre-release of Typed Racket@~cite{trs}
 that extends Typed Racket v1.12.
 Each data point is the result of running one program configuration nine times in a row
  and averaging the speed of the final eight runs.
+Our Racket@~cite{rkts} does not optimize @|stransient| checks to the same extent as
+a tracing JIT compiler (@secref{sec:related}), so there is potential room for
+improvement.
 
 
 @subsection[#:tag "sec:evaluation:perf:together"]{Deep and Shallow Combined}
@@ -218,7 +233,7 @@ Each data point is the result of running one program configuration nine times in
 @elem{
 Mixing @|sdeep| and @|sshallow| types within one program configuration can improve its
 performance.
-Such configurations are common in the GTP benchmarks.
+Such configurations are quite common in the GTP benchmarks.
 Out of the @${2^N} configurations in @integer->word[num-DDD] of the smaller
 benchmarks, a median of @$[@~a[DDD-median] "\\%"] run fastest
 with a mix of @|sdeep| and @|sshallow| types (@figure-ref{fig:both:3way}).
@@ -231,13 +246,13 @@ with a mix of @|sdeep| and @|sshallow| types (@figure-ref{fig:both:3way}).
 @; combination of @|sdeep| and @|sshallow| types.
 These mixtures also increase the number of @emph{@ddeliverable{D} migration
 paths} (defined in @secref{sec:evaluation:perf:path}).
-All paths in @oxfordize[path-3d] are @ddeliverable[path-3d-D]
+All paths in @oxfordize[path-3d] become @ddeliverable[path-3d-D]
 when configurations can mix @|sdeep| and @|sshallow| types.
 
-These encouraging numbers are the result, however, of an exhaustive search through
+These encouraging numbers are the result, however, of a search through
 @${3^N} configurations.
-The following three subsections therefore investigate whether Deep and Shallow
-mixtures can offer benefits without an infeasibly-large search.
+The following three subsections therefore investigate Deep and Shallow
+mixtures without relying on an exhaustive search.
 }
 @figure[
   "fig:both:3way"
@@ -262,8 +277,8 @@ programs:
 The author of this library
  @hyperlink["https://groups.google.com/g/racket-users/c/6KQxpfMLTn0/m/lil_6qSMDAAJ"]{reported poor performance}
  due to @|sdeep| type boundaries.
-Changing one bridge module from @|sdeep| to @|sshallow| types
-(a one-line change), however,
+Changing a bridge module from @|sdeep| to @|sshallow| types
+(a one-line change),
 reduces the time needed to run all tests from @${320} seconds to @${204} seconds
 (@${40\%} speedup).
 
@@ -296,7 +311,7 @@ reduces the time needed to run all tests from @${320} seconds to @${204} seconds
         (ds-slow (rnd (/ (mean (hash-ref synth-data 'd-lib-u-client))
                          (mean (hash-ref synth-data 's-lib-d-client))))))
   @elem{
-The @bm{synth} GTP benchmark is based on @hyperlink[synth-url]{an untyped program}
+The @bm{synth} benchmark is based on an untyped program
 that interacts with a @|sdeep|-typed math library to synthesize music.@note{@shorturl["https://" synth-short-url]}
 This untyped program runs @~a[deep-delta]x slower than a @|sdeep|-typed
 version because of the library boundary.
@@ -366,25 +381,31 @@ enormous costs.
 The second column shows that the worst configurations for @|sShallow| Racket are
 far less severe.
 The third column shows, however, that toggling between @|sDeep| and @|sShallow|
-Racket can do even better.
+often avoids the pathologies of each style.
 Numbers in this third column are typeset in @bold{bold} if they
 are the best (lowest) in their row.
-The @tt{sieve} and @tt{tetris} benchmarks are notable successes.
+
+@emph{Remark:} the either-or ``toggling'' strategy is possible only
+because @|sDeep| and @|sShallow| can interoperate.
+Most of the benchmarks rely on @|sdeep|-typed
+code that lives outside their @${N} core migratable modules (@~a[num-typed-lib] out of 21 benchmarks).
+Without interoperability, the outside code would require changes that are
+unrealistic to make in practice.
+
+In @figure-ref{fig:evaluation:mixed-worst-table}, the @tt{sieve} and
+@tt{tetris} benchmarks are notable successes.
 The @tt{zombie} benchmark is the worst.
 @|sDeep| Racket pays a huge cost in @tt{zombie} because functions
 repeatedly cross its module boundaries.
-@|sShallow| Racket also pays a relatively high cost because @tt{zombie}
+@|sShallow| Racket pays a high cost as well because @tt{zombie}
 uses functions to simulate message-passing objects, and therefore contains
-a large number of elimination forms that incur shape checks.
+many elimination forms that incur shape checks.
 
-@bold{Note}: This either-or strategy is possible in general only because @|sDeep|
-and @|sShallow| can interoperate.
-Indeed, most of the benchmarks (@~a[num-typed-lib]/21) rely on @|sdeep|-typed
-code that lives outside their @${N} core migratable modules.
-Without interoperability, the outside code would require changes that are
-unrealistic to make in practice.
 }])
 
+@; PS the speedups from full 3way vs. either-or are relatively low.
+@; @bm{zombie} improves the most: from 31x to 29x.
+@; ... may be artifact of the small tight-knit benchmarks
 
 @subsection[#:tag "sec:evaluation:perf:path"]{Migration Paths}
 

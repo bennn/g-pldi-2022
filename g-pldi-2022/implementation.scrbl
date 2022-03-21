@@ -31,17 +31,17 @@ when declaring a module.
 @; these options via module
 @; languages: @tt{typed/racket} for @|sdeep| types and
 @; @tt{typed/racket/shallow} for @|sshallow|.
-Switching between the two is a one-line change.
+Switching between the two is a one-line change except in programs that
+fine-tune the checks that guard type boundaries
+(@section-ref{sec:implementation:api}).
 
 For the most part, the model was an effective guide for the implementation.
 @|sDeep| and @|sShallow| share a common surface syntax, type checker,
 and evaluation syntax.
-The question was how to modify these compiler back-ends to produce code
+The key issue was how to modify these compiler back-ends to produce code
 with context-dependent runtime checks.
-Unexpected challenges arose regarding separate compilation and
-the enforcement of @|sdeep| types.
-Metaprogramming also raised issues, but these are deferred to an @appendixref{appendix:macro}
-to keep the paper widely-applicable.
+Unexpected challenges arose regarding separate compilation,
+the enforcement of @|sdeep| types, and metaprogramming.
 
 
 @section[#:tag "sec:implementation:ctc-indirect"]{Wrapping Contracts and Type Environments}
@@ -60,8 +60,8 @@ code must find a type for these wrappers to understand uses of
 In Typed Racket, all exports from @|sdeep| code statically resolve to either an
 unwrapped identifier or a wrapped one depending on the context in which they
 are used@~cite{ctf-sfp-2007,tscff-pldi-2011}.
-The wrappers do not have types due to the organization of compiled code; namely,
-types appear in one submodule@~cite{f-gpce-2013} while wrappers appear
+The wrappers do not have types due to the organization of compiled code.
+Types appear in one submodule@~cite{f-gpce-2013} while wrappers appear
 in a sibling submodule to delay the cost of building them.
 But because the wrappers are implemented as Racket contracts@~cite{ff-icfp-2002},
 they come with a compile-time pointer to the unwrapped identifier.
@@ -90,6 +90,25 @@ The main benefit of this approach is that multiple clients can reference one
 set of contract definitions.
 
 
+@section[#:tag "sec:implementation:macro"]{Macros and Hidden Exports}
+
+Macro expansion may cause private identifiers from one
+module to appear in the expansion of another module@~cite{f-popl-2016,fcdf-jfp-2012}.
+If one module uses @|sdeep| types and the other uses @|sshallow|,
+this behavior is a threat to type soundness.
+The stowed identifiers must be protected like any other export.
+
+By default, @|sDeep| and @|sShallow| Racket cannot share macros.
+Programmers can enable reuse by exporting a macro unsafely.
+An open question is whether a static analysis can determine
+which macros may safely cross type boundaries.
+
+@; example: rackunit macros
+@; future: replace manual with a static analysis
+@; future: protect stowed exports
+
+
+
 @section[#:tag "sec:implementation:api"]{Three-way Boundary Utilities}
 @; TB api
 
@@ -111,12 +130,12 @@ For example, the standard array library
 @; @render-lib[(make-lib "array library" "https://docs.racket-lang.org/math/array.html")]
 uses this tool to give untyped code access to an overloaded function that
 expects either an array of integers or an array of natural numbers.
-Instead of generating a contract based on the overloaded type, which would
+Rather than generate a contract based on the overloaded type, which would
 require a higher-order union contract, the library uses a subtype that
 expects arrays of integers.
 @|sShallow| code can access this array function as well, but only through the contract.
 Switching a module from @|sDeep| to @|sShallow| may therefore require
-casts to match the subtype.
+casts to meet the subtype.
 
 @;@bm{jpeg} benchmark (@section-ref{sec:evaluation:performance})
 @;depends on @render-lib[(make-lib "math/array" "https://docs.racket-lang.org/math/array.html")])
@@ -131,8 +150,8 @@ casts to match the subtype.
 @;  "  [check-array-shape"
 @;  "   (-> (Vectorof Integer) (Vectorof Natural))])")]
 
-The second tool combines two identifiers into one.
-For example, the following defines a context-sensitive identifier @tt{f}
+The second tool combines two identifiers.
+In the following example, @tt{f} is defined as a context-sensitive identifier 
 that expands to @tt{tf} in @|sDeep| code and to @tt{uf} in untyped code:
 @tt{(define-typed/untyped-identifier f tf uf)}.
 @;
@@ -142,10 +161,9 @@ that expands to @tt{tf} in @|sDeep| code and to @tt{uf} in untyped code:
 @; @exact{\smallskip}
 @;
 @|noindent|@|sShallow| cannot be trusted with @tt{tf}
-because of its weak soundness guarantee, and it may be unable
-to use @tt{uf} if this identifier lacks a type.
-Thus, the form should accept a third identifier for @|sShallow|
+because of its weak soundness guarantee, and it cannot use
+@tt{uf} if that identifier lacks a type.
+Thus, the tool needs a third input for @|sShallow|
 contexts.
-
 
 

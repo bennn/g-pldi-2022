@@ -56,8 +56,9 @@ that can mix typed and untyped code.
 Sound gradual language designs do not agree on how types should guide the
 behavior of a program.
 Two leading alternatives for run-time properties are @|sdeep| and @|sshallow| types.
-To a first approximation, @|sdeep| types aim for the same guarantees as conventional
-static types and @|sshallow| types aim for only local type soundness.
+To a first approximation, @|sdeep| types enforce (but do not verify) the same
+guarantees as conventional static types and @|sshallow| types enforce only
+local type soundness.
 
 @Figure-ref{fig:ds-example} presents a three-module program to illustrate
 the gap between @|sdeep| and @|sshallow| types.
@@ -148,8 +149,8 @@ and measuring the efficiency of implementations@~cite{fgsfs-oopsla-2018,kas-pldi
 Theoretical results about @|sNatural| hold for these semantics-preserving variants as well.
 }
 For example, base types are enforced with predicate checks,
-types for immutable data are enforced with first-order traversals,
-and types for higher-order data such as arrays and functions are enforced with
+types for immutable values are enforced with first-order traversals,
+and types for higher-order values such as arrays and functions are enforced with
 higher-order @emph{wrapper} contracts.
 Because each contract fully enforces a type, these contracts need only guard
 the boundaries between typed and untyped code.
@@ -166,11 +167,15 @@ checks throughout typed pieces of code:
 typed, public functions must check their inputs;
 typed modules must check their untyped imports; and
 typed expressions must check the results computed during a function call,
-the elements extracted from a data structure, and the outcome of any type-level
+the elements extracted from a data structure, and the outcome of any
 downcasts.
-Thus every line of typed code may add a cost, but the checks
-do not traverse data and impose none of the allocation and indirection
-costs that come with higher-order contracts.
+In @figure-ref{fig:model:base-interaction}, these conditions imply one check:
+the typed interface must check that @|untyped-fn| is a function.
+In general, every line of typed code may add several
+@|sTransient| checks, but each check is inexpensive.
+By contrast to higher-order contracts, the checks
+do not traverse values and do not impose allocation and indirection
+costs.
 
 
 @;@section{Why @|sTransient| and @|sNatural|?}

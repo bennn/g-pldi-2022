@@ -1,4 +1,4 @@
-#lang scribble/acmart @sigplan @10pt @natbib[#f] @screen
+#lang scribble/acmart @sigplan @10pt @natbib[#f] @review
 
 @(require "bib.rkt" (only-in "main.rkt" if-techrpt))
 
@@ -23,7 +23,7 @@
    ])
 
 @author["Ben Greenman"
-        #:email "benjaminlgreenman@gmail.com"
+        #:email "benjamin.l.greenman@gmail.com"
         #:orcid "0000-0001-7078-9287"
         #:affiliation Brown]
 
