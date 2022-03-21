@@ -24,4 +24,6 @@ full: fast
 	pdflatex paper
 	pdflatex paper
 
+diff:
+	latexdiff --exclude-text="section,subsection,subsubsection" submission-tex/paper.tex revision-tex/paper.tex > revision-tex/diff.tex
 
