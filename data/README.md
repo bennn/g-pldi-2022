@@ -55,7 +55,7 @@ For example, here is the second data line from the file `transient/acquire-2020-
 - The first running time comes from the string `"cpu time: 457 real time: 456 gc time: 101"`.
   The running time is 457 milliseconds (cpu time).
   The other times are also in milliseconds.
-  The full string comes from Racket`s `time` helper: <https://docs.racket-lang.org/reference/time.html#%28form._%28%28lib._racket%2Fprivate%2Fmore-scheme..rkt%29._time%29%29>
+  The full string comes from Racket's `time` helper: <https://docs.racket-lang.org/reference/time.html#%28form._%28%28lib._racket%2Fprivate%2Fmore-scheme..rkt%29._time%29%29>
 
 In this example from the `transient/` directory, a `"0"` in a configuration encoding
 means "untyped" and a `"1"` means "Shallow types".
