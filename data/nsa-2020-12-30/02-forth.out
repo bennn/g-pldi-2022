@@ -1,4 +1,4 @@
-#lang gtp-measure/output/transient
+#lang gtp-measure/output/deep-shallow-untyped
 ("0000" ("cpu time: 17 real time: 17 gc time: 0" "cpu time: 17 real time: 16 gc time: 0" "cpu time: 17 real time: 17 gc time: 0" "cpu time: 19 real time: 19 gc time: 0" "cpu time: 17 real time: 16 gc time: 0" "cpu time: 16 real time: 16 gc time: 0" "cpu time: 16 real time: 17 gc time: 0" "cpu time: 17 real time: 16 gc time: 0"))
 ("0001" ("cpu time: 28 real time: 28 gc time: 9" "cpu time: 29 real time: 29 gc time: 8" "cpu time: 29 real time: 28 gc time: 9" "cpu time: 29 real time: 30 gc time: 10" "cpu time: 28 real time: 28 gc time: 9" "cpu time: 28 real time: 28 gc time: 9" "cpu time: 29 real time: 28 gc time: 8" "cpu time: 28 real time: 29 gc time: 9"))
 ("0002" ("cpu time: 28 real time: 28 gc time: 10" "cpu time: 29 real time: 28 gc time: 10" "cpu time: 27 real time: 26 gc time: 9" "cpu time: 27 real time: 27 gc time: 8" "cpu time: 27 real time: 27 gc time: 9" "cpu time: 28 real time: 28 gc time: 10" "cpu time: 27 real time: 27 gc time: 8" "cpu time: 27 real time: 27 gc time: 9"))

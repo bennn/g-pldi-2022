@@ -39,6 +39,7 @@ For the latest news on Deep and Shallow types for Typed Racket, visit the follow
      to defend itself with transient run-time checks.
    - Several libraries: `gtp-measure`, `gtp-plot`, `gtp-util`, and `require-typed-check`
 3. Install a modern version of Racket from <https://download.racket-lang.org/>.
+   I have tested with [Racket 8.3](https://download.racket-lang.org/racket-v8.3.html).
    Make sure that its `racket` and `raco` executables are on your PATH.
 4. Run `make install` to add Deep and Shallow support to your Racket, to
    install the related libraries, and to compile the paper.
@@ -49,17 +50,26 @@ For the latest news on Deep and Shallow types for Typed Racket, visit the follow
 1. Run `make pdf` to build `g-pldi-2022/paper.pdf`
 2. Test Deep and Shallow types for Typed Racket:
    -  Go to the directory [`code/typed-racket/typed-racket-test/transient/pass`](./code/typed-racket/typed-racket-test/transient/pass).
-      All tests here should compile and run: `raco make -v FILE.rkt && racket FILE.rkt`
+      All tests here should compile and run `raco make -v FILE.rkt && racket FILE.rkt`
+      (though some tests may fail).
    - Go to the directory [`code/typed-racket/typed-racket-test/transient/error`](./code/typed-racket/typed-racket-test/transient/error).
      All tests here should raise a run-time exception; `raco make -v FILE.rkt`
      should succeed and `racket FILE.rkt` should error.
    - Use these tests to try writing your own.
-4. Run a small benchmark such as `morsecode`:
+3. (Linux and macOS only) Run a small benchmark such as `morsecode`:
    - Open [`code/run-info.rkt`](code/run-info.rkt) in a text editor
    - Replace `PATH-TO-YOUR-RACKET-INSTALL` with an absolute path to the Racket you installed above
    - Replace `PATH-TO-REPO` with an absolute path to this repo
    - Uncomment the line for `morsecode` (or for another benchmark)
    - Change to the `code/` directory, run `sh run-benchmarks.sh`, watch and wait for it to finish
    - Inspect the new `*.out` files under `run-output/*/`
-   - Refer to the `gtp-measure` docs for help (`raco docs gtp-measure`)
+     (see `data/README.md` to learn about the output format)
+   - To update figure 15 from the paper (mix of Deep and Shallow) with the new data:
+     1. Replace the old `*.out` or `*.rktd` files for the benchmarks with your new `*.out` files.
+        For `morsecode`: `mv run-output/**/*morsecode*.out ../data/nsa-2020-11-04/*morsecode*.rktd`.
+        (The suffix does not matter, either `.out` or `.rktd` works.)
+     2. Delete the old `*.3d` cache files for your benchmarks.
+        (`rm ../data/nsa-2020-11-04/*morsecode*.3d`)
+     3. Delete the cache file for figure 15: `rm src/with-cache/mixed-3d-best.rktd`
+     4. Rebuild the paper: `make pdf`
 
