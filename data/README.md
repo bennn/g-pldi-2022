@@ -19,12 +19,12 @@ and `data/nsa-2020-12-30/*.out`). It groups all data lines that have the same
 typed modules and counts the number of groups that run fastest with a mix
 of both Deep and Shallow types.
 
-Figure 16 combines data/7.8.0.5/*.rktd (Deep alone) with data/transient/*.rktd
+Figure 16 combines `data/7.8.0.5/*.rktd` (Deep alone) with `data/transient/*.rktd`
 (Shallow alone). It compares the worst-case average running times of Deep
 and Shallow for each benchmark.
 
-Figure 17 uses the same two datasets (data/7.8.0.5/*.rktd and
-data/transient/*.rktd) but performs a different analysis, counting good paths
+Figure 17 uses the same two datasets (`data/7.8.0.5/*.rktd` and
+`data/transient/*.rktd`) but performs a different analysis, counting good paths
 that go from fully-untyped to fully-typed by changing one module at a time.
 
 The script `analyze.rkt` prepares data for these figures with three functions:
