@@ -1,4 +1,4 @@
-#lang scribble/acmart @sigplan @10pt @natbib[#f] @review
+#lang scribble/acmart @sigplan @10pt @natbib[#f] @screen
 
 @(require "bib.rkt" (only-in "main.rkt" if-techrpt))
 
@@ -27,14 +27,6 @@
         #:orcid "0000-0001-7078-9287"
         #:affiliation Brown]
 
-
-@; -----------------------------------------------------------------------------
-
-@keywords{gradual typing, migratory typing, complete monitoring, type-enforcement strategies}
-@; TODO is there really no new vocabulary that we earned along the way???!
-
-@; TODO CCSXML
-
 @; -----------------------------------------------------------------------------
 
 @abstract{
@@ -59,6 +51,12 @@ Where an exhaustive search is feasible, 40% of all configurations run fastest
 with a mix of deep and shallow types.
 }
 
+@ccsdesc[#:number 500]{Software and its engineering~Semantics}
+@ccsdesc[#:number 100]{Software and its engineering~Constraints}
+@ccsdesc[#:number 100]{Software and its engineering~Functional languages}
+
+@keywords{gradual typing, migratory typing, complete monitoring, type-enforcement strategies}
+
 @; -----------------------------------------------------------------------------
 
 @include-section{introduction.scrbl}
@@ -71,6 +69,5 @@ with a mix of deep and shallow types.
 @include-section{conclusion.scrbl}
 
 @if-techrpt[
- @include-section{blank.scrbl}
  @include-section{appendix.scrbl}]
 

@@ -76,9 +76,10 @@ performance for guarantees, making the trade-off even more programmable.
 }
 
 
+@unless-techrpt[
 @exact|{
 \begingroup
 \setlength{\emergencystretch}{8em}
 \printbibliography
 \endgroup
-}|
+}|]

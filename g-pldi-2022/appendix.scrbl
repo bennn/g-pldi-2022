@@ -1540,3 +1540,9 @@ Unfortunately, these input wrappers change the behavior of @tt{index-of};
  because the @|stransient| semantics does not use wrappers to enforce types.
 
 
+@exact|{
+\begingroup
+\setlength{\emergencystretch}{8em}
+\printbibliography
+\endgroup
+}|

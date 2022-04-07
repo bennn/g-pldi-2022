@@ -4,6 +4,7 @@
   appendixref
   appendixrules
   if-techrpt
+  unless-techrpt
   ~a ~s
   exact
   $
@@ -86,6 +87,12 @@
     (lambda (stx) (syntax-case stx ()
      [(_ x ...) #'(begin x ...)]))
     (lambda (stx) #'(void))))
+
+(define-syntax unless-techrpt
+  (if TECHRPT
+    (lambda (stx) #'(void))
+    (lambda (stx) (syntax-case stx ()
+     [(_ x ...) #'(begin x ...)]))))
 
 (define (make-appendixref label)
   (if TECHRPT
