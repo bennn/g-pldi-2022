@@ -55,12 +55,8 @@ but these checks rarely dominate the running time of a program@~cite{vss-popl-20
 The question thus arises as to whether the two enforcement strategies can
 interoperate, giving programmers @|sdeep| types
 when guarantees matter and @|sshallow| types to avoid performance bottlenecks.
-This paper provides an affirmative answer.
-@|sDeep| and @|sshallow| types can interoperate without sacrificing
-their formal properties.
-Best of all, the combination brings measurable benefits.
-
-Studying these questions yields three contributions:
+This paper provides an affirmative answer
+via three contributions.
 
 @itemlist[
 
@@ -89,12 +85,16 @@ Studying these questions yields three contributions:
 
 ]
 @;
-Generally put, these contributions strongly suggest that combining
-type-sound gradual typing strategies gives programmers control over the
-protection/performance tradeoff.  The combination is coarse and the
-two strategies do little to cooperate (@section-ref{sec:future}),
-but the evaluation suggests that interoperability can effectively
-address tradeoffs without restricting the source language or replacing
-the compiler.
+@|sDeep| and @|sshallow| types can interoperate without sacrificing their
+formal properties.
+Best of all, the combination brings measurable benefits.
+These contributions strongly suggest that combining
+type-sound gradual typing strategies is an effective means to give programmers
+control over the protection/performance tradeoff.
+@; The combination is coarse and the
+@; two strategies do little to cooperate (@section-ref{sec:future}),
+@; but the evaluation suggests that interoperability can effectively
+@; address tradeoffs without restricting the source language or replacing
+@; the compiler.
 
 

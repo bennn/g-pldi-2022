@@ -1164,12 +1164,15 @@ The three-module program from @figure-ref{fig:ds-example} can be encoded with
 @|sshallow| types roughly as follows:
 
 @exact|{
+\medskip
   \(
   \begin{array}{l}
     \elet{\svar_0}{\emodule{\sslang}{(\emodule{\sulang}{(\efun{\svar_0\,\svar_1}{\texttt{\_}})})}}{}
     \\ \quad\eappu{\svar_0}{\texttt{`cat'}\,\texttt{`roman'}}
     \end{array}
   \)
+\bigskip
+\bigskip
 }|
 
 @|noindent|Compilation yields a term with one @${\sscan} check:
@@ -1940,10 +1943,10 @@ that arise in evaluation are consistent according to the @${\sWL} judgment
   \item[]
     by the definition of $\scompile$, because a $\sscan{}$ boundary links only \sshallow{} and/or \suntyped{} components
 
-  \item[Case:]
-    \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\swraperror}{\sowner_1}\)
-  \item[]
-    by the definition of $\sWL$
+%  \item[Case:]
+%    \(\obars{\ewrap{\stype_0}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\swraperror}{\sowner_1}\)
+%  \item[]
+%    by the definition of $\sWL$
 
   \item[Case:]
     \(\obars{\ewrap{(\tfun{\stype_0}{\stype_1})}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1} \snrlbl \obars{\emon{\tfun{\stype_0}{\stype_1}}{\obbars{\svalue_0}{\sownerlist_0}}}{\sowner_1}\)

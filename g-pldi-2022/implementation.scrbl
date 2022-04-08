@@ -25,7 +25,7 @@
 We have implemented three-way interactions atop Typed Racket.
 The extension combines the standard ``@|sDeep|'' Typed Racket, which implements the
 @|snatural| semantics@~cite{tf-popl-2008}, with the ``@|sShallow| Racket''
-implementation of @|stransient|@~cite{gldf-pj-2021}.
+implementation of @|stransient|@~cite{gldf-pj-2022}.
 Programmers may choose @|sdeep| or @|sshallow| types
 when declaring a module.
 @; these options via module
