@@ -62,6 +62,7 @@
   transient-rkt-version
   github-issue
   github-pull
+  bold-style
   (all-from-out scribble-abbrevs/scribble))
 
 (require
@@ -70,10 +71,16 @@
   scribble/core
   scribble/base
   scriblib/figure
+  scribble/private/lang-parameters
   (only-in scribble-abbrevs/scribble Integer->word integer->word format-url oxfordize)
   (only-in racket/string string-replace)
   (only-in racket/format ~a ~r ~s)
   (for-syntax racket/base))
+
+(default-figure-label-text (make-element 'bold "Figure"))
+(default-figure-label-sep ": ")
+(default-figure-caption-style 'roman)
+(default-figure-counter-style 'bold)
 
 ;; -----------------------------------------------------------------------------
 
@@ -294,3 +301,4 @@
 (define github-issue (make-github-url "issues"))
 (define github-pull (make-github-url "pull"))
 
+(define bold-style (make-style #f '(bold)))

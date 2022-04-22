@@ -35,7 +35,7 @@ values (including values that have passed through a typed context).
 @; namely, that a careful use of these checks can enforce the safety properties.
 
 
-@section[#:tag "sec:model:model:syntax"]{Three-way Surface Syntax}
+@section[#:tag "sec:model:model:syntax"]{Three-Way Surface Syntax}
 
 @figure[
   "fig:model:surface"
@@ -90,7 +90,7 @@ Any module expressions within @${\ssurface_0} are free to use any
 typing style (@${\sD}, @${\sS}, or @${\sU}).
 
 
-@section[#:tag "sec:model:model:types"]{Three-way Surface Typing}
+@section[#:tag "sec:model:model:types"]{Three-Way Surface Typing}
 @; TODO why not reformat, present as 2 or 3 judgments?
 @;  the evaluation typing is 3 judgments (different invariants)
 
@@ -571,7 +571,7 @@ a failed check at a @|sscan| boundary (@${\sscanerror}), a division by zero
 }|]
 
 
-@section[#:tag "sec:model:model:eval-types"]{Three-way Evaluation Typing}
+@section[#:tag "sec:model:model:eval-types"]{Three-Way Evaluation Typing}
 
 The evaluation syntax comes with three typing judgments that describe the
 invariants of @|sdeep|, @|sshallow|, and @|suntyped| code.
@@ -1158,21 +1158,18 @@ Pair elimination forms (@${\sfst}, @${\ssnd}) use @|sscan|s in a similar way.
 Finally, one template rule and a table represent six rules for module boundaries.
 These rules correspond to arrows in @figure-ref{fig:model:base-interaction}.
 
-@subsection{Example}
+@parag{Example}
 
 The three-module program from @figure-ref{fig:ds-example} can be encoded with
 @|sshallow| types roughly as follows:
 
 @exact|{
-\medskip
   \(
   \begin{array}{l}
     \elet{\svar_0}{\emodule{\sslang}{(\emodule{\sulang}{(\efun{\svar_0\,\svar_1}{\texttt{\_}})})}}{}
     \\ \quad\eappu{\svar_0}{\texttt{`cat'}\,\texttt{`roman'}}
     \end{array}
   \)
-\bigskip
-\bigskip
 }|
 
 @|noindent|Compilation yields a term with one @${\sscan} check:

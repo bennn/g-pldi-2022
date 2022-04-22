@@ -109,7 +109,7 @@ which macros may safely cross type boundaries.
 
 
 
-@section[#:tag "sec:implementation:api"]{Three-way Boundary Utilities}
+@section[#:tag "sec:implementation:api"]{Three-Way Boundary Utilities}
 @; TB api
 
 Static types and higher-order contracts are fundamentally different

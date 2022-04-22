@@ -111,7 +111,7 @@ submitted by Typed Racket users.
 @; @|sdeep| semantics.
 
 
-@subsection[#:tag "sec:evaluation:expr:any"]{Less-strict Top Type}
+@subsection[#:tag "sec:evaluation:expr:any"]{Relaxed Top Type}
 
 Statically, the top type is a supertype of every other type.
 Programmers often use this type as a convenient placeholder to avoid

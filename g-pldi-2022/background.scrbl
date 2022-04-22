@@ -75,7 +75,7 @@ Finally, the untyped client module on the bottom mistakenly calls @|untyped-fn|
 with two strings instead of one string and one object.
 
 @figure[
-  @; TODO do more with this figure ... clearer
+  #:label-style 'bold
   "fig:ds-example"
   @elem{Untyped library, typed interface, and untyped client}
   fig:ds-example-y]
@@ -135,7 +135,7 @@ that all clients, typed or untyped, can rely on.
   %\draw [->] (D) edge [loop, min distance=2mm,in=110,out=70,looseness=3] node [above] {\(\snoop\)} (D);
   %\draw [->] (U) edge [loop, min distance=2mm,in=300,out=340,looseness=3] node [below] {\(\snoop\)} (U);
 
-\end{tikzpicture}\vspace{-2ex} }|]
+\end{tikzpicture}\vspace{-1ex} }|]
 
 @subsection{@|sNatural| Semantics}
 
@@ -144,7 +144,7 @@ semantics@~cite{tf-dls-2006,mf-toplas-2009,st-sfp-2006}.@note{@|sNatural| is a.k
 Guarded@~cite{vksb-dls-2014}, Behavioral@~cite{clzv-ecoop-2018}, and
 Deep@~cite{tgpk-dls-2018}.}
 Natural interprets types as contracts in a straightforward manner.@note{
-Researchers are actively seeking improved variants of @|sNatural|@~cite{htf-hosc-2010,g-popl-2015,stw-pldi-2015,gct-popl-2016}
+Researchers are actively seeking improved variants of @|sNatural|@~cite{htf-hosc-2010,g-popl-2015,stw-pldi-2015,stw-jfp-2021,gct-popl-2016}
 and measuring the efficiency of implementations@~cite{fgsfs-oopsla-2018,kas-pldi-2019}.
 Theoretical results about @|sNatural| hold for these semantics-preserving variants as well.
 }
