@@ -73,3 +73,56 @@ For the latest news on Deep and Shallow types for Typed Racket, visit the follow
      3. Delete the cache file for figure 15: `rm src/with-cache/mixed-3d-best.rktd`
      4. Rebuild the paper: `make pdf`
 
+### Reusing the Code
+
+#### Q. How to add a new benchmark?
+
+The current benchmarks live in `./code/benchmarks`. To add a new benchmark, make a new directory in this folder that contains 3 to 5 subdirectories:
+
+- `untyped/` : an untyped version of the benchmark (`#lang racket`)
+- `typed/` : a deep-typed version of the benchmark (`#lang typed/racket`)
+- `shallow/` : a shallow-typed version of the benchmark (`#lang typed/racket #:transient`)
+- (optional) `base/` : extra code or data that the benchmark modules depend on
+- (optional) `both/` : extra code that will be copied into the same directory as the benchmark modules before they run
+
+Refer to the current benchmarks for examples.
+
+To collect data for all `3^N` configurations of a new benchmark, edit the file
+`code/run-info.rkt` to point to the new benchmark and then run
+`code/run-benchmarks.sh`.
+
+(To collect data for `2**N` configurations, use `typed-untyped` instead of
+`deep-shallow-untyped` in the run-info file.)
+
+The paper uses scripts in `data/analyze.rkt` to format data.
+
+
+#### Q. How to add new tests for deep and shallow types?
+
+- To write new code with deep types, open a file that starts with `#lang
+  typed/racket`.
+- To write new code with shallow types, open a file that starts with `#lang
+  typed/racket #:transient`
+- To write new code that mixes deep and shallow, have a deep module require a
+  shallow module or vice-versa.
+
+Refer to the [Typed Racket test suite](./code/typed-racket/typed-racket-test)
+for example modules.
+
+
+#### Q. What are possible ways to reuse this artifact in a different application?
+
+Research ideas:
+
+- Study the datasets further (`./data/`)
+- Improve the compiler support for deep and shallow types (`./code/typed-racket`)
+
+Engineering ideas:
+
+- Reuse the benchmarks (`./code/benchmarks`, or <docs.racket-lang.org/gtp-benchmarks>)
+- Reuse the paper's Scribble source (`./g-pldi-2022/`)
+- Reuse the data analysis scripts (`./data/analyze.rkt`)
+- Reuse the talk's slides (`./talk/`)
+
+Cheers!
+
