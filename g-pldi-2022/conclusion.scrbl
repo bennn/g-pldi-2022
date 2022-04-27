@@ -62,6 +62,14 @@ performance for guarantees, making the trade-off even more programmable.
 @;After the release, I look forward to studying programmers' experience with
 @; the multi-faceted system.
 
+@exact{\section*{Data Availability Statement}}
+
+The datasets and software that support
+@secref{sec:evaluation}
+of this paper
+are available via Software Heritage@~cite{gpldi2022sh}
+and Zenodo@~cite{gpldi2022z}.
+
 @acks{
   This work is supported by NSF grant 2030859 to the CRA for the
   @hyperlink["https://cifellows2020.org"]{CIFellows} project.
