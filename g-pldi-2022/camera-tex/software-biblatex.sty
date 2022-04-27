@@ -1,0 +1,15 @@
+%
+% Reference implementation of a BibLaTeX style for the software family of bibliographic entries
+%
+% 2020/04/02 Roberto Di Cosmo <roberto@dicosmo.org>
+%
+%
+% style file wrapper to software.bbx to make software entries available on the fly
+%
+% use after loading biblatex with the datamodel=software option
+% - special toggles may be controlled with the directive \ExecuteBibliographyOptions
+%   that defaults to
+%     \ExecuteBibliographyOptions{halid=true,swhid=true,swlabels=true,vcs=true,license=true}
+%
+\ProvidesPackage{software-biblatex}[Software entries for biblatex]
+\blx@inputonce{software.bbx}{biblatex style for software}{}{}{}{}
