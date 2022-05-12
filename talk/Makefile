@@ -1,6 +1,5 @@
 TALK=talk.ss
-raco=raco
-#/Applications/Racket-8.3-CS/bin/raco
+raco=/Applications/Racket-8.3-CS/bin/raco
 
 #install:
 #	${raco} pkg install --auto pict-abbrevs scribble-abbrevs gtp-pict gtp-plot

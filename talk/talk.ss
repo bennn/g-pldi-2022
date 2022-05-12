@@ -2,7 +2,17 @@
 
 ;; outline 2022-04-27
 ;; - ben postdoc at brown
-;; - ????
+;;
+;; todo 2022-05-04
+;; - [ ] all languages ... rough landscape
+;;   - [X] do the typing labor
+;; - [X] 4 directions, prior work
+;; - [ ] interactions roadmap: W S N
+;; - [ ] performance ... tables and/or plots
+;; - [ ] expressiveness slides
+;; - [ ] conclusion ... should be easy no? from job slides
+;; - [X] no wrappers = simpler top type
+
 
 (require
   images/icons/misc
@@ -1280,6 +1290,80 @@
 (define (retic-pict)
   (python-pict))
 
+(define (actionscript-pict)
+  (blank))
+
+(define (cl-pict)
+  (blank))
+
+(define (hack-pict)
+  (blank))
+
+(define (pytype-pict)
+  (blank))
+
+(define (pyright-pict)
+  (blank))
+
+(define (rdl-pict)
+  (blank))
+
+(define (strongtalk-pict)
+  (blank))
+
+(define (typescript-pict)
+  (blank))
+
+(define (typed-lua-pict)
+  (blank))
+
+(define (gradualtalk-pict)
+  (blank))
+
+(define (grift-pict)
+  (blank))
+
+(define (tpd-pict)
+  (blank))
+
+(define (pyret-pict)
+  (blank))
+
+(define (grace-pict)
+  (blank))
+
+(define (pallene-pict)
+  (blank))
+
+(define (sp-pict)
+  (blank))
+
+(define (csharp-pict)
+  (blank))
+
+
+(define (dart2-pict)
+  (blank))
+
+(define (nom-pict)
+  (blank))
+
+(define (safets-pict)
+  (blank))
+
+(define (tsstar-pict)
+  (blank))
+
+
+(define (sorbet-pict)
+  (blank))
+
+(define (strongscript-pict)
+  (blank))
+
+(define (thorn-pict)
+  (blank))
+
 (define (indiana-pict)
   (symbol->lang-pict 'indiana))
 
@@ -2492,6 +2576,76 @@
   )
   (void))
 
+(define (sec:unsorted)
+  (pslide
+    #:go heading-coord-m
+    @headrm{Gradual Landscape}
+    #:go center-coord
+    (let* ((lang*
+             (list (actionscript-pict) (cl-pict) (mypy-pict)
+                   (flow-pict) (hack-pict) (pyre-pict)
+                   (pytype-pict) (pyright-pict) (rdl-pict)
+                   (strongtalk-pict) (typescript-pict) (typed-clojure-pict)
+                   (typed-lua-pict) (gradualtalk-pict) (grift-pict)
+                   (tpd-pict) (tr-pict) (pyret-pict) (grace-pict)
+                   (pallene-pict) (retic-pict) (sp-pict) (csharp-pict)
+                   (dart2-pict) (nom-pict) (safets-pict) (tsstar-pict)
+                   (sorbet-pict) (strongscript-pict) (thorn-pict)))
+           (lang**
+             (split/n lang* 5))
+           (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*))))
+           (pp (apply vc-append small-y-sep pp*)))
+      pp)
+  )
+  (pslide
+    #:go (coord slide-text-left slide-text-top 'lt)
+    (the-perf-problem)
+    #:go (coord 1/2 slide-text-top 'ct)
+    (bghost (the-perf-problem))
+    (yblank small-y-sep)
+    #:alt ( (perf-what-to-do 0) )
+    #:alt ( (perf-what-to-do 1) )
+    #:alt ( (perf-what-to-do 2) )
+    #:alt ( (perf-what-to-do 3) )
+    (perf-what-to-do 4)
+  )
+  (pslide
+    @bodyrm{DSU interactions}
+  )
+  (pslide
+    @bodyrm{perf tables andor picts}
+  )
+  (pslide
+    @bodyrm{expressiveness}
+  )
+  (pslide
+    @bodyrm{conclusions}
+  )
+
+  (pslide
+    #:go heading-coord-m
+    @headrm{No Wrappers = Simpler}
+    #:go hi-text-coord-m
+    (ht-append
+      med-x-sep
+      (typed-codeblock* (list
+@tcoderm{(define b : (Boxof Char)}
+@tcoderm{  (box #\X))}
+@tcoderm{}
+@tcoderm{(define any : Any b)}))
+      (untyped-codeblock* (list
+@tcoderm{(set-box! any #\Y)}
+)))
+    (yblank small-y-sep)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep tiny-y-sep
+      (list
+        @bodyembf{Guarded} @coderm{Error}
+        @bodyembf{Transient} @coderm{OK}))
+  )
+  (void))
+
 (define (sec:intro)
   (pslide
     #:go heading-coord-m
@@ -2939,12 +3093,6 @@
 (define (sec:qa)
   (pslide
     #:go heading-coord-m
-    @headrm{Worst Case Overhead vs. Untyped}
-    #:go (coord 1/2 slide-text-top 'ct)
-    (blame-table 2)
-  )
-  (pslide
-    #:go heading-coord-m
     @headrm{Optimizations}
     #:go hi-text-coord-m
     (ht-append
@@ -2953,6 +3101,7 @@
       #:col-sep small-x-sep
       #:row-sep pico-y-sep
       (list
+        ;; TODO shallow or transient?
         @bodyrmlo{Topic} @bodyrmlo{Ok for Transient?}
         @coderm{apply} @codeemrm{y}
         @coderm{box} @codeemrm{y}
@@ -3012,28 +3161,6 @@
   )
   (pslide
     #:go heading-coord-m
-    @headrm{No Wrappers = Simpler}
-    #:go hi-text-coord-m
-    (ht-append
-      med-x-sep
-      (typed-codeblock* (list
-@tcoderm{(define b : (Boxof Char)}
-@tcoderm{  (box #\X))}
-@tcoderm{}
-@tcoderm{(define any : Any b)}))
-      (untyped-codeblock* (list
-@tcoderm{(set-box! any #\Y)}
-)))
-    (yblank small-y-sep)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep tiny-y-sep
-      (list
-        @bodyembf{Guarded} @coderm{Error}
-        @bodyembf{Transient} @coderm{OK}))
-  )
-  (pslide
-    #:go heading-coord-m
     @headrm{Limitation}
     #:go hi-text-coord-m
     (word-append
@@ -3058,7 +3185,6 @@
 @tcoderm{(string-length fake-str)}
 ))
   )
-
   (void))
 
 (define (sec:unused)
@@ -3244,12 +3370,14 @@
   (parameterize ((current-slide-assembler title-cs.brown.edu))
     (sec:title)
     (void))
-  #;(parameterize ((current-slide-assembler bg-cs.brown.edu)
+  (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
-    (sec:intro)
-    (sec:rp)
-    (sec:noblame-perf)
-    (sec:end)
+    (sec:unsorted)
+
+    #;(sec:intro)
+    #;(sec:rp)
+    #;(sec:noblame-perf)
+    #;(sec:end)
 
     (pslide)
     (sec:qa)
@@ -3273,6 +3401,11 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
+    #:go heading-coord-m
+    @headrm{DSU Plan}
+    #:go center-coord
+    (blank)
+    #;(dsu-pict 'TODO)
 
 
   )))

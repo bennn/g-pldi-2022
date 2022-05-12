@@ -10,8 +10,14 @@ June 26 or so
 ---
 
 - gradual typing many forms
+  - tons of languages
+  - tons of strategies too (cluster languages)
 
 - impasse unless change language
+  - grift, nom, sp are OK
+  - structural / migratory are NOT ok
+    - but this is the killer app
+    - and many researchers are working on it
 
 - what to do?
   ... ORTHOGONAL to these, interoperate with weaker semantics
@@ -32,6 +38,7 @@ June 26 or so
 - how know it works?
   ... nothing sneaks into deep without a wrapper
   ... ditto nothing exits without "protection"
+  basic idea for proof technique, well-label judgment
 
 - implemented for TR
   [[ release info??? ]]
