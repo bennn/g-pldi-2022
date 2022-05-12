@@ -8,7 +8,7 @@
 ;;   - [X] do the typing labor
 ;; - [X] 4 directions, prior work
 ;; - [ ] interactions roadmap: W S N
-;; - [ ] performance ... tables and/or plots
+;; - [X] performance ... tables and/or plots
 ;; - [ ] expressiveness slides
 ;; - [ ] conclusion ... should be easy no? from job slides
 ;; - [X] no wrappers = simpler top type
@@ -2418,6 +2418,156 @@
         tiny-x-sep
         tiny-y-sep))))
 
+(define mixed-best-data*
+  (list
+    (list "forth" "12%")
+    (list "fsm" "38%")
+    (list "fsmoo" "31%")
+    (list "mbta" "19%")
+    (list "morsecode" "25%")
+    (list "zombie" "6%")
+    (list "dungeon" "31%")
+    (list "jpeg" "38%")
+    (list "zordoz" "47%")
+    (list "lnm" "66%")
+    (list "suffixtree" "48%")
+    (list "kcfa" "55%")
+    (list "snake" "46%")
+    (list "take5" "36%")
+    (list "acquire" "64%")
+    (list "tetris" "62%")
+    ))
+
+(define (mixed-best-table n)
+  (define title* (list "Benchmark" @bodyembf{Best with D+S}))
+  (define (num->pict str)
+    (define n (string->number
+                (let ((ss (substring str 0 (sub1 (string-length str)))))
+                  (if (eq? #\> (string-ref ss 0))
+                    (substring ss 1)
+                    ss))))
+    (coderm #;(if (<= n 6) codeemrm (if (< n 100) coderm codeembf)) str))
+  (define (?bodyrmlo x)
+    (if (pict? x) x (bodyrmlo x)))
+  (define (title->pre-pict* rr)
+    (list (bghost (bodyrmlo (first rr))) (?bodyrmlo (second rr))))
+  (define (row->pre-pict* rr)
+    (list (coderm (first rr)) (num->pict (second rr))))
+  (define mask*
+    (case n
+      ((0 1)
+       (lambda (pp*)
+         (define-values [ll rr] (split-at pp* (- (length pp*) (- 2 n))))
+         (append ll (map bghost rr))))
+      (else
+       (lambda (pp*)
+         pp*))))
+  (define ff (compose1 mask* row->pre-pict*))
+  (apply
+    ht-append
+    (w%->pixels 7/100)
+    (for/list ((row (in-list (split/n mixed-best-data* 11))))
+      (table
+        2
+        (flatten
+          (cons
+            (mask* (title->pre-pict* title*))
+            (map ff row)))
+        (cons lc-superimpose rc-superimpose)
+        cc-superimpose
+        tiny-x-sep
+        tiny-y-sep))))
+
+(define overhead-data*
+  (list
+    (list "sieve" "16x" "4.36x" "2.97x")
+    (list "forth" "5800x" "5.51x" "5.43x")
+    (list "fsm" "2.24x" "2.38x" "1.91x")
+    (list "fsmoo" "420x" "4.28x" "4.25x")
+    (list "mbta" "1.91x" "1.74x" "1.71x")
+    (list "morsecode" "1.57x" "2.77x" "1.3x")
+    (list "zombie" "46x" "31x" "31x")
+    (list "dungeon" "15000x" "4.97x" "3.16x")
+    (list "jpeg" "23x" "1.66x" "1.56x")
+    (list "zordoz" "2.63x" "2.75x" "2.58x")
+    (list "lnm" "1.23x" "1.21x" "1.17x")
+    (list "suffixtree" "31x" "5.8x" "5.8x")
+    (list "kcfa" "4.33x" "1.24x" "1.24x")
+    (list "snake" "12x" "7.67x" "7.61x")
+    (list "take5" "44x" "2.99x" "2.97x")
+    (list "acquire" "4.22x" "1.42x" "1.42x")
+    (list "tetris" "13x" "9.93x" "5.44x")
+    (list "synth" "47x" "4.2x" "4.2x")
+    (list "gregor" "1.72x" "1.59x" "1.51x")
+    (list "quadT" "26x" "7.39x" "7.23x")
+    (list "quadU" "55x" "7.57x" "7.45x")
+    ))
+
+(define (overhead-table n)
+  (define title* (list "Benchmark" @bodyembf{Deep} @bodyembf{Shallow} @bodyembf{D||S}))
+  (define (num->pict str)
+    (define n (string->number
+                (let ((ss (substring str 0 (sub1 (string-length str)))))
+                  ss)))
+    (unless (real? n)
+      (printf "DEAD ~a~n" str))
+    ((if (<= n 6) codeemrm (if (< n 100) coderm codeembf)) str))
+  (define (?bodyrmlo x)
+    (if (pict? x) x (bodyrmlo x)))
+  (define (title->pre-pict* rr)
+    (list (bghost (bodyrmlo (first rr)))
+          (?bodyrmlo (second rr))
+          (?bodyrmlo (third rr))
+          (?bodyrmlo (fourth rr))))
+  (define (row->pre-pict* rr)
+    (list (coderm (first rr))
+          (num->pict (second rr))
+          (num->pict (third rr))
+          (num->pict (fourth rr))))
+  (define mask*
+    (case n
+      ((0 1)
+       (lambda (pp*)
+         (define-values [ll rr] (split-at pp* (- (length pp*) (- 2 n))))
+         (append ll (map bghost rr))))
+      (else
+       (lambda (pp*)
+         pp*))))
+  (define ff (compose1 mask* row->pre-pict*))
+  (apply
+    ht-append
+    (w%->pixels 7/100)
+    (for/list ((row (in-list (split/n overhead-data* 11))))
+      (table
+        4
+        (flatten
+          (cons
+            (mask* (title->pre-pict* title*))
+            (map ff row)))
+        (cons lc-superimpose rc-superimpose)
+        cc-superimpose
+        tiny-x-sep
+        tiny-y-sep))))
+
+(define path-data*
+  (list
+    (list "sieve" "0%" "0%" "100%")
+    (list "forth" "0%" "0%" "50%")
+    (list "fsm" "100%" "100%" "100%")
+    (list "fsmoo" "0%" "0%" "50%")
+    (list "mbta" "100%" "100%" "100%")
+    (list "morsecode" "100%" "100%" "100%")
+    (list "zombie" "0%" "0%" "50%")
+    (list "dungeon" "0%" "0%" "67%")
+    (list "jpeg" "0%" "100%" "100%")
+    (list "zordoz" "100%" "100%" "100%")
+    (list "lnm" "100%" "100%" "100%")
+    (list "suffixtree" "0%" "0%" "12%")
+    (list "kcfa" "33%" "100%" "100%")
+    (list "snake" "0%" "0%" "0%")
+    (list "take5" "0%" "100%" "100%")
+    ))
+
 (define (overhead-legend)
     (ht-append
       med-x-sep
@@ -2614,6 +2764,22 @@
   )
   (pslide
     @bodyrm{perf tables andor picts}
+  )
+  (pslide
+    #:go heading-coord-l
+    @headrm{... Mixed Best}
+    #:next
+    #:go (coord 1/2 slide-text-top 'ct)
+    (mixed-best-table 2)
+  )
+  (pslide
+    #:go heading-coord-l
+    @headrm{Worst Case Overhead vs. Untyped}
+    #:next
+    #:go (coord 1/2 slide-text-top 'ct)
+    ;; #:alt ( (overhead-table 0) )
+    ;; #:alt ( (overhead-table 1) )
+    (overhead-table 2)
   )
   (pslide
     @bodyrm{expressiveness}
@@ -3401,11 +3567,11 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-    #:go heading-coord-m
-    @headrm{DSU Plan}
-    #:go center-coord
-    (blank)
-    #;(dsu-pict 'TODO)
+;    #:go heading-coord-m
+;    @headrm{DSU Plan}
+;    #:go center-coord
+;    (blank)
+;    #;(dsu-pict 'TODO)
 
 
   )))
