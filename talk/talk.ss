@@ -12,7 +12,12 @@
 ;; - [ ] expressiveness slides
 ;; - [ ] conclusion ... should be easy no? from job slides
 ;; - [X] no wrappers = simpler top type
+;; - [ ] uu recruiting slide
 
+;; LATER
+;; - [ ] utah fonts
+;; - [ ] fix up colors
+;; - [ ] ....
 
 (require
   images/icons/misc
@@ -99,6 +104,7 @@
 
 (define default-line-width 4)
 (define default-arrow-size 14)
+(define large-arrow-size 18)
 
 (define turn revolution)
 
@@ -413,13 +419,15 @@
                   #:line-width pre-line-width #:color color #:label label
                   #:x-adjust-label x-label #:y-adjust-label y-label #:hide? hide?))
 
-(define (add-code-arrows pp #:color [color #f] . arrow*)
-  (add-code-arrows* pp arrow* #:color color))
+(define (add-code-arrows pp #:arrow-size [arrow-size #f] #:color [color #f] . arrow*)
+  (add-code-arrows* pp arrow* #:arrow-size arrow-size #:color color))
 
-(define (add-code-arrows* pp* arrow* #:color [color #f])
+(define (add-code-arrows* pp* arrow* #:color [color #f] #:arrow-size [arrow-size #f])
   (for/fold ((pp pp*))
             ((arrow (in-list arrow*)))
-    (add-code-arrow pp arrow #:color color)))
+    (add-code-arrow pp arrow #:color color #:arrow-size arrow-size)))
+
+(define add-code-arrow* add-code-arrows*)
 
 (define (add-code-lines pp #:color [color #f] . arrow*)
   (add-code-line* pp arrow* #:color color))
@@ -2692,6 +2700,54 @@
      pp
      #;(above-all-lang (browncs-box pp)))))
 
+(define (region-pict name #:color color)
+  (let* ((bg (filled-rounded-rectangle
+               (w%->pixels 26/100)
+               (h%->pixels 2/10)
+               1
+               #:color color
+               #:border-color black
+               #:border-width 1))
+         (fg (bodyrm name))
+         (pp (cc-superimpose bg fg))
+         (sym (string->symbol name)))
+    (add-hubs pp sym)))
+
+(define interaction-y-sep med-y-sep)
+(define interaction-x-sep (w%->pixels 24/100))
+
+(define (tu-interaction n)
+  (let* ((t-pict (region-pict "Typed" #:color typed-brush-color))
+         (u-pict (region-pict "Untyped" #:color untyped-brush-color))
+         (pp (hc-append interaction-x-sep t-pict u-pict))
+         (arr (code-arrow 'Typed-E rc-find 'Untyped-W lc-find 0 0 0 0 'solid))
+         (pp (if (< n 1)
+               pp
+               (add-code-arrow pp arr #:arrow-size large-arrow-size #:both #true))))
+    pp))
+
+(define (dsu-interaction n)
+  (let* ((d-pict (region-pict "Deep Typed" #:color deep-brush-color))
+         (s-pict (region-pict "Shallow Typed" #:color shallow-brush-color))
+         (ds-pict (vc-append interaction-y-sep d-pict s-pict))
+         (u-pict (region-pict "Untyped" #:color untyped-brush-color))
+         (u+-pict (cc-superimpose (yblank (- (pict-height ds-pict) (pict-height d-pict))) u-pict))
+         (pp (hc-append interaction-x-sep ds-pict u+-pict))
+         (pp (if (< n 1)
+               pp
+               (add-code-arrow*
+                 (add-code-arrow
+                   pp
+                   (code-arrow '|Deep Typed-S| cb-find '|Shallow Typed-N| ct-find (* 3/4 turn) (* 3/4 turn) 0 0 'solid)
+                   #:arrow-size large-arrow-size #:both #true)
+                 (list
+                   (code-arrow u+-pict ct-find '|Deep Typed-E| rc-find (* 1/2 turn) (* 1/2 turn) 0 0 'solid)
+                   (code-arrow u+-pict cb-find '|Shallow Typed-E| rc-find (* 1/2 turn) (* 1/2 turn) 0 0 'solid)
+                   (code-arrow u+-pict ct-find '|Untyped-N| ct-find (* 1/2 turn) (* 3/4 turn) 0 0 'solid)
+                   (code-arrow u+-pict cb-find '|Untyped-S| cb-find (* 1/2 turn) (* 1/4 turn) 0 0 'solid))
+                 #:arrow-size large-arrow-size))))
+    pp))
+
 
 (define the-title-str "Deep and Shallow Types for Gradual Languages")
 
@@ -2760,10 +2816,21 @@
     (perf-what-to-do 4)
   )
   (pslide
-    @bodyrm{DSU interactions}
+    #:go heading-coord-m
+    @headrm{before}
+    #:go center-coord
+    #:alt ( (tu-interaction 0) )
+    (tu-interaction 1)
   )
   (pslide
-    @bodyrm{perf tables andor picts}
+    #:go heading-coord-m
+    @headrm{after}
+    #:go center-coord
+    #:alt ( (dsu-interaction 0) )
+    (dsu-interaction 1)
+  )
+  (pslide
+    ;; dsu
   )
   (pslide
     #:go heading-coord-l
@@ -2810,6 +2877,28 @@
         @bodyembf{Guarded} @coderm{Error}
         @bodyembf{Transient} @coderm{OK}))
   )
+
+  (pslide
+    ;; recruiting
+    #:go center-coord
+    (add-rounded-border
+      (scale-to-fit (bitmap "img/flux-bg.jpeg") (* 95/100 client-w) (* 98/100 client-h))
+      #:x-margin 1
+      #:y-margin 1
+      #:radius 0.1
+      #:frame-width 1
+      #:frame-color black)
+    #:go center-coord
+    (add-rounded-border
+      (bitmap "img/the-u.png")
+      #:x-margin small-x-sep
+      #:y-margin tiny-y-sep
+      #:radius 0.1
+      #:frame-width 1
+      #:frame-color black)
+  )
+
+
   (void))
 
 (define (sec:intro)
@@ -3566,6 +3655,16 @@
   (ppict-do
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
+
+    #:go heading-coord-m
+    @headrm{after}
+    #:go center-coord
+    #:alt ( (dsu-interaction 0) )
+    (dsu-interaction 1)
+
+
+
+
 
 ;    #:go heading-coord-m
 ;    @headrm{DSU Plan}

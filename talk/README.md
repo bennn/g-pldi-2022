@@ -49,6 +49,7 @@ June 26 or so
 - performance
 
 - expressiveness ... remarkable ... incidental?
+  - getting rid of wrapper layer is very significant! from practical standpoint
   occurrence typing hey its research ... sidestepping research questions
 
 - in conclusion
@@ -56,5 +57,9 @@ June 26 or so
   first mix, quite promising with perf + expr and more to come (better perf)
    reminder: orthogonal
   other mixes well worth exploring, whole new regime
+
+- future ...
+  - shallow wrappers for better interaction
+  - 
 
 
