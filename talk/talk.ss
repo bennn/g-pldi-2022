@@ -2782,7 +2782,24 @@
   )
   (void))
 
-(define (sec:unsorted)
+(define (sec:intro)
+  (pslide
+    #:go heading-coord-m
+    @headrm{Context = Gradual Typing}
+    #:go slide-text-coord-m
+    (tag-pict (word-append
+      @bodyrmhi{High-level goal}
+      @bodyrmlo{: mix typed and untyped code}) 'top-text)
+    #:next
+    #:go hi-text-coord-m
+    (yblank med-y-sep)
+    (basic-example 'T 'U)
+    #:next
+    (yblank med-y-sep)
+    (word-append
+      @bodyrmhi{Central question}
+      @bodyrmlo{: what should types mean at run-time?})
+  )
   (pslide
     #:go heading-coord-m
     @headrm{Gradual Landscape}
@@ -2808,115 +2825,6 @@
     @bodyrmlo{good clean-slate approaches ... if you can do that}
   )
   (pslide
-    #:go (coord slide-text-left slide-text-top 'lt)
-    (the-perf-problem)
-    #:go (coord 1/2 slide-text-top 'ct)
-    (bghost (the-perf-problem))
-    (yblank small-y-sep)
-    #:alt ( (perf-what-to-do 0) )
-    #:alt ( (perf-what-to-do 1) )
-    #:alt ( (perf-what-to-do 2) )
-    #:alt ( (perf-what-to-do 3) )
-    (perf-what-to-do 4)
-  )
-  (pslide
-    ;; ground rules
-    ;; - 
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{before}
-    #:go center-coord
-    #:alt ( (tu-interaction 0) )
-    (tu-interaction 1)
-  )
-  (pslide
-    #:go center-coord
-    @headrm{explain optional}
-  )
-  (pslide
-    #:go center-coord
-    @headrm{explain deep}
-  )
-  (pslide
-    #:go center-coord
-    @headrm{explain transient}
-  )
-  (pslide
-    #:go center-coord
-    @headrm{motivate both}
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{after}
-    #:go center-coord
-    #:alt ( (dsu-interaction 0) )
-    (dsu-interaction 1)
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{... Mixed Best}
-    #:next
-    #:go (coord 1/2 slide-text-top 'ct)
-    (mixed-best-table 2)
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Worst Case Overhead vs. Untyped}
-    #:next
-    #:go (coord 1/2 slide-text-top 'ct)
-    ;; #:alt ( (overhead-table 0) )
-    ;; #:alt ( (overhead-table 1) )
-    (overhead-table 2)
-  )
-  ;; sec
-  (pslide
-    @bodyrm{conclusions}
-  )
-
-
-  (pslide
-    ;; recruiting
-    #:go center-coord
-    (add-rounded-border
-      (scale-to-fit (bitmap "img/flux-bg.jpeg") (* 95/100 client-w) (* 98/100 client-h))
-      #:x-margin 1
-      #:y-margin 1
-      #:radius 0.1
-      #:frame-width 1
-      #:frame-color black)
-    #:go center-coord
-    (add-rounded-border
-      (bitmap "img/the-u.png")
-      #:x-margin small-x-sep
-      #:y-margin tiny-y-sep
-      #:radius 0.1
-      #:frame-width 1
-      #:frame-color black)
-  )
-
-
-  (void))
-
-(define (sec:intro)
-  (pslide
-    #:go heading-coord-m
-    @headrm{Context = Gradual Typing}
-    #:go slide-text-coord-m
-    (tag-pict (word-append
-      @bodyrmhi{High-level goal}
-      @bodyrmlo{: mix typed and untyped code}) 'top-text)
-    #:next
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    (basic-example 'T 'U)
-    #:next
-    (yblank med-y-sep)
-    (word-append
-      @bodyrmhi{Central question}
-      @bodyrmlo{: what should types mean at run-time?})
-  )
-  (pslide
     #:go heading-coord-l
     @headrm{What Should Types Mean?}
     #:go hi-text-coord-m
@@ -2924,46 +2832,6 @@
     #:next
     (yblank med-y-sep)
     (three-alt-pict 0)
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Example}
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    #:alt ( (basic-example 'T 'U))
-    (basic-example 'T 'U #:lbl? 'gte)
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Example 2}
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    #:alt ( (bad-array-example) )
-    (bad-array-example #:lbl? 'gte)
-    #:go slide-text-coord-m
-    (word-append
-      (bodyembf natural-str)
-      @bodyrmlo{ and }
-      (bodyembf transient-str)
-      @bodyrmlo{ agree, but for different reasons ...})
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Example 2+}
-    #:go slide-text-coord-m
-    (word-append
-      (bodyembf natural-str)
-      @bodyrmlo{ and }
-      (bodyembf transient-str)
-      @bodyrmlo{ agree, but for different reasons ...})
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmlo{ ... and they disagree for an untyped client})
-    #:next
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    #:alt ( (bad-array-example2) )
-    (bad-array-example2 #:lbl? 'gte)
   )
   (pslide
     #:go hi-text-coord-m
@@ -3015,7 +2883,71 @@
     (yblank small-y-sep)
     (perf-what-to-do 5 #:only 3)
   )
+  (pslide
+    ;; TODO ground rules
+    ;; - 
+  )
+  (pslide
+    #:go center-coord
+    @bodyrmlo{Q. can gt strategies interoperate without losing formal guarantees?}
+  )
 
+  (void))
+
+(define (sec:2way)
+  (pslide
+    #:go heading-coord-m
+    @headrm{before}
+    #:go center-coord
+    #:alt ( (tu-interaction 0) )
+    (tu-interaction 1)
+  )
+  (pslide
+    #:go center-coord
+    @headrm{explain optional}
+  )
+  (pslide
+    #:go center-coord
+    @bodyrm{explain deep}
+  )
+  (pslide
+    #:go center-coord
+    @bodyrm{explain transient / shallow}
+    @bodyrm{thank you mike v}
+  )
+  (void))
+
+(define (sec:3way)
+  (pslide
+    #:go center-coord
+    @headrm{motivate both}
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{after}
+    #:go center-coord
+    #:alt ( (dsu-interaction 0) )
+    (dsu-interaction 1)
+  )
+  (void))
+
+(define (sec:perf)
+  (pslide
+    #:go heading-coord-l
+    @headrm{... Mixed Best}
+    #:next
+    #:go (coord 1/2 slide-text-top 'ct)
+    (mixed-best-table 2)
+  )
+  (pslide
+    #:go heading-coord-l
+    @headrm{Worst Case Overhead vs. Untyped}
+    #:next
+    #:go (coord 1/2 slide-text-top 'ct)
+    ;; #:alt ( (overhead-table 0) )
+    ;; #:alt ( (overhead-table 1) )
+    (overhead-table 2)
+  )
   (void))
 
 (define (sec:rp)
@@ -3393,30 +3325,54 @@
 
 (define (sec:end)
   (pslide
-    #:go heading-coord-l
-    @headrm{In Conclusion}
-    #:go hi-text-coord-m
-    #:alt ( (transient-works 0) )
-    #:alt ( (transient-works 1) )
-    (transient-works 2)
+    #:go heading-coord-m
+    @headrm{Conclusion}
     (yblank med-y-sep)
-    (perf-bottom-line)
+    @bodyrmlo{Q. can gt strategies interoperate without losing formal guarantees?}
+    (ht-append med-x-sep
+               @bodyrmlo{Yes!}
+               (scale-to-fit (dsu-interaction 1) 400 400))
+    @bodyrmlo{+ performance}
+    @bodyrmlo{+ expressiveness (on-ramp for TR)}
+    @bodyrmlo{coming soon: racket 8.6 (we're happy with mix)}
   )
   (pslide
+    ;; much more research to do!
+    ;; title deliberate play on sfp 06 (who cares?! no good quotes for this)
+    ;; ... home base for explorations?
     #:go center-coord
-    (transient-gateway 0)
+    @bodyrmlo{much more to explore (flag, horizon?)}
+    @bodyrmlo{generalize ((DS) U) picture to static-slider dyn}
+    #:go (coord slide-right 2/10 'rt)
+    (let* ((thumb (scale-to-fit (dsu-interaction 1) 400 400))
+           (txt (add-rounded-border @bodyrmlo{alt}))
+           (pp (cc-superimpose thumb txt)))
+      (vc-append med-y-sep pp pp))
   )
   (pslide
+    ;; recruiting
     #:go center-coord
-    @headrm{The End}
+    (add-rounded-border
+      (scale-to-fit (bitmap "img/flux-bg.jpeg") (* 95/100 client-w) (* 98/100 client-h))
+      #:x-margin 1
+      #:y-margin 1
+      #:radius 0.1
+      #:frame-width 1
+      #:frame-color black)
+    #:go center-coord
+    (add-rounded-border
+      (bitmap "img/the-u.png")
+      #:x-margin small-x-sep
+      #:y-margin tiny-y-sep
+      #:radius 0.1
+      #:frame-width 1
+      #:frame-color black)
   )
-  #;(pslide
-    #:go heading-coord-l
-    @headrm{In Conclusion}
+  (pslide
+  )
+  (pslide
     #:go hi-text-coord-m
-    (transient-works 2)
-    (yblank med-y-sep)
-    (perf-bottom-line)
+    @bodyrmlo{repeat 1st in section}
   )
 
   (void))
@@ -3520,59 +3476,44 @@
 
 (define (sec:unused)
   (pslide
-    #:go heading-coord-m
-    @headrm{Research Goal  =  Sound Gradual Typing}
-    #:next
-    #:alt (
-      #:go (coord head-left slide-text-top 'lt)
-      (word-append
-        @bodyrmhi{Vision}
-        @bodyrmlo{: in any codebase ....})
-      #:go hi-text-coord-mid
-      (yblank small-y-sep)
-      (huge-program-example 0)
-    )
-    #:go (coord head-left slide-text-top 'lt)
-    (word-append
-      @bodyrmhi{Vision}
-      @bodyrmlo{: in any codebase .... }
-      @bodyrmhi{any components}
-      @bodyrmlo{ can have }
-      @bodyrmhi{reliable types})
-    #:go hi-text-coord-mid
-    (yblank small-y-sep)
-    (huge-program-example 1)
-  )
-  (pslide
     #:go heading-coord-l
-    @headrm{Example 1: Sound Types}
+    @headrm{Example}
     #:go hi-text-coord-m
-    #:alt ( (basic-example 'T #f))
+    (yblank med-y-sep)
     #:alt ( (basic-example 'T 'U))
-    (basic-example 'T 'U #:lbl? #t)
+    (basic-example 'T 'U #:lbl? 'gte)
   )
   (pslide
     #:go heading-coord-r
-    @headrm{Example 2: Sound Types}
+    @headrm{Example 2}
+    #:go hi-text-coord-m
+    (yblank med-y-sep)
+    #:alt ( (bad-array-example) )
+    (bad-array-example #:lbl? 'gte)
+    #:go slide-text-coord-m
+    (word-append
+      (bodyembf natural-str)
+      @bodyrmlo{ and }
+      (bodyembf transient-str)
+      @bodyrmlo{ agree, but for different reasons ...})
+  )
+  (pslide
+    #:go heading-coord-r
+    @headrm{Example 2+}
+    #:go slide-text-coord-m
+    (word-append
+      (bodyembf natural-str)
+      @bodyrmlo{ and }
+      (bodyembf transient-str)
+      @bodyrmlo{ agree, but for different reasons ...})
+    (yblank tiny-y-sep)
+    (word-append
+      @bodyrmlo{ ... and they disagree for an untyped client})
     #:next
     #:go hi-text-coord-m
-    #:alt ( (bad-array-example) )
-    (bad-array-example #:lbl? #t)
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{Types for Debugging}
-    #:next
-    #:go hi-text-coord-mid
-    (yblank small-y-sep)
-    #:alt ( (huge-program-example 0) )
-    #:alt ( (huge-program-example 2) )
-    (huge-program-example 3)
-  )
-  (pslide
-    #:go center-coord
-    #:alt ( (the-problem 0) )
-    (the-problem 1)
+    (yblank med-y-sep)
+    #:alt ( (bad-array-example2) )
+    (bad-array-example2 #:lbl? 'gte)
   )
   (pslide
     #:go heading-coord-l
@@ -3591,65 +3532,6 @@
     (bad-news @headrm{Q.   Is Sound Gradual Typing Dead?})
   )
   (pslide
-    #:go (coord slide-text-left slide-text-top 'lt)
-    (the-perf-problem)
-    #:go (coord 1/2 slide-text-top 'ct)
-    (bghost (the-perf-problem))
-    (yblank small-y-sep)
-    #:alt ( (perf-what-to-do 0) )
-    #:alt ( (perf-what-to-do 1) )
-    #:alt ( (perf-what-to-do 2) )
-    #:alt ( (perf-what-to-do 3) )
-    (perf-what-to-do 4)
-  )
-  (pslide
-    #:go (coord 1/2 30/100 'ct)
-    ;; TODO needs more color
-    (scale
-      (lc-append
-        (word-append
-          @bodyrmlo{"A way to } @bodyrmhi{reduce costs across the board})
-        (word-append
-          @bodyrmlo{without changing the surface language"}))
-      12/10)
-    (yblank tiny-y-sep)
-    (arrow-bullet*
-      @bodyrmlo{Same code, types, and type checker}
-      (word-append
-        @bodyrmlo{Different } @bodyrmhi{typed-untyped interactions}))
-    #:go (coord 1/2 slide-text-top 'ct)
-    (bghost (the-perf-problem))
-    (yblank small-y-sep)
-    (perf-what-to-do 5 #:only 3)
-  )
-  (pslide
-    ;; TODO fix the little shuffle "How to Detect"
-    ;; TODO time permitting, show the other program U-T-U to explain "weak"
-    #:go center-coord
-    ;; img/horizon
-    #:go heading-coord-m
-    (retic-head)
-    (yblank pico-y-sep)
-    (lc-append
-      (word-append
-        @bodyembf{Transient}
-        @bodyrmlo{ = weakly-sound gradual types with } @bodyrmhi{no wrappers} @bodyrmlo{ and }
-        @bodyrmhi{no traversals})
-      (word-append
-        @bodyemrm{Types enforce only top-level properties}))
-    (yblank med-y-sep)
-    #:alt ( (bad-array-example #:cost? 'ghost) )
-    #:alt ( (bad-array-example #:retic? #t #:cost? #t) )
-    #:next
-    (ppict-do
-      (retic-perf 1)
-      #:go (coord 1/2 0 #:abs-y (- (* 1.6 tiny-y-sep)))
-      (ppict-do
-        @bodyrmlo{Performance is not bad!}
-        #:go (coord 1 1/2 'lc #:abs-x tiny-x-sep)
-        @coderm{[POPL'17]}))
-  )
-  (pslide
     #:go heading-coord-m
     (ppict-do
       @headrm{Challenges}
@@ -3660,28 +3542,6 @@
     (roadblock-pict
       (word-append
         @bodyrmhi{Transient blame is } @bodyrmhi{very expensive}))
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Blame: The Idea}
-    #:go heading-coord-m
-    (bghost @headrm{B})
-    (yblank small-y-sep)
-    #:alt ( (blame-illustration 0) )
-    #:alt ( (blame-illustration 2) )
-    (blame-illustration 3)
-    (yblank small-y-sep)
-    (lc-append
-      (word-append
-        @bodyrmlo{When a } @bodyemty{typed} @bodyrmlo{/}
-        @bodyemun{untyped} @bodyrmlo{ interaction goes wrong,})
-      (word-append
-        @bodyembl{blame} @bodyrmlo{ shows where to begin debugging}))
-    #:next
-    (yblank small-y-sep)
-    #:alt ( (blame-how 0) )
-    #:alt ( (blame-how 1) )
-    (blame-how 2)
   )
 
   (void))
@@ -3703,11 +3563,10 @@
     (void))
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
-    (sec:unsorted)
-
     (sec:intro)
-    (sec:rp)
-    (sec:noblame-perf)
+    (sec:2way)
+    (sec:3way)
+    (sec:perf)
     (sec:expr)
     (sec:end)
 
@@ -3732,6 +3591,19 @@
   (ppict-do
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
+
+    #:go heading-coord-m
+    @headrm{Conclusion}
+    (yblank med-y-sep)
+    @bodyrmlo{Q. can gt strategies interoperate without losing formal guarantees?}
+    (ht-append med-x-sep
+               @bodyrmlo{Yes!}
+               (scale-to-fit (dsu-interaction 1) 400 400))
+    @bodyrmlo{+ performance}
+    @bodyrmlo{+ expressiveness (on-ramp for TR)}
+    @bodyrmlo{coming soon: racket 8.6}
+
+
 
 
 

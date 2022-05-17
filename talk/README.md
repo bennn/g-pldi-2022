@@ -41,7 +41,7 @@ June 26 or so
   basic idea for proof technique, well-label judgment
 
 - implemented for TR
-  [[ release info??? ]]
+   release in 8.5
   now programming in another world
 
 - guarantees ... obvious ... this is part of the new world, premise
