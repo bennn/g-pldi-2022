@@ -2804,6 +2804,10 @@
       pp)
   )
   (pslide
+    @bodyrmlo{bottom line, no clear winners}
+    @bodyrmlo{good clean-slate approaches ... if you can do that}
+  )
+  (pslide
     #:go (coord slide-text-left slide-text-top 'lt)
     (the-perf-problem)
     #:go (coord 1/2 slide-text-top 'ct)
@@ -2816,6 +2820,10 @@
     (perf-what-to-do 4)
   )
   (pslide
+    ;; ground rules
+    ;; - 
+  )
+  (pslide
     #:go heading-coord-m
     @headrm{before}
     #:go center-coord
@@ -2823,14 +2831,27 @@
     (tu-interaction 1)
   )
   (pslide
+    #:go center-coord
+    @headrm{explain optional}
+  )
+  (pslide
+    #:go center-coord
+    @headrm{explain deep}
+  )
+  (pslide
+    #:go center-coord
+    @headrm{explain transient}
+  )
+  (pslide
+    #:go center-coord
+    @headrm{motivate both}
+  )
+  (pslide
     #:go heading-coord-m
     @headrm{after}
     #:go center-coord
     #:alt ( (dsu-interaction 0) )
     (dsu-interaction 1)
-  )
-  (pslide
-    ;; dsu
   )
   (pslide
     #:go heading-coord-l
@@ -2848,35 +2869,11 @@
     ;; #:alt ( (overhead-table 1) )
     (overhead-table 2)
   )
-  (pslide
-    @bodyrm{expressiveness}
-  )
+  ;; sec
   (pslide
     @bodyrm{conclusions}
   )
 
-  (pslide
-    #:go heading-coord-m
-    @headrm{No Wrappers = Simpler}
-    #:go hi-text-coord-m
-    (ht-append
-      med-x-sep
-      (typed-codeblock* (list
-@tcoderm{(define b : (Boxof Char)}
-@tcoderm{  (box #\X))}
-@tcoderm{}
-@tcoderm{(define any : Any b)}))
-      (untyped-codeblock* (list
-@tcoderm{(set-box! any #\Y)}
-)))
-    (yblank small-y-sep)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep tiny-y-sep
-      (list
-        @bodyembf{Guarded} @coderm{Error}
-        @bodyembf{Transient} @coderm{OK}))
-  )
 
   (pslide
     ;; recruiting
@@ -3315,6 +3312,85 @@
 
   (void))
 
+(define (sec:expr)
+  (pslide
+    #:go center-coord
+    @bodyrmlo{expressiveness, what why}
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{No Wrappers = Simpler}
+    @bodyrmlo{any wrapper is do-nothing rather than allow-nothing}
+    #:go hi-text-coord-m
+    (ht-append
+      med-x-sep
+      (typed-codeblock* (list
+@tcoderm{(define b : (Boxof Integer)}
+@tcoderm{  (box 0))}
+@tcoderm{}
+@tcoderm{(define any : Any b)}))
+      (untyped-codeblock* (list
+@tcoderm{(set-box! any 1)}
+)))
+    (yblank small-y-sep)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep tiny-y-sep
+      (list
+        @bodyembf{Guarded} @coderm{Error: cannot mutate an Any-wrapped value}
+        @bodyembf{Transient} @coderm{OK}))
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{No Missing Wrappers}
+    @bodyrmlo{deep, at the moment, does not have wrappers for mutable pairs}
+    #:go hi-text-coord-m
+    (vc-append
+      small-y-sep
+      (typed-codeblock* (list
+@tcoderm{(: add-mpair (-> (MPairof Integer Integer) Integer))}
+@tcoderm{(define (add-mpair mp)}
+@tcoderm{  (+ (mcar mp) (mcdr mp)))}
+))
+      (untyped-codeblock* (list
+@tcoderm{(add-mpair (mcons 2 4))}
+)))
+    (yblank small-y-sep)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep tiny-y-sep
+      (list
+        @bodyembf{Deep} @coderm{Error: no contract for type}
+        @bodyembf{Shallow} @coderm{OK}))
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{uniform behavior}
+    @bodyrmlo{contract wrappers from deep types can change behavior, no wrap = no change}
+    #:go hi-text-coord-m
+    (vc-append
+      small-y-sep
+      (typed-codeblock* (list
+@tcoderm{(require/typed racket/list}
+@tcoderm{  [index-of}
+@tcoderm{    (All (T)}
+@tcoderm{      (-> (Listof T) T}
+@tcoderm{          (U #false Natural)))])}
+@tcoderm{(index-of '(a b) 'a)}
+))
+      (untyped-codeblock* (list
+@tcoderm{(index-of '(a b) 'a)}
+)))
+    (yblank small-y-sep)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep tiny-y-sep
+      (list
+        @bodyembf{Deep} @coderm{#false (not found)}
+        @bodyembf{Shallow} @coderm{0 (found at position 0)}))
+  )
+  (void))
+
 (define (sec:end)
   (pslide
     #:go heading-coord-l
@@ -3629,10 +3705,11 @@
                  (pplay-steps 7))
     (sec:unsorted)
 
-    #;(sec:intro)
-    #;(sec:rp)
-    #;(sec:noblame-perf)
-    #;(sec:end)
+    (sec:intro)
+    (sec:rp)
+    (sec:noblame-perf)
+    (sec:expr)
+    (sec:end)
 
     (pslide)
     (sec:qa)
@@ -3656,21 +3733,6 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-    #:go heading-coord-m
-    @headrm{after}
-    #:go center-coord
-    #:alt ( (dsu-interaction 0) )
-    (dsu-interaction 1)
-
-
-
-
-
-;    #:go heading-coord-m
-;    @headrm{DSU Plan}
-;    #:go center-coord
-;    (blank)
-;    #;(dsu-pict 'TODO)
 
 
   )))
