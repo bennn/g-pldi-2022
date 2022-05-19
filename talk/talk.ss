@@ -1,5 +1,7 @@
 #lang at-exp slideshow
 
+;; 15 min talk, 5min qa
+
 ;; outline 2022-04-27
 ;; - ben postdoc at brown
 ;;
@@ -7,12 +9,14 @@
 ;; - [ ] all languages ... rough landscape
 ;;   - [X] do the typing labor
 ;; - [X] 4 directions, prior work
-;; - [ ] interactions roadmap: W S N
+;; - [X] interactions roadmap: W S N
 ;; - [X] performance ... tables and/or plots
-;; - [ ] expressiveness slides
-;; - [ ] conclusion ... should be easy no? from job slides
+;; - [X] expressiveness slides
+;; - [X] conclusion ... should be easy no? from job slides
 ;; - [X] no wrappers = simpler top type
-;; - [ ] uu recruiting slide
+;; - [X] uu recruiting slide
+
+;; - [ ] firm slide outline (@ ground rules)
 
 ;; LATER
 ;; - [ ] utah fonts
@@ -2784,25 +2788,15 @@
 
 (define (sec:intro)
   (pslide
-    #:go heading-coord-m
-    @headrm{Context = Gradual Typing}
-    #:go slide-text-coord-m
-    (tag-pict (word-append
-      @bodyrmhi{High-level goal}
-      @bodyrmlo{: mix typed and untyped code}) 'top-text)
-    #:next
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    (basic-example 'T 'U)
-    #:next
-    (yblank med-y-sep)
-    (word-append
-      @bodyrmhi{Central question}
-      @bodyrmlo{: what should types mean at run-time?})
+    ;; old q in PL ... source of debate and holy war
+    ;; [[ past 15 years tremendous progress ]]
+    #:go center-coord
+    @bodyrmlo{old dilemma: typed or untyped?}
+    @bodyrmlo{resolution: gradual typing}
+    @bodyrmlo{best of both}
   )
   (pslide
-    #:go heading-coord-m
-    @headrm{Gradual Landscape}
+    ;; idea really took off, past 15 years
     #:go center-coord
     (let* ((lang*
              (list (actionscript-pict) (cl-pict) (mypy-pict)
@@ -2816,43 +2810,21 @@
                    (sorbet-pict) (strongscript-pict) (thorn-pict)))
            (lang**
              (split/n lang* 5))
-           (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*))))
+           (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*)) lang**))
            (pp (apply vc-append small-y-sep pp*)))
       pp)
+    #:go center-coord
+    (browncs-box
+      @bodyrmlo{Tons of languages, all gradual})
+    (browncs-box
+      @bodyrmlo{firmly different, divided in camps})
+    (browncs-box
+      @bodyrmlo{4 groups: N T E "clean slate"})
   )
   (pslide
-    @bodyrmlo{bottom line, no clear winners}
-    @bodyrmlo{good clean-slate approaches ... if you can do that}
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{What Should Types Mean?}
-    #:go hi-text-coord-m
-    @bodyrmlo{Three leading strategies:}
-    #:next
-    (yblank med-y-sep)
-    (three-alt-pict 0)
-  )
-  (pslide
-    #:go hi-text-coord-m
-    (bghost @bodyrmlo{Three leading strategies:})
-    (yblank med-y-sep)
-    #:alt ( (three-alt-pict 0) )
-    (three-alt-pict 1)
-    #:go slide-text-coord-m
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmlo{Typed Racket has } @bodyembf{Guarded} @bodyrmlo{ types ... and a big problem})
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Guarded Types are Expensive!}
-    #:next
-    #:go hi-text-coord-l
-    (memory-bg (vl-append tiny-y-sep (tr-app-head) (tr-app-body)))
-    #:next
-    #:go (coord 42/100 36/100 'lt)
-    (bad-news @headrm{Q.   Is Sound Gradual Typing Dead?})
+    ;; TODO
+    ;; ground rules
+
   )
   (pslide
     #:go (coord slide-text-left slide-text-top 'lt)
@@ -2882,10 +2854,6 @@
     (bghost (the-perf-problem))
     (yblank small-y-sep)
     (perf-what-to-do 5 #:only 3)
-  )
-  (pslide
-    ;; TODO ground rules
-    ;; - 
   )
   (pslide
     #:go center-coord
@@ -3558,11 +3526,12 @@
   [current-page-number-font page-font]
   [current-page-number-color white]
   ;; --
-  (parameterize ((current-slide-assembler title-cs.brown.edu))
+  #;(parameterize ((current-slide-assembler title-cs.brown.edu))
     (sec:title)
     (void))
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
+    (sec:title)
     (sec:intro)
     (sec:2way)
     (sec:3way)
@@ -3592,19 +3561,43 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-    #:go heading-coord-m
-    @headrm{Conclusion}
-    (yblank med-y-sep)
-    @bodyrmlo{Q. can gt strategies interoperate without losing formal guarantees?}
-    (ht-append med-x-sep
-               @bodyrmlo{Yes!}
-               (scale-to-fit (dsu-interaction 1) 400 400))
-    @bodyrmlo{+ performance}
-    @bodyrmlo{+ expressiveness (on-ramp for TR)}
-    @bodyrmlo{coming soon: racket 8.6}
+;    #:go heading-coord-m
+;    @headrm{Context = Gradual Typing}
+;    #:go slide-text-coord-m
+;    (tag-pict (word-append
+;      @bodyrmhi{High-level goal}
+;      @bodyrmlo{: mix typed and untyped code}) 'top-text)
+;    #:next
+;    #:go hi-text-coord-m
+;    (yblank med-y-sep)
+;    (basic-example 'T 'U)
+;    #:next
+;    (yblank med-y-sep)
+;    (word-append
+;      @bodyrmhi{Central question}
+;      @bodyrmlo{: what should types mean at run-time?})
 
-
-
-
+    ;; idea really took off, past 15 years
+    #:go center-coord
+    (let* ((lang*
+             (list (actionscript-pict) (cl-pict) (mypy-pict)
+                   (flow-pict) (hack-pict) (pyre-pict)
+                   (pytype-pict) (pyright-pict) (rdl-pict)
+                   (strongtalk-pict) (typescript-pict) (typed-clojure-pict)
+                   (typed-lua-pict) (gradualtalk-pict) (grift-pict)
+                   (tpd-pict) (tr-pict) (pyret-pict) (grace-pict)
+                   (pallene-pict) (retic-pict) (sp-pict) (csharp-pict)
+                   (dart2-pict) (nom-pict) (safets-pict) (tsstar-pict)
+                   (sorbet-pict) (strongscript-pict) (thorn-pict)))
+           (lang**
+             (split/n lang* 5))
+           (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*)) lang**))
+           (pp (apply vc-append small-y-sep pp*)))
+      pp)
+    #:go center-coord
+    (browncs-box
+      @bodyrmlo{Tons of languages, all gradual})
+    (browncs-box
+      @bodyrmlo{firmly different, divided in camps})
 
   )))

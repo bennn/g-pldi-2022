@@ -1,7 +1,7 @@
 PLDI 2022 talk
 ===
 
-20 minute?
+20 minutes total
 
 June 26 or so
 
