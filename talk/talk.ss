@@ -2819,14 +2819,21 @@
     (browncs-box
       @bodyrmlo{firmly different, divided in camps})
     (browncs-box
-      @bodyrmlo{4 groups: N T E "clean slate"})
+      @bodyrmlo{4 groups: N T E C})
+    (browncs-box
+      ;; ground rules
+      (lc-append
+        @bodyrmlo{C = clean slate, restrict untyped code ... promising if viable}
+        @bodyrmlo{E = unsound}
+        @bodyrmlo{focus here = all the rest ~ sound, unrestricted u, aot compiler, ...}))
   )
   (pslide
-    ;; TODO
-    ;; ground rules
-
+    ;; 2 strategies, complementary
+    ;; what do / guarantee high level
+    ;; goal of paper = interop
   )
   (pslide
+    ;; ack: several OTHER ways to improve (gotta redraw)
     #:go (coord slide-text-left slide-text-top 'lt)
     (the-perf-problem)
     #:go (coord 1/2 slide-text-top 'ct)
@@ -2839,6 +2846,9 @@
     (perf-what-to-do 4)
   )
   (pslide
+    ;; great news about interop:
+    ;; 1. reduce costs across the board without changing language
+    ;; 2. orthogonal to other approaches, all the research can come to bear
     #:go (coord 1/2 30/100 'ct)
     (lc-append
       (word-append
@@ -2856,6 +2866,11 @@
     (perf-what-to-do 5 #:only 3)
   )
   (pslide
+    ;; now come to the central question
+    ;; have 2 strategies
+    ;; can they interop?!
+    ;; - shallow prop = TS (spell it out, no surprises in theorem though it is weak)
+    ;; - deep prop = TS + CM
     #:go center-coord
     @bodyrmlo{Q. can gt strategies interoperate without losing formal guarantees?}
   )
@@ -2863,6 +2878,7 @@
   (void))
 
 (define (sec:2way)
+  ;; to study 2way gotta understand the 2way
   (pslide
     #:go heading-coord-m
     @headrm{before}
@@ -2872,31 +2888,40 @@
   )
   (pslide
     #:go center-coord
-    @headrm{explain optional}
-  )
-  (pslide
-    #:go center-coord
     @bodyrm{explain deep}
+    ;; deep = guarded
+    ;; strict barrier between two worlds
+    ;; - 1st order = fully checked
+    ;; - higher order (\x e) = wrap ... if called, process happens again
+    ;; thats all for deep. note that wrappers are expensive, that motivates our shallow
   )
   (pslide
     #:go center-coord
     @bodyrm{explain transient / shallow}
     @bodyrm{thank you mike v}
+    ;; shallow = transient
+    ;; forget about barrier, too costly: allocation indirection checking
+    ;; - check the shape = border when a value reaches
+    ;;   instead of wrappers, checking the border only (value kinda looks like wrapper)
+    ;; - plus pre-emptive checks in typed code
+    ;; - #checks way up, but cost of each one is way lower
+    ;; great tradeoff when T U mixed, not great when T dominates
   )
   (void))
 
 (define (sec:3way)
-  (pslide
-    #:go center-coord
-    @headrm{motivate both}
-  )
   (pslide
     #:go heading-coord-m
     @headrm{after}
     #:go center-coord
     #:alt ( (dsu-interaction 0) )
     (dsu-interaction 1)
+    ;; how to combine?
+    ;; - D U gotta guard
+    ;; - S U natural thing is scan/noop
+    ;; - but then ... gotta wrap
   )
+  ;; and that's all? have a plan, paper confirms that it works out
   (void))
 
 (define (sec:perf)
@@ -3346,6 +3371,21 @@
   (void))
 
 (define (sec:qa)
+  (pslide
+    #:go center-coord
+    @bodyrmlo{DSU alt 1}
+    ;; escape analysis (tough!)
+    ;; DS free to share unless value escapes or originally from untyped
+    ;; D can make all the wrappers
+  )
+  (pslide
+    #:go center-coord
+    @bodyrmlo{DSU alt 2}
+    ;; escape analysis again
+    ;; DS noop
+    ;; S conditionally wraps
+  )
+  ;; ---
   (pslide
     #:go heading-coord-m
     @headrm{Optimizations}
