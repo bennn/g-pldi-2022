@@ -71,8 +71,11 @@ are available via Software Heritage@~cite{gpldi2022sh}
 and Zenodo@~cite{gpldi2022z}.
 
 @acks{
-  This work is supported by NSF grant 2030859 to the CRA for the
-  @hyperlink["https://cifellows2020.org"]{CIFellows} project.
+  This work is supported by
+  @hyperlink["https://www.nsf.gov/awardsearch/showAward?AWD_ID=1518844"]{NSF grant 1518844}
+  and
+  @hyperlink["https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030859"]{NSF grant 2030859}
+  to the CRA for the @hyperlink["https://cifellows2020.org"]{CIFellows} project.
   Thanks to Matthias Felleisen for improving drafts of this paper and to
   the rest of my thesis committee for supervising parts of this work:
   Amal Ahmed,
