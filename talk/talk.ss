@@ -2919,19 +2919,45 @@
     ;; how to combine?
     ;; - D U gotta guard
     ;; - S U natural thing is scan/noop
-    ;; - but then ... gotta wrap
+    ;; - but then ... loose SU boundary => wrap SD
+    ;;   example: f:T could've come from untyped code
+    ;;   can't even check for "defn. in S" b/c could've gone SUS
+    ;; - conjecture: to improve, need escape analysis (can say more later)
   )
-  ;; and that's all? have a plan, paper confirms that it works out
+  (pslide
+    #:go heading-coord-m
+    @bodyrm{model?}
+    ;; 3way syntax
+    ;; "mod" to connect
+    ;; state properties
+    ;; details in paper
+  )
+  (pslide
+    ;; substantial benefits over D or S alone
+    ;; - choose guarantees
+    ;; - better perf
+    ;; - allows more T/U combos
+    ;; (consider using prose from paper)
+  )
   (void))
 
 (define (sec:perf)
-  (pslide
-    #:go heading-coord-l
-    @headrm{... Mixed Best}
-    #:next
-    #:go (coord 1/2 slide-text-top 'ct)
-    (mixed-best-table 2)
-  )
+  ;; - context: gtp benchmarks (use logo!)
+  ;; - each program => lattice
+  ;; - general trend: D and S have pitfalls
+  ;;   - D fine untyped, excellent typed, dead in middle
+  ;;   - S gets incrementally worse (not quite dead, but bad)
+  ;; - allowing choice, avoid pitfalls of each,
+  ;;   focus on worst case to see
+  ;; - do avoid pitfalls (lattice D, lattice S => lattice D||S has more green)
+  ;; - on top of that, many points best off with a D+S mix ("do even better" is false)
+  ;;   ran small benchmarks exhaustively, got high %'s of winners
+  ;;   future Q: how to find "best" points? 
+  ;;   general tips:
+  ;;   - D for few/small interactions
+  ;;   - S for "bridge" modules
+  ;;   more room to explore ... and easy to explore b/c one-line switch
+  ;; - (optionally, paths)
   (pslide
     #:go heading-coord-l
     @headrm{Worst Case Overhead vs. Untyped}
@@ -2941,329 +2967,33 @@
     ;; #:alt ( (overhead-table 1) )
     (overhead-table 2)
   )
-  (void))
+  #;(pslide
+    ;; optional: paths
+    ;; - things are so much better that paths work out
+    ;;   ... gotta explain what a path is
+    ;;   ... then again, "gradual conversion" is a good bottom line to emphasize
+  )
 
-(define (sec:rp)
-  (pslide
-    #:go heading-coord-m
-    (retic-head)
-    (yblank pico-y-sep)
-    (lc-append
-      (word-append
-        @bodyembf{Transient}
-        @bodyrmlo{ sematics ~ enforce types with tag checks})
-      (word-append
-        @bodyrmhi{No} @bodyrmlo{ contract wrappers}))
-    (yblank med-y-sep)
-    #:next
-    (ppict-do
-      (retic-perf 1)
-      #:go (coord 2/100 0 'lc #:abs-y (- (* 1.6 tiny-y-sep)))
-      (ppict-do
-        @bodyrmlo{Performance is not bad!}
-        #:go (coord 1 1/2 'lc #:abs-x tiny-x-sep)
-        @coderm{[POPL'17]}))
-  )
-  (pslide
-    #:go hi-text-coord-m
-    @headrm{Research Questions}
-    ;; TODO 2 goals = rich type system and compiler
-    ;;  - can T work for rich
-    ;;  - do so without rewriting compiler
-    (yblank small-y-sep)
-    (tag-pict
-    (word-append
-      @bodyrmhi{RQ0}
-      @bodyrmlo{. How to add } @bodyembf{transient types}
-      @bodyrmlo{ to Typed Racket?}) 'RQ0)
-    (yblank tiny-y-sep)
-    (retic-vs-tr-pict 20/100)
-    #:next
-    (yblank small-y-sep)
-    (ll-append
-      (word-append
-        @bodyrmhi{RQ1}
-        @bodyrmlo{. Can Transient } @bodyrmhi{scale}
-        @bodyrmhi{ to a } @bodyrmhi{rich type system} @bodyrmlo{?})
-      (yblank pico-y-sep)
-      (word-append
-        @bodyrmhi{RQ2}
-        @bodyrmlo{. Can we } @bodyrmhi{adapt an existing complier} @bodyrmlo{ to do so?}))
-    #:next
-    #:go (at-find-pict 'RQ0 ct-find 'ct)
-    (bb-box
-      (vc-append
-        small-y-sep
-        (lc-append
-          @bodyrmlo{Implications for other gradual languages,}
-          (word-append
-            @bodyrmlo{especially } @bodyembf{Optional} @bodyrmlo{ ones that wish to } @bodyrmhi{strengthen} @bodyrmlo{ their types}))
-        (optional-langs-pict)))
-  )
   (pslide
     #:go heading-coord-l
-    @headrm{Two Type Systems}
-    #:alt ( (retic-vs-tr-types -1) )
-    #:alt ( (retic-vs-tr-types 1) )
-    #:alt ( (retic-vs-tr-types 2) )
-    #:alt ( (retic-vs-tr-types 3) )
-    #:alt ( (retic-vs-tr-types 4) )
-    #:alt ( (retic-vs-tr-types 5) )
-    #:alt ( (retic-vs-tr-types 6) )
-    #:alt ( (retic-vs-tr-types 7) )
-    (retic-vs-tr-types 8)
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Two Compilers}
-    #:go slide-text-coord-m
-    #:alt ( (retic-vs-tr-table 0) )
-    #:alt ( (retic-vs-tr-table 1) )
-    #:alt ( (retic-vs-tr-table 2) )
-    (retic-vs-tr-table 3)
-  )
-  (pslide
-    #:go heading-coord-m
-    (ppict-do
-      @headrm{Challenges}
-      #:go (coord 1/2 8/100 'ct)
-      (scale (retic-vs-tr-pict 90/100) 8/10))
-    #:next
-    #:go (coord 24/100 40/100 'cc)
-    #:alt ( (type-challenge-pict 0) )
-    #:alt ( (type-challenge-pict 1) )
-    (type-challenge-pict 2)
-    #:go (coord 33/100 80/100 'cc)
-    #:alt ( (opt-challenge-pict 0) )
-    #:alt ( (opt-challenge-pict 1) )
-    (opt-challenge-pict 2)
-    #:go (coord 74/100 33/100 'cc)
-    #:alt ( (expand-challenge-pict 0) )
-    #:alt ( (expand-challenge-pict 1) )
-    (expand-challenge-pict 2)
-;    #:go (coord 56/100 47/100 'lt)
-;    #:alt ( (cast-challenge-pict 0) )
-;    (cast-challenge-pict 1)
-    #:go (coord 72/100 70/100 'cc)
-    #:alt ( (cost-challenge-pict 0) )
-    #:alt ( (cost-challenge-pict 1) )
-    (cost-challenge-pict 2)
-  )
-  (pslide
-    #:go (coord slide-right slide-heading-top 'rt)
-    (expand-challenge-pict 2)
-    #:next
-    #:go slide-text-coord-l
-    #:alt ( (expand-example 0) )
-    (expand-example 1)
-    #:next
-    #:go center-coord
-    (browncs-box
-      #:x-margin small-x-sep
-      #:y-margin small-y-sep
-      (word-append
-        @bodyrmlo{Don't want to check } @bodyrmhi{every} @bodyrmlo{ function call!}))
-  )
-
-  (void))
-
-(define (sec:noblame-perf)
-  (pslide
-    #:go heading-coord-m
-    (ppict-do
-      (bghost @headrm{Challenges})
-      #:go center-coord y-str
-      #:go (coord 1/2 8/100 'ct)
-      (scale (retic-vs-tr-pict 90/100) 8/10))
-    #:next
-    #:go center-coord
-    @bodyrmlo{How's performance?}
-    (yblank med-y-sep)
-    (ppict-do
-      (retic-perf 1)
-      #:go (coord 1/2 0 'cb #:abs-y (- (* 1.0 tiny-y-sep)))
-      @bodyrmlo{Does it match the worst cases for Reticulated?})
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Worst Case Overhead vs. Untyped}
+    @headrm{... Mixed Best}
     #:next
     #:go (coord 1/2 slide-text-top 'ct)
-    #:alt ( (blame-table 0) )
-    (blame-table 1)
-    #:next
-    #:go center-coord
-    (browncs-box
-      (vc-append
-        small-y-sep
-        (blank)
-        (word-append
-          @bodyembf{Transient} @bodyrmlo{ alone is } @bodyembf2{not so bad})
-        (word-append
-          @bodyembf{T} @bodyrmlo{+Blame gets } @bodyembf3{expensive})
-        (blank)))
+    (mixed-best-table 2)
   )
-  (pslide
-    #:go heading-coord-m
-    @headrm{Blame: The Idea}
-    #:go heading-coord-m
-    (bghost @headrm{B})
-    (yblank small-y-sep)
-    #:alt ( (blame-illustration 0) )
-    #:alt ( (blame-illustration 2) )
-    (blame-illustration 3)
-    (yblank small-y-sep)
-    (lc-append
-      (word-append
-        @bodyrmlo{When a } @bodyemty{typed} @bodyrmlo{/}
-        @bodyemun{untyped} @bodyrmlo{ interaction goes wrong,})
-      (word-append
-        @bodyembl{blame} @bodyrmlo{ shows where to start debugging}))
-    #:next
-    (yblank small-y-sep)
-    #:alt ( (blame-how 0) )
-    #:alt ( (blame-how 1) )
-    (blame-how 2)
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Worst Case Overhead vs. Untyped}
-    #:go (coord 1/2 slide-text-top 'ct)
-    (blame-table 1)
-    #:next
-    #:go center-coord
-    (browncs-box
-      (vc-append
-        small-y-sep
-        (blank)
-        (vc-append
-          tiny-y-sep
-          (word-append
-            @bodyrmlo{Why is } @bodyembf{T} @bodyrmlo{+Blame so much worse than Reticulated?})
-          (ll-append
-            @bodyrmlo{1. Larger, longer-running benchmarks}
-            @bodyrmlo{2. No dynamic type}))
-        (blank)))
-  )
-  (pslide
-    #:go center-coord
-    (roadblock-pict
-      (word-append
-        @bodyembf{T}
-        @bodyrmlo{+Blame is too expensive!}))
-    (yblank tiny-y-sep)
-    @bodyrmlo{Future: can run-time support reduce the cost?}
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Overall Performance}
-    #:next
-    #:go slide-text-coord-m
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmlo{Gradual types should support }
-      @bodyrmhi{all}
-      @bodyrmlo{ mixed-typed configurations})
-    #:go center-coord
-    #:alt ( (explain-oplot 0) )
-    #:alt ( (explain-oplot 1) )
-    (tag-pict (explain-oplot 2) 'plot)
-    #:go (at-find-pict 'plot cb-find 'ct #:abs-y small-y-sep)
-    (lc-append
-      (word-append
-        @bodyrmlo{At } @bodyemrm{x} @bodyrmlo{=10, count the % of configurations})
-      (word-append
-        @bodyrmlo{that run at most 10x slower than untyped}))
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Overall Performance}
-    #:go heading-coord-m
-    (bghost @headrm{Overall Performance})
-    #:next
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmhibb{Guarded} @bodyrmlo{: % of fast-enough points})
-    (yblank small-y-sep)
-    (deep-perf-pict)
-    (yblank small-y-sep)
-    (overhead-legend)
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{Overall Performance}
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmhibb{Guarded} @bodyrmlo{  vs  } @bodyrmhiyy{Transient}
-      @bodyrmlo{: % of fast-enough points})
-    (yblank small-y-sep)
-    (ds-perf-pict)
-    (yblank small-y-sep)
-    (overhead-legend)
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{Overall Performance}
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmhibb{Guarded} @bodyrmlo{  vs  } @bodyrmhiyy{Transient}
-      @bodyrmlo{: % of fast-enough points})
-    (yblank small-y-sep)
-    (let* ((pp (ds-perf-pict))
-           (ww (pict-width pp))
-           (hh (pict-height pp))
-           (mask-color (color%-update-alpha white 0.7))
-           (mask-pict (lambda (w h) (filled-rectangle w h #:color mask-color #:draw-border? #f))))
-      (lc-superimpose
-        (rt-superimpose
-          pp
-          (mask-pict (* 1/2 ww) (* 2/3 hh)))
-        (mask-pict (* 1/2 ww) hh)))
-    (yblank small-y-sep)
-    (overhead-legend)
-    #:next
-    #:go (coord 48/100 32/100 'ct)
-    ;; TODO keep discussion short, consider adding more text to the slide
-    (browncs-box
-      (vc-append
-        tiny-y-sep
-        (word-append
-          @bodyrmhiyy{Transient} @bodyrmlo{ ~ low costs in general})
-        (word-append
-          @bodyrmhibb{Guarded} @bodyrmlo{ ~ high cost, but only for interactions})
-        (blank)
-        @bodyrmlo{Future: systematically explore combinations}))
-  )
-
   (void))
 
 (define (sec:expr)
+  ;; - other big payoff, can express more gradual combinations
+  ;;   because of TRANSIENT (gotta say transient)
+  ;; - unclear from benchmarks, b/c started off with code that works fully typed
+  ;; - but, often get "stuck" in the middle (you know if you've programmed in this world)
+  ;; - example 1:  ... mcar?
+  ;; - example 2: any wrap
+  ;; - example 3: index-of
   (pslide
     #:go center-coord
     @bodyrmlo{expressiveness, what why}
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{No Wrappers = Simpler}
-    @bodyrmlo{any wrapper is do-nothing rather than allow-nothing}
-    #:go hi-text-coord-m
-    (ht-append
-      med-x-sep
-      (typed-codeblock* (list
-@tcoderm{(define b : (Boxof Integer)}
-@tcoderm{  (box 0))}
-@tcoderm{}
-@tcoderm{(define any : Any b)}))
-      (untyped-codeblock* (list
-@tcoderm{(set-box! any 1)}
-)))
-    (yblank small-y-sep)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep tiny-y-sep
-      (list
-        @bodyembf{Guarded} @coderm{Error: cannot mutate an Any-wrapped value}
-        @bodyembf{Transient} @coderm{OK}))
   )
   (pslide
     #:go heading-coord-m
@@ -3287,6 +3017,29 @@
       (list
         @bodyembf{Deep} @coderm{Error: no contract for type}
         @bodyembf{Shallow} @coderm{OK}))
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{No Wrappers = Simpler}
+    @bodyrmlo{any wrapper is do-nothing rather than allow-nothing}
+    #:go hi-text-coord-m
+    (ht-append
+      med-x-sep
+      (typed-codeblock* (list
+@tcoderm{(define b : (Boxof Integer)}
+@tcoderm{  (box 0))}
+@tcoderm{}
+@tcoderm{(define any : Any b)}))
+      (untyped-codeblock* (list
+@tcoderm{(set-box! any 1)}
+)))
+    (yblank small-y-sep)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep tiny-y-sep
+      (list
+        @bodyembf{Guarded} @coderm{Error: cannot mutate an Any-wrapped value}
+        @bodyembf{Transient} @coderm{OK}))
   )
   (pslide
     #:go heading-coord-m
