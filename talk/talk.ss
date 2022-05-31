@@ -334,11 +334,13 @@
 (define down-arrow-pict
   (arrowhead-pict (* 3/4 turn) #:color black))
 
+(define bg-img (rotate (bitmap "img/browncs-lite.jpeg") (* 3/4 turn)))
+
 (define make-bg
   (let ((*cache (box #f)))
     (lambda (w h)
       (or (unbox *cache)
-          (let* ((bg (rotate (bitmap "img/browncs-bg.png") (* 3/4 turn)))
+          (let* ((bg bg-img)
                  (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
                  (fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f))
                  (pp (freeze (cc-superimpose bg fg))))
@@ -346,7 +348,7 @@
             pp)))))
 
 (define (make-titlebg w h)
-  (let* ((bg (rotate (bitmap "img/browncs-bg.png") (* 3/4 turn)))
+  (let* ((bg bg-img)
          (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
          #;(fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f)))
     bg))
@@ -2994,6 +2996,8 @@
   (pslide
     #:go center-coord
     @bodyrmlo{expressiveness, what why}
+    ;; show lots of emails in nice frames, select 1 to zoom in, fade out others
+    ;; 
   )
   (pslide
     #:go heading-coord-m
@@ -3067,6 +3071,11 @@
         @bodyembf{Deep} @coderm{#false (not found)}
         @bodyembf{Shallow} @coderm{0 (found at position 0)}))
   )
+  (pslide
+    ;; fundamental? perhaps not (2 3 probably are), but definitely a practical issue
+    ;;  same practical issue that motivates optional types in the first place
+    ;; ... or, just cut to the chase ... important practical motivation
+  )
   (void))
 
 (define (sec:end)
@@ -3096,6 +3105,15 @@
       (vc-append med-y-sep pp pp))
   )
   (pslide
+    ;; acks
+    ;; neu brown
+    ;; thesis committee
+    ;; shriram
+    ;; nsf cra
+    #:go center-coord
+    @bodyrmlo{NEU Brown NSF CIF}
+  )
+  (pslide
     ;; recruiting
     #:go center-coord
     (add-rounded-border
@@ -3118,7 +3136,7 @@
   )
   (pslide
     #:go hi-text-coord-m
-    @bodyrmlo{repeat 1st in section}
+    @bodyrmlo{repeat 1st slide in section for q/a}
   )
 
   (void))
@@ -3319,10 +3337,10 @@
   [current-page-number-font page-font]
   [current-page-number-color white]
   ;; --
-  #;(parameterize ((current-slide-assembler title-cs.brown.edu))
+  (parameterize ((current-slide-assembler title-cs.brown.edu))
     (sec:title)
     (void))
-  (parameterize ((current-slide-assembler bg-cs.brown.edu)
+  #;(parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
     (sec:title)
     (sec:intro)
