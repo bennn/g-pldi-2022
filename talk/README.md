@@ -3,7 +3,8 @@ PLDI 2022 talk
 
 20 minutes total
 
-June 26 or so
+2022-06-16 15:50
+
 
 
 2022-04-27
@@ -61,5 +62,12 @@ June 26 or so
 - future ...
   - shallow wrappers for better interaction
   - 
+
+
+2022-05-31
+---
+
+focus on getting slide text in shape!!!
+
 
 
