@@ -6,7 +6,7 @@
 ;; - ben postdoc at brown
 ;;
 ;; todo 2022-05-04
-;; - [ ] all languages ... rough landscape
+;; - [X] all languages ... rough landscape
 ;;   - [X] do the typing labor
 ;; - [X] 4 directions, prior work
 ;; - [X] interactions roadmap: W S N
@@ -17,10 +17,13 @@
 ;; - [X] uu recruiting slide
 
 ;; - [ ] firm slide outline (@ ground rules)
+;;   - [ ] firm text
 
-;; LATER
+;; TODO LATER
+;; - [ ] consistent font / style
 ;; - [ ] utah fonts
 ;; - [ ] fix up colors
+;; - [X] bg looks terrible black & white
 ;; - [ ] ....
 
 (require
@@ -101,6 +104,7 @@
 (define lo-text-coord-left (coord slide-text-left lo-text 'lt))
 (define lo-text-coord-mid (coord 1/2 lo-text 'ct))
 (define lo-text-coord-right (coord slide-text-right lo-text 'rt))
+(define title-coord-m (coord 1/2 26/100 'ct))
 (define all-lang-coord (coord 99/100 1/2 'rc))
 
 (define img "img")
@@ -252,6 +256,7 @@
 (define bodybf (make-string->text #:font (bold-style body-font) #:size body-size #:color black))
 (define bodyemit (make-string->text #:font body-font-it #:size body-size #:color dark-orange))
 (define bodyemrm (make-string->text #:font body-font-md #:size body-size #:color dark-orange))
+(define bodyrmem bodyemrm)
 (define bodyembf (make-string->text #:font (bold-style body-font) #:size body-size #:color dark-orange))
 (define bodyemrm2 (make-string->text #:font body-font-md #:size body-size #:color green2-3k1))
 (define bodyembf2 (make-string->text #:font (bold-style body-font-md) #:size body-size #:color green2-3k1))
@@ -331,16 +336,21 @@
 (define right-arrow-pict
   (arrowhead-pict (* 0 turn) #:color black))
 
+(define left-arrow-pict
+  (arrowhead-pict (* 1/2 turn) #:color black))
+
 (define down-arrow-pict
   (arrowhead-pict (* 3/4 turn) #:color black))
 
-(define bg-img (rotate (bitmap "img/browncs-lite.jpeg") (* 3/4 turn)))
+(define (bg-img path)
+  (rotate (bitmap path) (* 3/4 turn)))
 
 (define make-bg
   (let ((*cache (box #f)))
     (lambda (w h)
-      (or (unbox *cache)
-          (let* ((bg bg-img)
+      (filled-rectangle w h #:color white #:draw-border? #f)
+      #;(or (unbox *cache)
+          (let* ((bg (bg-img "img/browncs-lite.jpeg"))
                  (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
                  (fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f))
                  (pp (freeze (cc-superimpose bg fg))))
@@ -348,22 +358,32 @@
             pp)))))
 
 (define (make-titlebg w h)
-  (let* ((bg bg-img)
+  (let* ((bg (bg-img "img/browncs-lite.jpeg"))
          (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
          #;(fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f)))
     bg))
 
-(define browncs-x-margin (make-parameter small-x-sep))
+(define (make-waters w h)
+  (let* ((bg (bitmap "img/waters.jpg"))
+         (bg (clip-to (scale-to-fit bg w (* h 2) #:mode 'preserve) w h))
+         #;(fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f)))
+    bg))
 
-(define (browncs-box pp #:color [color white] #:x-margin [x-margin #f] #:y-margin [y-margin #f] #:frame-color [frame-color #f])
+(define browncs-x-margin (make-parameter small-x-sep))
+(define browncs-y-margin (make-parameter tiny-y-sep))
+
+(define bbox-frame-width 2)
+(define bbox-frame-color browncs-frame-color)
+
+(define (bbox pp #:color [color white] #:x-margin [x-margin #f] #:y-margin [y-margin #f] #:frame-color [frame-color #f])
   (add-rounded-border
     pp
     #:x-margin (or x-margin (browncs-x-margin))
-    #:y-margin (or y-margin tiny-y-sep)
-    #:radius 2
+    #:y-margin (or y-margin (browncs-y-margin))
+    #:radius 1
     #:background-color color
-    #:frame-width 2
-    #:frame-color (or frame-color browncs-frame-color)))
+    #:frame-width bbox-frame-width
+    #:frame-color (or frame-color bbox-frame-color)))
 
 (define (hilite-box pp #:color [color white] #:x-margin [x-margin #f] #:y-margin [y-margin #f] #:frame-color [frame-color #f])
   (add-rounded-border
@@ -376,10 +396,10 @@
     #:frame-color (or frame-color hilite-frame-color)))
 
 (define (browncs-frame pp)
-  (browncs-box pp #:x-margin 0 #:y-margin 0))
+  (bbox pp #:x-margin 0 #:y-margin 0))
 
 (define (cite-box pp)
-  (browncs-box #:color white pp))
+  (bbox #:color white pp))
 
 (struct code-arrow (src-tag src-find tgt-tag tgt-find start-angle end-angle start-pull end-pull style) #:transparent)
 
@@ -688,7 +708,7 @@
   (define radius 1)
   (define fw 5)
   (let* ((block-pict
-           (browncs-box
+           (bbox
              (code-line-append* pp*)
              #:frame-color #f #;(if dark? #f background-color)
              #:color (if dark?
@@ -734,10 +754,10 @@
 (define typed-codeblock* deep-codeblock*)
 
 (define (untyped-box pp)
-  (browncs-box #:x-margin 0 #:y-margin 0 #:color untyped-brush-color pp))
+  (bbox #:x-margin 0 #:y-margin 0 #:color untyped-brush-color pp))
 
 (define (typed-box pp)
-  (browncs-box #:x-margin 0 #:y-margin 0 #:color deep-brush-color pp))
+  (bbox #:x-margin 0 #:y-margin 0 #:color deep-brush-color pp))
 
 (define (typed-codeblock #:dark? [dark? #f] #:title [title #f] #:lang [lang #f #;"#lang typed"] . str*)
   (deep-codeblock* #:dark? dark? #:title title (conslang lang (map tt str*))))
@@ -931,6 +951,16 @@
 (define (typed-icon #:lbl [lbl "T"])
   (center-label
     (deep-codeblock* #:title #f (list big-swatch-blank))
+    lbl))
+
+(define (deep-icon #:lbl [lbl "D"])
+  (center-label
+    (deep-codeblock* #:title #f (list big-swatch-blank))
+    lbl))
+
+(define (shallow-icon #:lbl [lbl "S"])
+  (center-label
+    (shallow-codeblock* #:title #f (list big-swatch-blank))
     lbl))
 
 (define (untyped-icon2 pp)
@@ -1194,7 +1224,7 @@
                        #:url url
                        #:page page-num
                        body)
-  (define pp (browncs-box body))
+  (define pp (bbox body))
   (cloud-background pp))
 
 (define (string*->text str*)
@@ -1219,11 +1249,24 @@
   (titlerm str))
 
 (define (tu-icon)
-  (scale
+  (hc-append
+    tiny-x-sep
+    (typed-icon #:lbl #f)
+    (untyped-icon #:lbl #f))
+  #;(scale
     (bridge-pict2 #:sep small-x-sep
                   (typed-icon #:lbl #f)
                   (untyped-icon #:lbl #f))
     75/100))
+
+(define (dsu-icon)
+  (hc-append
+    tiny-x-sep
+    (vc-append
+      tiny-y-sep
+      (deep-icon #:lbl    "Deep")
+      (shallow-icon #:lbl "Shallow"))
+    (untyped-icon #:lbl "Untyped")))
 
 (define (bridge-pict2 tt uu #:sep [sep #f])
   (let* ((pp (ht-append (or sep big-x-sep) (add-hubs tt 'TT) (add-hubs uu 'UU)))
@@ -1257,10 +1300,14 @@
   (word-append
     @bodyrmhi{Q.  } pp))
 
-(define (question-box pp)
-  (browncs-box #:x-margin med-x-sep #:y-margin small-y-sep pp))
+(define (rq-text pp)
+  (word-append
+    @bodyrmhi{RQ.  } pp))
 
-(define answer-box browncs-box)
+(define (question-box pp)
+  (bbox #:x-margin med-x-sep #:y-margin small-y-sep pp))
+
+(define answer-box bbox)
 
 (define (scale-lang-sidebar pp)
   (scale pp 80/100))
@@ -1270,7 +1317,7 @@
 
 (define (maybe-lbl do-lbl? pp name)
   (if do-lbl?
-    (cc-superimpose pp (browncs-box (bodyembf name)))
+    (cc-superimpose pp (bbox (bodyembf name)))
     pp))
 
 (define (interleave x* y*)
@@ -1305,81 +1352,148 @@
   (python-pict))
 
 (define (actionscript-pict)
-  (blank))
+  (tmp-lang))
 
 (define (cl-pict)
-  (blank))
+  (tmp-lang))
 
 (define (hack-pict)
-  (blank))
+  (tmp-lang))
 
 (define (pytype-pict)
-  (blank))
+  (tmp-lang))
 
 (define (pyright-pict)
-  (blank))
+  (tmp-lang))
 
 (define (rdl-pict)
-  (blank))
+  (tmp-lang))
 
 (define (strongtalk-pict)
-  (blank))
+  (tmp-lang))
 
 (define (typescript-pict)
-  (blank))
+  (tmp-lang))
 
 (define (typed-lua-pict)
-  (blank))
+  (tmp-lang))
 
 (define (gradualtalk-pict)
-  (blank))
+  (tmp-lang))
 
 (define (grift-pict)
-  (blank))
+  (tmp-lang))
 
 (define (tpd-pict)
-  (blank))
+  (tmp-lang))
 
 (define (pyret-pict)
-  (blank))
+  (tmp-lang))
 
 (define (grace-pict)
-  (blank))
+  (tmp-lang))
 
 (define (pallene-pict)
-  (blank))
+  (tmp-lang))
 
 (define (sp-pict)
-  (blank))
+  (tmp-lang))
 
 (define (csharp-pict)
-  (blank))
+  (tmp-lang))
 
 
 (define (dart2-pict)
-  (blank))
+  (tmp-lang))
 
 (define (nom-pict)
-  (blank))
+  (tmp-lang))
 
 (define (safets-pict)
-  (blank))
+  (tmp-lang))
 
 (define (tsstar-pict)
-  (blank))
+  (tmp-lang))
 
 
 (define (sorbet-pict)
-  (blank))
+  (tmp-lang))
 
 (define (strongscript-pict)
-  (blank))
+  (tmp-lang))
 
 (define (thorn-pict)
-  (blank))
+  (tmp-lang))
+
+(define (tmp-lang)
+  (scale-lang-lo (filled-rectangle 200 200 #:color "gray" #:draw-border? #f)))
 
 (define (indiana-pict)
   (symbol->lang-pict 'indiana))
+
+(define (all-lang-pict*)
+             (list (actionscript-pict) (cl-pict) (mypy-pict)
+                   (flow-pict) (hack-pict) (pyre-pict)
+                   (pytype-pict) (pyright-pict) (rdl-pict)
+                   (strongtalk-pict) (typescript-pict) (typed-clojure-pict)
+                   (typed-lua-pict) (gradualtalk-pict) (grift-pict)
+                   (tpd-pict) (tr-pict) (pyret-pict) (grace-pict)
+                   (pallene-pict) (retic-pict) (sp-pict) (csharp-pict)
+                   (dart2-pict) (nom-pict) (safets-pict) (tsstar-pict)
+                   (sorbet-pict) (strongscript-pict) (thorn-pict)))
+
+(define (lang-grid lang* #:num [num #f])
+      (let* (
+             (row-width (or num 8))
+             (lang** (split/n lang* row-width))
+             (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*)) lang**))
+             (pp (apply vc-append small-y-sep pp*)))
+        pp))
+
+(define (four-camps-pict north-tag east-tag south-tag west-tag)
+  (define c*
+    (list (sp-pict) (csharp-pict) (dart2-pict) (nom-pict) (safets-pict)
+          (tsstar-pict) (sorbet-pict) (strongscript-pict) (thorn-pict)))
+  (define e*
+    (list (actionscript-pict) (cl-pict) (mypy-pict) (pyre-pict) (flow-pict)
+          (hack-pict) (pytype-pict) (pyright-pict) (rdl-pict) (strongtalk-pict)
+          (typescript-pict) (typed-clojure-pict) (typed-lua-pict)))
+  (define n*
+    (list (gradualtalk-pict) (grift-pict) (tpd-pict) (tr-pict)))
+  (define t*
+    (list (pyret-pict) (grace-pict) (pallene-pict) (retic-pict)))
+  (ppict-do
+    (bghost (lang-grid (all-lang-pict*)))
+    #:go (coord 1/2 0 'cc)
+    (tag-pict (values (lang-grid c* #:num 5)) north-tag)
+    #:go (coord 1 1/2 'cc)
+    (tag-pict (values (lang-grid t* #:num 4)) east-tag)
+    #:go (coord 1/2 1 'cc)
+    (tag-pict (values (lang-grid e*)) south-tag)
+    #:go (coord 0 1/2 'cc)
+    (tag-pict (values (lang-grid n* #:num 4)) west-tag)
+    ))
+
+(define (not-today why-str)
+  ;; TODO icon for "later" / "delay"
+  ;;  yellow stop-icon
+  (bbox
+    (bodyrmlo why-str)))
+
+(define (yes-today why-str lbl-str)
+  ;; TODO green record-icon
+  (bbox
+    (lc-append
+      (bodyrmlo why-str)
+      (bodyrmem lbl-str))))
+
+(define (camp-lbl str)
+  (bbox (bodyrmlo str)))
+
+(define (more-lang-pict)
+  (cc-superimpose
+    (scale-lang-lo (filled-rectangle 200 200 #:color white #:draw-border? #f))
+    @headrm{...}))
 
 (define (vss-pict)
   ;; TODO show Vitousek and coauthors??
@@ -1479,7 +1593,7 @@
 (define (venue->pict2 vv)
   (if (pict? vv)
     vv
-    (scale (browncs-box (coderm vv)) 8/10)))
+    (scale (bbox (coderm vv)) 8/10)))
 
 (define (venue->pict vv)
   (memory-bg (coderm vv)))
@@ -1509,7 +1623,7 @@
 
 
 (define (benchmark-pict img #:w% [w% #f] #:lbl [lbl-above? #t] #:url [url #f])
-  (define pp (browncs-box #:x-margin pico-y-sep #:y-margin pico-y-sep
+  (define pp (bbox #:x-margin pico-y-sep #:y-margin pico-y-sep
                           (scale-to-square (bitmap img) (w%->pixels (or w% 30/100)))))
   (if url ((if lbl-above? label-above label-below) pp (coderm url) (yblank 4)) pp))
 
@@ -1522,7 +1636,7 @@
     #:x tiny-y-sep
     #:y tiny-y-sep
     (label-below
-      (browncs-box
+      (bbox
         #:x-margin pico-y-sep #:y-margin pico-y-sep
         (scale-to-fit (bitmap img)
                       (w%->pixels (or w% 3/10))
@@ -1531,12 +1645,12 @@
       (coderm url))))
 
 (define (add-lite-bg pp #:x [x #f] #:y [y #f])
-  (browncs-box pp #:color lite-grey #:x-margin x #:y-margin y))
+  (bbox pp #:color lite-grey #:x-margin x #:y-margin y))
 
 (define memory-bg add-lite-bg)
 
 (define (sunny-bg pp #:x [x #f] #:y [y #f])
-  (browncs-box pp #:color shallow-brush-color #:x-margin x #:y-margin y))
+  (bbox pp #:color shallow-brush-color #:x-margin x #:y-margin y))
 
 (define (the-perf-problem)
   (bad-news
@@ -1548,7 +1662,7 @@
       @bodyembf{What to do?})))
 
 (define (perf-what-to-do n #:only [only-show #f])
-  (let* ((bb (browncs-box (blank (w%->pixels 40/100) (h%->pixels 16/100))))
+  (let* ((bb (bbox (blank (w%->pixels 40/100) (h%->pixels 16/100))))
          (task* '("Improve the compiler" "Remove checks statically" "Build a new compiler" "Use weaker types"))
          ;;(venue** '(("OOPSLA'18") ("POPL'18" "POPL'21") ("OOPSLA'17") ("Today!")))
          (venue** '(("Collapsible Contracts" "OOPSLA'18")
@@ -1654,7 +1768,7 @@
     (define pi* (for/list ((v (in-list bm-v*)))
                   (benchmark-name->performance-info bm-name v #:full-name? #t)))
     (add-xticks2
-      (browncs-box
+      (bbox
         #:x-margin 2
         #:y-margin 2
         (overhead-plot pi*)))))
@@ -1900,7 +2014,7 @@
 
 (define (retic-perf n)
   (ppict-do
-    (browncs-box
+    (bbox
       (freeze
         (scale-to-width
           (bitmap "img/retic-perf.png")
@@ -2004,7 +2118,7 @@
           (append (f (car str**)) (loop (cdr str**) (+ curr-i 1)))])))
   (define add-bg
     (lambda (pp)
-      (browncs-box pp)))
+      (bbox pp)))
   (define (pict*->column tag pp*)
     ;; igrone tag
     (apply
@@ -2017,7 +2131,7 @@
   (ht-append
     big-x-sep
     (ct-superimpose
-      (bghost (browncs-box @coderm{Typecheck + Elaborate}))
+      (bghost (bbox @coderm{Typecheck + Elaborate}))
       lcol)
     rcol))
 
@@ -2034,7 +2148,7 @@
         (dmigration-append*
           (for/list ((pp (in-list pp*))
                      (i (in-naturals)))
-            (tag-pict (browncs-box (add-bg pp)) (tag-append tag i)))))
+            (tag-pict (bbox (add-bg pp)) (tag-append tag i)))))
   (define lcol (vc-append lp ((if (< 0 n) values bghost) (pict*->column 'A rp*))))
   (define rcol (vc-append rp ((if (< 1 n) values ghost) (pict*->column 'B tr*))))
   (ppict-do
@@ -2058,14 +2172,14 @@
   (apply vl-append 2 (map arrow-bullet pp*)))
 
 (define (bad-news pp)
-  (browncs-box
+  (bbox
     #:x-margin pico-y-sep #:y-margin pico-y-sep
     (question-box pp)))
 
-(define (bb-box pp)
-  (browncs-box
+(define (bbbox pp)
+  (bbox
     #:x-margin pico-y-sep #:y-margin pico-y-sep
-    (browncs-box pp)))
+    (bbox pp)))
 
 (define pplay-steps (make-parameter 10))
 
@@ -2135,7 +2249,7 @@
         (boundary-node '(U B U B U B U B U B U B U B U B U B U))
         )
        #:go (coord 34/100 32/100 'lt)
-       (browncs-box
+       (bbox
          (lc-append
            (word-append
              @bodyrmlo{When something goes wrong,})
@@ -2177,7 +2291,7 @@
         stop))))
 
 (define (compiler-challenge-pict dd img what how)
-  ((if (< dd 2) bb-box browncs-box)
+  ((if (< dd 2) bbbox bbox)
     (vc-append
       pico-y-sep
       (if (pict? what) what (bodyrmlo what))
@@ -2637,7 +2751,7 @@
 
 (define (transient-gateway n)
   (define spectrum-pict
-    (browncs-box
+    (bbox
       (hc-append
         tiny-x-sep
         (bodyembf natural-str)
@@ -2671,7 +2785,7 @@
     (vc-append
       4
       @bodyrmlo{Lots of potential clients!}
-      (bb-box (optional-langs-pict)))
+      (bbbox (optional-langs-pict)))
     )
 
   #;(hc-append
@@ -2695,7 +2809,7 @@
         pico-x-sep
         (tag-pict (bodyembf nm) (string->symbol nm))
         (apply vc-append 2 (map bodyrmlo ds)))))
-  (define pp (apply ht-append med-x-sep (map browncs-box pp*)))
+  (define pp (apply ht-append med-x-sep (map bbox pp*)))
   (case n
     ((0)
      pp)
@@ -2704,7 +2818,7 @@
        #:go (at-find-pict 'Guarded   lt-find 'rc #:abs-x (- pico-y-sep) #:abs-y pico-y-sep) (tr-pict)))
     ((2)
      pp
-     #;(above-all-lang (browncs-box pp)))))
+     #;(above-all-lang (bbox pp)))))
 
 (define (region-pict name #:color color)
   (let* ((bg (filled-rounded-rectangle
@@ -2754,15 +2868,40 @@
                  #:arrow-size large-arrow-size))))
     pp))
 
+(define (tu-bubbles)
+  (define-values [tt uu]
+    (apply values (pict-bbox-sup @bodyrmlo{Typed} @bodyrmlo{Untyped})))
+  (values (typed-bubble tt)
+          (untyped-bubble uu)))
+
+(define (typed-bubble pp)
+  (bubblebox pp #:color deep-brush-color))
+
+(define (untyped-bubble pp)
+  (bubblebox pp #:color untyped-brush-color))
+
+(define (bubblebox pp #:color [color white])
+  (add-rounded-border
+    pp
+    #:radius 10
+    #:background-color color
+    #:frame-width bbox-frame-width
+    #:frame-color bbox-frame-color
+    #:x-margin (browncs-x-margin)
+    #:y-margin (browncs-y-margin)))
+
+;; -----------------------------------------------------------------------------
 
 (define the-title-str "Deep and Shallow Types for Gradual Languages")
+;; TODO add linebreak, newline somewhere!
+;; TODO titlerm too dark, use brown blue ... org change headrm to not use blue!
 
 (define (sec:title)
   (pslide
     #:next
-    #:go (coord 1/2 26/100 'ct)
+    #:go title-coord-m
     (let* ([title-pict
-             (browncs-box
+             (bbox
                #:y-margin small-y-sep
                (let* ((top the-title-str))
                  (title-block top)))]
@@ -2780,7 +2919,7 @@
                        @subtitlerm{2022-06-xx})]
            [brown-pict
                  (scale-to-width% (bitmap "img/browncs-logo.png") 14/100)]
-           [author-pict (browncs-box (hc-append small-x-sep ben-pict brown-pict))])
+           [author-pict (bbox (hc-append small-x-sep ben-pict brown-pict))])
       (vc-append
         tiny-y-sep
           (vc-append tiny-y-sep title-pict (bghost tu-pict))
@@ -2790,85 +2929,131 @@
 
 (define (sec:intro)
   (pslide
-    ;; old q in PL ... source of debate and holy war
-    ;; [[ past 15 years tremendous progress ]]
-    #:go center-coord
-    @bodyrmlo{old dilemma: typed or untyped?}
-    @bodyrmlo{resolution: gradual typing}
-    @bodyrmlo{best of both}
+    ;; as title suggests, this paper is about gradual languages
+    ;; or gradually typed languages
+    ;; [[ as many of you know // the key thing to note ]]
+    ;; gradual languages arose from this longstanding dilemma between T and U
+    #:go title-coord-m
+    @bodyrmlo{Should your PL be typed or untyped?}
+    (yblank small-y-sep)
+    (let ()
+      ;; TODO rounder bubble
+      ;; TODO larger bubble
+      ;; TODO softer colors
+      ;; TODO bold text?
+      ;; TODO background too, to match the "waters" pic?
+      ;; TODO more boxes for text?
+      (define-values [tt uu] (tu-bubbles))
+      (hc-append med-x-sep tt (vrule (h%->pixels 1/10) #:thickness 2) uu))
+    (yblank med-y-sep)
+    (word-append @bodyrmem{Gradual typing} @bodyrmlo{ says } @bodyrmem{yes} @bodyrmlo{ to both})
+    (yblank tiny-y-sep)
+    @bodyit{"best" of two worlds}
   )
   (pslide
     ;; idea really took off, past 15 years
+    ;; ... great ... inspiring ... terrific ... 
+    #:go heading-coord-m
+    ;; TODO box around words
+    ;; TODO pplay fade in
+    ;; TODO fill languages
+    @headrm{Great Idea!}
+    @bodyrmlo{Inspired MANY Languages Over 16+ Years}
+    (yblank med-y-sep)
+    #:next
+    (lang-grid (append (all-lang-pict*) (list (more-lang-pict))))
+    #:next
     #:go center-coord
-    (let* ((lang*
-             (list (actionscript-pict) (cl-pict) (mypy-pict)
-                   (flow-pict) (hack-pict) (pyre-pict)
-                   (pytype-pict) (pyright-pict) (rdl-pict)
-                   (strongtalk-pict) (typescript-pict) (typed-clojure-pict)
-                   (typed-lua-pict) (gradualtalk-pict) (grift-pict)
-                   (tpd-pict) (tr-pict) (pyret-pict) (grace-pict)
-                   (pallene-pict) (retic-pict) (sp-pict) (csharp-pict)
-                   (dart2-pict) (nom-pict) (safets-pict) (tsstar-pict)
-                   (sorbet-pict) (strongscript-pict) (thorn-pict)))
-           (lang**
-             (split/n lang* 5))
-           (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*)) lang**))
-           (pp (apply vc-append small-y-sep pp*)))
-      pp)
-    #:go center-coord
-    (browncs-box
-      @bodyrmlo{Tons of languages, all gradual})
-    (browncs-box
-      @bodyrmlo{firmly different, divided in camps})
-    (browncs-box
-      @bodyrmlo{4 groups: N T E C})
-    (browncs-box
-      ;; ground rules
-      (lc-append
-        @bodyrmlo{C = clean slate, restrict untyped code ... promising if viable}
-        @bodyrmlo{E = unsound}
-        @bodyrmlo{focus here = all the rest ~ sound, unrestricted u, aot compiler, ...}))
+    (question-box
+      (word-append
+        ;; caveat:
+        @bodyrmlo{No agreement on the } @bodyrmem{semantics} @bodyrmlo{ of gradual types}))
   )
   (pslide
-    ;; 2 strategies, complementary
-    ;; what do / guarantee high level
-    ;; goal of paper = interop
+    #:go heading-coord-m
+    (bghost @headrm{Great Idea!})
+    (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
+    ;; TODO fade out
+    ;; TODO arrange 4b langs
+    #:alt [
+      (yblank med-y-sep)
+      (lang-grid (all-lang-pict*))
+    ]
+    #:alt (
+      (four-camps-pict 'C 'T 'E 'N)
+    )
+    (cellophane (four-camps-pict 'C 'T 'E 'N) 1/2)
+    #:go (at-find-pict 'C ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Concrete")
+    #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
+    #:go (at-find-pict 'E ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Erasure")
+    #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
+    #:alt (
+      #:go (coord 1/2 58/100 'cb)
+      (bbox (word-append @bodyrmhi{4} @bodyrmlo{ leading semantics}))
+      (yblank tiny-y-sep)
+    ;; ... if you want to use GT to reason about behavior, gotta pay cost
+    ;; ... costs can be prohibitive = high and unpredictable
+      (bbox
+        (lc-append
+          @bodyrmlo{because of a key tradeoff:}
+          (blank)
+          (word-append @bodyrmlo{type } @bodyemrm{guarantees} @bodyrmlo{ vs. } @bodyemrm{performance} @bodyrmlo{ costs})
+          (word-append @bodyrmlo{vs. } @bodyrmem{expressiveness})))
+    )
+    #:next
+    #:go (at-find-pict 'C cc-find 'ct #:abs-y (- small-y-sep)) (not-today "limited interop w/ untyped")
+    #:go (at-find-pict 'E cc-find 'ct #:abs-y (- small-y-sep)) (not-today "unsound interop")
+    #:next
+    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep)) (yes-today "fast, wrong types" "shallow")
+    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep)) (yes-today "strong, slow types" "deep")
   )
   (pslide
-    ;; ack: several OTHER ways to improve (gotta redraw)
-    #:go (coord slide-text-left slide-text-top 'lt)
-    (the-perf-problem)
-    #:go (coord 1/2 slide-text-top 'ct)
-    (bghost (the-perf-problem))
+    ;; without further ado, this is the main RQ
+    #:go heading-coord-m
+    (bghost @headrm{Great Idea!})
+    (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
+    (cellophane (four-camps-pict 'C 'T 'E 'N) 0)
+    #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
+    #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
+    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep))
+    (yes-today "fast, wrong types" "shallow")
+    (yblank tiny-y-sep) (tu-icon)
+    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep))
+    (yes-today "strong, slow types" "deep")
+    (yblank tiny-y-sep) (tu-icon)
+    #:next
+    #:go hi-text-coord-m
+    (rq-text
+      @bodyrmlo{Can Natural and Transient interoperate?})
+    #:next
+    (yblank med-y-sep)
+    (hc-append
+      small-x-sep
+      right-arrow-pict
+      (dsu-icon)
+      left-arrow-pict)
+  )
+  (pslide
+    #:go hi-text-coord-m
+    (rq-text
+      @bodyrmlo{Can Natural and Transient interoperate?})
+    #:next
+    (yblank med-y-sep) (dsu-icon)
+    #:next
     (yblank small-y-sep)
-    #:alt ( (perf-what-to-do 0) )
-    #:alt ( (perf-what-to-do 1) )
-    #:alt ( (perf-what-to-do 2) )
-    #:alt ( (perf-what-to-do 3) )
-    (perf-what-to-do 4)
+    (ll-append
+      (word-append @bodyrmhi{Motivations} @bodyrmlo{:})
+      (word-append @bodyrmlo{  - ease the } @bodyrmem{guarantees} @bodyrmlo{ vs. } @bodyrmem{performance} @bodyrmlo{ tradeoff})
+      (word-append @bodyrmlo{  - no loss of } @bodyrmem{expressiveness} @bodyrmlo{; same static types})
+      (word-append @bodyrmlo{  - orthogonal to basic improvements})
+      (word-append @bodyrmlo{      Pycket OOPSLA'17    Collapsible Contracts OOPSLA'18})
+      (word-append @bodyrmlo{      Set-Based Analysis DLS'18    Corpse Reviver POPL'21})
+      )
   )
-  (pslide
-    ;; great news about interop:
-    ;; 1. reduce costs across the board without changing language
-    ;; 2. orthogonal to other approaches, all the research can come to bear
-    #:go (coord 1/2 30/100 'ct)
-    (lc-append
-      (word-append
-        @bodyrmlo{Hope to } @bodyrmhi{reduce costs across the board})
-      (word-append
-        @bodyrmlo{without changing the surface language}))
-    (yblank tiny-y-sep)
-    (arrow-bullet*
-      @bodyrmlo{Same code, types, and type checker}
-      (word-append
-        @bodyrmlo{Different run-time behavior}))
-    #:go (coord 1/2 slide-text-top 'ct)
-    (bghost (the-perf-problem))
-    (yblank small-y-sep)
-    (perf-what-to-do 5 #:only 3)
-  )
+
   (pslide
     ;; now come to the central question
+    ;; what to do at the boundaries?
     ;; have 2 strategies
     ;; can they interop?!
     ;; - shallow prop = TS (spell it out, no surprises in theorem though it is weak)
@@ -3076,34 +3261,58 @@
     ;;  same practical issue that motivates optional types in the first place
     ;; ... or, just cut to the chase ... important practical motivation
   )
+  (pslide
+    ;; ... some kind of wrap up?
+    #:go center-coord
+    (blank)
+  )
   (void))
 
 (define (sec:end)
+  (parameterize ((current-slide-assembler waters-bg))
+    (pslide
+      #:go (coord 1/2 20/100 'cc)
+      (question-box @headrm{Conclusion})
+    ))
   (pslide
-    #:go heading-coord-m
-    @headrm{Conclusion}
-    (yblank med-y-sep)
-    @bodyrmlo{Q. can gt strategies interoperate without losing formal guarantees?}
-    (ht-append med-x-sep
-               @bodyrmlo{Yes!}
-               (scale-to-fit (dsu-interaction 1) 400 400))
-    @bodyrmlo{+ performance}
-    @bodyrmlo{+ expressiveness (on-ramp for TR)}
-    @bodyrmlo{coming soon: racket 8.6 (we're happy with mix)}
+    #:go (coord 90/100 10/100 'rt)
+    (dsu-icon)
+    #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep small-y-sep
+      #:col-align lt-superimpose
+      #:row-align lt-superimpose
+      (list
+        @bodyrmhi{Context:} (ll-append
+                              @bodyrmlo{Different GT strategies exist}
+                              @bodyrmlo{ (and for good reason!)})
+        @bodyrmhi{Question:} (ll-append
+                               @bodyrmlo{Can two extreme strategies interoperate?}
+                               (yblank pico-y-sep)
+                               (word-append @bodyrmhi{  Deep types} @bodyrmlo{ via Guarded (wrappers)})
+                               (word-append @bodyrmhi{  Shallow types} @bodyrmlo{ via Transient (no wrappers)}))
+        @bodyrmhi{Contribution:} (ll-append
+                             @bodyrmlo{Yes! In a way that:}
+                             @bodyrmlo{ - preserves their formal guarantees}
+                             @bodyrmlo{ - leads to better performance})
+        ))
+    ;; TODO add flag
+    #:alt
+    (
+      #:go (coord slide-text-left 62/100 'lt)
+      @bodyrmlo{More to explore!}
+    )
+    #:next
+    #:go (coord 1/2 slide-text-bottom 'ct #:abs-y (- small-y-sep))
+    (question-box
+      (hc-append
+        small-x-sep
+        @bodyrmlo{Coming soon to Racket v8.6} 
+        (symbol->lang-pict 'racket)))
   )
-  (pslide
-    ;; much more research to do!
-    ;; title deliberate play on sfp 06 (who cares?! no good quotes for this)
-    ;; ... home base for explorations?
-    #:go center-coord
-    @bodyrmlo{much more to explore (flag, horizon?)}
-    @bodyrmlo{generalize ((DS) U) picture to static-slider dyn}
-    #:go (coord slide-right 2/10 'rt)
-    (let* ((thumb (scale-to-fit (dsu-interaction 1) 400 400))
-           (txt (add-rounded-border @bodyrmlo{alt}))
-           (pp (cc-superimpose thumb txt)))
-      (vc-append med-y-sep pp pp))
-  )
+
+  ;; TODO
   (pslide
     ;; acks
     ;; neu brown
@@ -3111,7 +3320,7 @@
     ;; shriram
     ;; nsf cra
     #:go center-coord
-    @bodyrmlo{NEU Brown NSF CIF}
+    @bodyrmlo{acks: NEU Brown NSF CIF}
   )
   (pslide
     ;; recruiting
@@ -3330,6 +3539,7 @@
 (define bg-orig (current-slide-assembler))
 (define bg-cs.brown.edu (slide-assembler/background bg-orig make-bg))
 (define title-cs.brown.edu (slide-assembler/background bg-orig make-titlebg))
+(define waters-bg (slide-assembler/background bg-orig make-waters))
 
 (define (do-show)
   (set-page-numbers-visible! #true)
@@ -3337,10 +3547,10 @@
   [current-page-number-font page-font]
   [current-page-number-color white]
   ;; --
-  (parameterize ((current-slide-assembler title-cs.brown.edu))
+  (parameterize ((current-slide-assembler waters-bg))
     (sec:title)
     (void))
-  #;(parameterize ((current-slide-assembler bg-cs.brown.edu)
+  (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
     (sec:title)
     (sec:intro)
@@ -3372,43 +3582,25 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-;    #:go heading-coord-m
-;    @headrm{Context = Gradual Typing}
-;    #:go slide-text-coord-m
-;    (tag-pict (word-append
-;      @bodyrmhi{High-level goal}
-;      @bodyrmlo{: mix typed and untyped code}) 'top-text)
-;    #:next
-;    #:go hi-text-coord-m
-;    (yblank med-y-sep)
-;    (basic-example 'T 'U)
-;    #:next
-;    (yblank med-y-sep)
-;    (word-append
-;      @bodyrmhi{Central question}
-;      @bodyrmlo{: what should types mean at run-time?})
+    #:go heading-coord-m
+    @bodyrmlo{How to Enforce Types at Boundaries?}
+    ;; want to preserve properties (what are they?)
+    ;; care about base values, data structures, higher-order values
+    #:go center-coord
+    (dsu-interaction 1)
 
-    ;; idea really took off, past 15 years
-    #:go center-coord
-    (let* ((lang*
-             (list (actionscript-pict) (cl-pict) (mypy-pict)
-                   (flow-pict) (hack-pict) (pyre-pict)
-                   (pytype-pict) (pyright-pict) (rdl-pict)
-                   (strongtalk-pict) (typescript-pict) (typed-clojure-pict)
-                   (typed-lua-pict) (gradualtalk-pict) (grift-pict)
-                   (tpd-pict) (tr-pict) (pyret-pict) (grace-pict)
-                   (pallene-pict) (retic-pict) (sp-pict) (csharp-pict)
-                   (dart2-pict) (nom-pict) (safets-pict) (tsstar-pict)
-                   (sorbet-pict) (strongscript-pict) (thorn-pict)))
-           (lang**
-             (split/n lang* 5))
-           (pp* (map (lambda (l*) (apply hc-append tiny-x-sep l*)) lang**))
-           (pp (apply vc-append small-y-sep pp*)))
-      pp)
-    #:go center-coord
-    (browncs-box
-      @bodyrmlo{Tons of languages, all gradual})
-    (browncs-box
-      @bodyrmlo{firmly different, divided in camps})
+
+;    (cellophane (four-camps-pict 'C 'T 'E 'N) 1/2)
+;    #:go (at-find-pict 'C ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Concrete")
+;    #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
+;    #:go (at-find-pict 'E ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Erasure")
+;    #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
+;    #:go (coord 1/2 1/2 'cc) (bbox @bodyrmem{4 main semantics})
+;    #:next
+;    #:go (at-find-pict 'C cc-find 'ct #:abs-y (- small-y-sep)) (not-today "limited interop w/ untyped")
+;    #:go (at-find-pict 'E cc-find 'ct #:abs-y (- small-y-sep)) (not-today "unsound interop")
+;    #:next
+;    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep)) (yes-today "fast, wrong types" "shallow")
+;    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep)) (yes-today "strong, slow types" "deep")
 
   )))
