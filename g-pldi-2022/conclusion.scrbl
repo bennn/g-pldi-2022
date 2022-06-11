@@ -72,7 +72,8 @@ and Zenodo@~cite{gpldi2022z}.
 
 @acks{
   This work is supported by
-  @hyperlink["https://www.nsf.gov/awardsearch/showAward?AWD_ID=1518844"]{NSF grant 1518844}
+  @hyperlink["https://www.nsf.gov/awardsearch/showAward?AWD_ID=1518844"]{NSF grant 1518844},
+  @hyperlink["https://www.nsf.gov/awardsearch/showAward?AWD_ID=1763922"]{NSF grant 1763922},
   and
   @hyperlink["https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030859"]{NSF grant 2030859}
   to the CRA for the @hyperlink["https://cifellows2020.org"]{CIFellows} project.
