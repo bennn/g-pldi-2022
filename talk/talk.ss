@@ -23,7 +23,7 @@
 ;; - [ ] rethink how to draw the boundaries, interaction pict ... but first get the point across!
 ;; - [ ] checkerboard ... waters ... style background, for some kind of mixing?
 ;; - [ ] consistent font / style
-;; - [ ] utah fonts
+;; - [X] utah fonts
 ;; - [ ] fix up colors
 ;; - [X] bg looks terrible black & white
 ;; - [ ] ....
@@ -166,16 +166,28 @@
 (define bg-lite-blue (hex-triplet->color% #x357C9F))
 (define lite-blue (hex-triplet->color% #xC0EFFF))
 (define lite-green (hex-triplet->color% #x00b18f))
-(define typed-color lite-orange)
-(define untyped-color lite-green)
-(define shallow-color dark-orange)
+
+(define utah-red (hex-triplet->color% #xCC0000))
+(define utah-black (hex-triplet->color% #x000000))
+(define utah-white (hex-triplet->color% #xFFFFFF))
+(define utah-sunrise (hex-triplet->color% #xFFB81D))
+(define utah-lake (hex-triplet->color% #x3ABFC0))
+(define utah-crimson (hex-triplet->color% #x890000))
+(define utah-granite (hex-triplet->color% #x708E99))
+(define utah-darkgrey (hex-triplet->color% #xE2E6E6))
+(define utah-litegrey (hex-triplet->color% #xF7F9FB))
+
+(define typed-color utah-sunrise)
+(define untyped-color utah-granite)
+(define shallow-color utah-lake)
 (define deep-color typed-color)
 (define typed-brush-color (color%++ typed-color 20))
 (define shallow-pen-color shallow-color #;(hex-triplet->color% #xffc20a) )
-(define deep-pen-color (hex-triplet->color% #x0c7bdc))
-(define shallow-brush-color lite-orange #;(hex-triplet->color% #xfdc008))
-(define deep-brush-color deep-pen-color #;(hex-triplet->color% #x0a79da))
-(define untyped-brush-color (color%++ untyped-color 20))
+(define deep-pen-color deep-color #;(hex-triplet->color% #x0c7bdc))
+(define untyped-pen-color untyped-color)
+(define shallow-brush-color (color%-update-alpha shallow-pen-color 0.4) #;lite-orange #;(hex-triplet->color% #xfdc008))
+(define deep-brush-color (color%-update-alpha deep-pen-color 0.4) #;(hex-triplet->color% #x0a79da))
+(define untyped-brush-color (color%-update-alpha untyped-pen-color 0.4) #;(color%++ untyped-color 20))
 (define fog-3k1 (hex-triplet->color% #xDBCAC2))
 (define neutral-brush-color fog-3k1)
 (define green0-3k1 (hex-triplet->color% #x71BE8D))
@@ -186,7 +198,6 @@
 (define apple-green lite-green)
 (define apple-red red1-3k1)
 (define typed-pen-color #f)
-(define untyped-pen-color #f)
 (define validate-pen-color red1-3k1)
 (define validate-brush-color (color%-update-alpha validate-pen-color code-brush-alpha))
 (define happy-cloud-color lite-blue)
@@ -195,22 +206,24 @@
 (define browncs-frame-color dark-blue)
 (define hilite-frame-color dark-orange)
 (define triangle-blue (color%++ bg-lite-blue 30))
-(define alloy-brush-color lite-blue)
 (define wong-red (hex-triplet->color% #xd55e00))
 (define wong-green (hex-triplet->color% #x009e73))
 (define traffic-green-hi (string->color% "light green"))
 (define traffic-yellow-hi (string->color% "yellow"))
 (define traffic-red-hi (string->color% "firebrick"))
 (define blame-color typed-color)
-(define shallow-bg-color (color%-update-alpha shallow-brush-color 0.2))
-(define deep-bg-color  (color%-update-alpha deep-brush-color 0.2))
+(define shallow-bg-color (color%-update-alpha shallow-pen-color 0.2))
+(define deep-bg-color  (color%-update-alpha deep-pen-color 0.2))
 
 (define (color-off c)
   (color%-update-alpha c 0.2))
 
+;; TODO
+;; montserrat
 (define title-font "Bree Serif")
-(define code-font "Inconsolata")
+;; source sans pro
 (define body-font "Open Sans")
+(define code-font "Inconsolata")
 
 (define title-size 52)
 (define subtitle-size 34)
@@ -352,18 +365,6 @@
 (define (bg-img path)
   (rotate (bitmap path) (* 3/4 turn)))
 
-(define make-bg
-  (let ((*cache (box #f)))
-    (lambda (w h)
-      (filled-rectangle w h #:color white #:draw-border? #f)
-      #;(or (unbox *cache)
-          (let* ((bg (bg-img "img/browncs-lite.jpeg"))
-                 (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
-                 (fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f))
-                 (pp (freeze (cc-superimpose bg fg))))
-            (set-box! *cache pp)
-            pp)))))
-
 (define (make-titlebg w h)
   (let* ((bg (bg-img "img/browncs-lite.jpeg"))
          (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
@@ -381,6 +382,20 @@
          (fg (filled-rectangle w h #:color color #:draw-border? #f)))
     (cc-superimpose bg fg)))
 
+(define (make-bg w h) (make-solid-bg w h utah-litegrey))
+
+#;(define make-bg
+  (let ((*cache (box #f)))
+    (lambda (w h)
+      (filled-rectangle w h #:color utah-litegrey #:draw-border? #f)
+      #;(or (unbox *cache)
+          (let* ((bg (bg-img "img/browncs-lite.jpeg"))
+                 (bg (clip-to (scale-to-fit bg w h #:mode 'distort) w h))
+                 (fg (filled-rectangle w (* 9/10 h) #:color white #:draw-border? #f))
+                 (pp (freeze (cc-superimpose bg fg))))
+            (set-box! *cache pp)
+            pp)))))
+
 (define (make-deepbg w h)
   (make-solid-bg w h deep-bg-color))
 
@@ -393,12 +408,20 @@
 (define bbox-frame-width 2)
 (define bbox-frame-color browncs-frame-color)
 
-(define (bbox pp #:color [color white] #:x-margin [x-margin #f] #:y-margin [y-margin #f] #:frame-color [frame-color #f])
+(define (bbox pp #:color [color white] #:x-margin [x-margin #f] #:y-margin [y-margin #f] #:frame-color [frame-color #f] #:backup? [backup? #f])
+  (define xm (or x-margin (browncs-x-margin)))
+  (define ym (or y-margin (browncs-y-margin)))
+  (define rr 1)
   (add-rounded-border
-    pp
-    #:x-margin (or x-margin (browncs-x-margin))
-    #:y-margin (or y-margin (browncs-y-margin))
-    #:radius 1
+    (if backup?
+      (add-rounded-border
+        pp
+        #:x-margin xm #:y-margin ym #:radius rr
+        #:background-color white #:frame-width 0)
+      pp)
+    #:x-margin (if backup? 0 xm)
+    #:y-margin (if backup? 0 ym)
+    #:radius rr
     #:background-color color
     #:frame-width bbox-frame-width
     #:frame-color (or frame-color bbox-frame-color)))
@@ -728,6 +751,7 @@
   (let* ((block-pict
            (bbox
              (code-line-append* pp*)
+             #:backup? #t
              #:frame-color #f #;(if dark? #f background-color)
              #:color (if dark?
                        background-color
@@ -805,40 +829,8 @@
 (define amnesic-str "Amnesic")
 (define erasure-str "Optional")
 
-(define (check-pict size)
-  (define outer-color green1-3k1)
-  (define inner-color green0-3k1)
-  (define line-width% 6)
-  ;;
-  (define size/2 (/ size 2))
-  (define size/3 (/ size 3))
-  (define line-width (/ size line-width%))
-  (define line-width/2 (/ line-width 2))
-  (define F 50/100)
-  ;;
-  (define (draw-check dc% dx dy)
-    (define old-brush (send dc% get-brush))
-    (define old-pen (send dc% get-pen))
-    ;;
-    (send dc% set-brush (new brush% [color inner-color]))
-    (send dc% set-pen (new pen% [width 1] [color outer-color]))
-    ;; draw check from mid-left
-    (define path% (new dc-path%))
-    (send path% move-to (+ line-width/2 2) (* F size))
-    (send path% line-to (- size/2 (/ line-width 2)) size)
-    (send path% line-to (+ size/2 (/ line-width 4)) size)
-    (send path% line-to size 0)
-    (send path% line-to (- size line-width) 0)
-    (send path% line-to (- size/2 (/ line-width 8)) (- size line-width))
-    (send path% line-to (- size/2 (/ line-width 5)) (- size line-width))
-    (send path% line-to (+ (* 1.6 line-width) 2) (* F size))
-    (send path% close)
-    (send dc% draw-path path% dx dy)
-    ;;
-    (send dc% set-brush old-brush)
-    (send dc% set-pen old-pen)
-    (void))
-  (dc draw-check size size))
+(define (check-pict h)
+  (bitmap (check-icon #:color apple-green #:height h #:material rubber-icon-material)))
 
 (define (x-pict size)
   (define outer-color red1-3k1)
@@ -1125,14 +1117,14 @@
   (apply hc-append pico-x-sep (add-between pp* (or arr right-arrow-pict))))
 
 (define (email-panels pth*)
-  (define w 300)
-  (define h 600)
+  (define w 280)
+  (define h 240)
   (for/fold ((acc (blank)))
             ((pth (in-list pth*))
              (up? (in-cycle (in-list '(#t #f)))))
     (define img
       (if (pict? pth)
-        (cc-superimpose (blank w h) pth)
+        (ppict-do (blank w h) #:go (coord 1/2 10/100 'ct) pth)
         (scale-to-fit (bitmap pth) w h)))
     (define yshim (yblank (* 1/2 (pict-height img))))
     (hc-append
@@ -3032,6 +3024,9 @@
     #:x-margin (browncs-x-margin)
     #:y-margin (browncs-y-margin)))
 
+(define (snoc x* x)
+  (append x* (list x)))
+
 ;; -----------------------------------------------------------------------------
 
 (define the-title-str "Deep and Shallow Types for Gradual Languages")
@@ -3661,10 +3656,9 @@
     #:next
     (yblank small-y-sep)
     @bodyrmlo{Overall: migrating from Untyped to Shallow is more}
-    @bodyrmlo{ likely to "just work" as intended}
+    @bodyrmlo{likely to work as intended}
     (yblank med-y-sep)
-    ;; TODO check mark
-    (email-panels (glob "img/email/*png"))
+    (email-panels (snoc (glob "img/email/*png") (check-pict 120)))
   )
   (void))
 
@@ -3675,37 +3669,39 @@
       (question-box @headrm{Conclusion})
     ))
   (pslide
+    ;; TODO background stripes
     #:go (coord 90/100 10/100 'rt)
     (dsu-icon)
     #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
     (table2
       #:col-sep small-x-sep
-      #:row-sep small-y-sep
+      #:row-sep (* 2 tiny-y-sep)
       #:col-align lt-superimpose
       #:row-align lt-superimpose
       (list
         @bodyrmhi{Context:} (ll-append
                               @bodyrmlo{Different GT strategies exist}
-                              @bodyrmlo{ (and for good reason!)})
+                              @bodyrmlo{ (for good reason!)})
         @bodyrmhi{Question:} (ll-append
                                @bodyrmlo{Can two extreme strategies interoperate?}
                                (yblank pico-y-sep)
-                               (word-append @bodyrmhi{  Deep types} @bodyrmlo{ via Guarded (wrappers)})
-                               (word-append @bodyrmhi{  Shallow types} @bodyrmlo{ via Transient (no wrappers)}))
+                               (word-append @bodyrmhi{  Deep} @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
+                               (word-append @bodyrmhi{  Shallow} @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
         @bodyrmhi{Contribution:} (ll-append
                              @bodyrmlo{Yes! In a way that:}
-                             @bodyrmlo{ - preserves their formal guarantees}
-                             @bodyrmlo{ - leads to better performance})
+                             (word-append @bodyrmlo{ - preserves their formal } @bodyrmhi{guarantees})
+                             (word-append @bodyrmlo{ - leads to better overall } @bodyrmhi{performance})
+                             (word-append @bodyrmlo{ - lets TR } @bodyrmhi{express} @bodyrmlo{ additional programs}))
         ))
-    ;; TODO add flag
-    #:alt
-    (
-      #:go (coord slide-text-left 62/100 'lt)
-      @bodyrmlo{More to explore!}
-    )
+;    ;; TODO add flag
+;    #:alt
+;    (
+;      #:go (coord slide-text-left 62/100 'lt)
+;      @bodyrmlo{More to explore!}
+;    )
     #:next
-    #:go (coord 1/2 slide-text-bottom 'ct #:abs-y (- small-y-sep))
-    (question-box
+    #:go (coord 1/2 95/100 'cb)
+    (bbbox ;;question-box
       (hc-append
         small-x-sep
         @bodyrmlo{Coming soon to Racket v8.6} 
@@ -3782,7 +3778,7 @@
       #:row-sep pico-y-sep
       (list
         ;; TODO shallow or transient?
-        @bodyrmlo{Topic} @bodyrmlo{Ok for Transient?}
+        @bodyrmlo{Topic} @bodyrmlo{Ok for Shallow TR?}
         @coderm{apply} @codeemrm{y}
         @coderm{box} @codeemrm{y}
         @coderm{dead-code} @codeembf{N}
@@ -3808,11 +3804,11 @@
     (yblank tiny-y-sep)
     @tcoderm{https://prl.ccs.neu.edu/blog/2020/01/15/the-typed-racket-optimizer-vs-transient}
   )
-  (pslide
+  #;(pslide
     #:go heading-coord-m
     @headrm{Example: Retic. and Dyn}
-    #:go slide-text-coord-mid
-    @bodyrmlo{Most of the local variables get the Dynamic type and skip blame-map updates}
+    #:go slide-text-coord-m
+    @bodyrmlo{Local vars often get the Dynamic type and skip blame-map updates}
     (yblank tiny-y-sep)
     (typed-codeblock* (list
 @tcoderm{def permutations(iterable:List(int))->List(List(int)):}
@@ -3842,12 +3838,12 @@
   (pslide
     #:go heading-coord-m
     @headrm{Limitation}
-    #:go hi-text-coord-m
+    #:go slide-text-coord-m
     (word-append
       @bodyrmlo{Neither }
-      @bodyembf{Guarded}
+      @bodyemrm{Deep}
       @bodyrmlo{ nor }
-      @bodyembf{Transient}
+      @bodyemrm{Shallow}
       @bodyrmlo{ TR allows occurrence types at a boundary})
     (yblank tiny-y-sep)
     (typed-codeblock* (list
@@ -3989,41 +3985,17 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-    #:go (coord 90/100 10/100 'rt)
-    (dsu-icon)
-    #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep small-y-sep
-      #:col-align lt-superimpose
-      #:row-align lt-superimpose
-      (list
-        @bodyrmhi{Context:} (ll-append
-                              @bodyrmlo{Different GT strategies exist}
-                              @bodyrmlo{ (and for good reason!)})
-        @bodyrmhi{Question:} (ll-append
-                               @bodyrmlo{Can two extreme strategies interoperate?}
-                               (yblank pico-y-sep)
-                               (word-append @bodyrmhi{  Deep types} @bodyrmlo{ via Guarded (wrappers)})
-                               (word-append @bodyrmhi{  Shallow types} @bodyrmlo{ via Transient (no wrappers)}))
-        @bodyrmhi{Contribution:} (ll-append
-                             @bodyrmlo{Yes! In a way that:}
-                             @bodyrmlo{ - preserves their formal guarantees}
-                             @bodyrmlo{ - leads to better performance})
-        ))
-    ;; TODO add flag
-    #:alt
-    (
-      #:go (coord slide-text-left 62/100 'lt)
-      @bodyrmlo{More to explore!}
-    )
-    #:next
-    #:go (coord 1/2 slide-text-bottom 'ct #:abs-y (- small-y-sep))
-    (question-box
-      (hc-append
-        small-x-sep
-        @bodyrmlo{Coming soon to Racket v8.6} 
-        (symbol->lang-pict 'racket)))
+;    #:go heading-coord-m
+;    @headrm{Acknowledgments}
+;    #:next
+;
+;    ;; acks
+;    ;; neu brown
+;    ;; thesis committee
+;    ;; shriram
+;    ;; nsf cra
+;    #:go center-coord
+;    @bodyrmlo{acks: NEU Brown NSF CIF}
 
 
   )))
