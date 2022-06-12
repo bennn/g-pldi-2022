@@ -218,16 +218,13 @@
 (define (color-off c)
   (color%-update-alpha c 0.2))
 
-;; TODO
-;; montserrat
-(define title-font "Bree Serif")
-;; source sans pro
-(define body-font "Open Sans")
+(define title-font "Montserrat" #;"Bree Serif")
+(define body-font "Source Sans Pro" #;"Open Sans")
 (define code-font "Inconsolata")
 
 (define title-size 52)
 (define subtitle-size 34)
-(define head-size 40)
+(define head-size 38)
 (define body-size 30)
 (define code-size 28)
 (define tcode-size (- code-size 4))
@@ -246,9 +243,10 @@
 (define body-font-itbf (make-object font% body-size body-font 'default 'italic 'semibold))
 (define body-font-md (make-object font% body-size body-font 'default 'normal 'medium))
 (define body-font-hi (make-object font% body-size body-font 'default 'normal 'semibold))
+(define utah-web-headline-font (make-object font% title-size title-font 'default 'normal 'semibold))
 (define page-font (make-font #:face code-font #:size tcode-size))
 
-(define titlerm (make-string->text #:font title-font #:size title-size #:color black))
+(define titlerm (make-string->text #:font utah-web-headline-font #:size title-size #:color black))
 (define subtitlerm (make-string->text #:font title-font #;body-font-md #:size subtitle-size #:color black))
 (define subtitlermlo
   (let ((ff (make-string->text #:font title-font #:size subtitle-size #:color black)))
@@ -620,7 +618,7 @@
 (define (word-append . pp*)
   (apply hb-append word-sep pp*))
 
-(define line-sep2 (- 2))
+(define line-sep2 (+ 2))
 
 (define (left-line-append2 . pp*)
   (left-line-append2* pp*))
@@ -3031,7 +3029,7 @@
 
 (define the-title-str "Deep and Shallow Types for Gradual Languages")
 ;; TODO add linebreak, newline somewhere!
-;; TODO titlerm too dark, use brown blue ... org change headrm to not use blue!
+;; TODO titlerm too dark, use brown blue ... or change headrm to not use blue!
 
 (define (sec:title)
   (pslide
@@ -3053,7 +3051,7 @@
                        -4
                        @subtitlerm{Ben Greenman}
                        (yblank 12)
-                       @subtitlerm{2022-06-xx})]
+                       @subtitlerm{2022-06-16})]
            [brown-pict
                  (scale-to-width% (bitmap "img/browncs-logo.png") 14/100)]
            [author-pict (bbox (hc-append small-x-sep ben-pict brown-pict))])
@@ -3571,7 +3569,8 @@
     ;; TODO add surprise logo
     (email-panels (glob "img/email/*png"))
   )
-  (pslide
+  #;(pslide
+  ;; TODO enough time for this?!
     #:go heading-coord-m
     @headrm{Expressiveness}
     (yblank small-y-sep)
@@ -3655,8 +3654,9 @@
     @headrm{Expressiveness}
     #:next
     (yblank small-y-sep)
-    @bodyrmlo{Overall: migrating from Untyped to Shallow is more}
-    @bodyrmlo{likely to work as intended}
+    (lc-append
+      @bodyrmlo{Overall: migrating from Untyped to Shallow is more}
+      @bodyrmlo{likely to work as intended})
     (yblank med-y-sep)
     (email-panels (snoc (glob "img/email/*png") (check-pict 120)))
   )
@@ -3709,13 +3709,23 @@
   )
   ;; TODO
   (pslide
-    ;; acks
-    ;; neu brown
-    ;; thesis committee
-    ;; shriram
-    ;; nsf cra
+    #:go heading-coord-m
+    @headrm{Acknowledgments}
+    #:next
+    (yblank small-y-sep)
+    @bodyrmlo{Current    &    Past}
     #:go center-coord
-    @bodyrmlo{acks: NEU Brown NSF CIF}
+    (let* ((s1 (lambda (pp) (scale-to-fit pp (w%->pixels 20/100) (h%->pixels 16/100))))
+           (s2 (lambda (pp) (scale-to-fit pp (w%->pixels 24/100) (h%->pixels 16/100)))))
+      (table2
+        #:col-sep (w%->pixels 10/100)
+        #:row-sep (h%->pixels 5/100)
+        #:col-align cc-superimpose
+        (list
+          (s1 (bitmap "img/browncs-logo.png"))
+          (bbox (s2 (bitmap "img/neu-logo.png")))
+          (bbox (s2 (bitmap "img/cra-logo.png")) #:x-margin 2 #:y-margin 2)
+          (s1 (bitmap "img/nsf-logo.png")))))
   )
   (pslide
     ;; recruiting
@@ -3985,17 +3995,7 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-;    #:go heading-coord-m
-;    @headrm{Acknowledgments}
-;    #:next
-;
-;    ;; acks
-;    ;; neu brown
-;    ;; thesis committee
-;    ;; shriram
-;    ;; nsf cra
-;    #:go center-coord
-;    @bodyrmlo{acks: NEU Brown NSF CIF}
+
 
 
   )))
