@@ -415,12 +415,12 @@
       (add-rounded-border
         pp
         #:x-margin xm #:y-margin ym #:radius rr
-        #:background-color white #:frame-width 0)
+        #:background-color color #:frame-width 0)
       pp)
     #:x-margin (if backup? 0 xm)
     #:y-margin (if backup? 0 ym)
     #:radius rr
-    #:background-color color
+    #:background-color (if backup? white color)
     #:frame-width bbox-frame-width
     #:frame-color (or frame-color bbox-frame-color)))
 
@@ -830,6 +830,9 @@
 (define (check-pict h)
   (bitmap (check-icon #:color apple-green #:height h #:material rubber-icon-material)))
 
+(define (caution-pict h)
+  (bitmap (close-icon #:color utah-sunrise #:height h #:material rubber-icon-material)))
+
 (define (x-pict size)
   (define outer-color red1-3k1)
   (define inner-color red0-3k1)
@@ -1122,7 +1125,7 @@
              (up? (in-cycle (in-list '(#t #f)))))
     (define img
       (if (pict? pth)
-        (ppict-do (blank w h) #:go (coord 1/2 10/100 'ct) pth)
+        (ppict-do (blank w h) #:go (coord 1/2 0/100 'ct) pth)
         (scale-to-fit (bitmap pth) w h)))
     (define yshim (yblank (* 1/2 (pict-height img))))
     (hc-append
@@ -1544,7 +1547,7 @@
   (define x-sep
     (if (< n 5) lattice-x-sep pico-x-sep))
   (define (atop lo hi)
-    (ppict-do lo #:go (coord 1/2 1/2 'cb) (bbox hi #:color shallow-brush-color)))
+    (ppict-do lo #:go (coord 1/2 1/2 'cb) (bbox hi #:backup? #t #:color shallow-brush-color)))
   (define (b->p/3 b*)
     (define base (bits->path-node b*))
     (cond
@@ -1566,6 +1569,20 @@
         base]))
   (make-lattice n b->p/3 #:x-margin x-sep #:y-margin lattice-y-sep))
 
+(define (whence-lattice n)
+    (let* ((ss (lambda (pp) (scale pp 78/100)))
+           (txt (lambda (pp str) (vc-append tiny-y-sep (bbox (bodyrmlo str)) pp))))
+      (vc-append
+        small-y-sep
+        (txt (ss (path-node (make-list 3 'T))) "Ex: One program with 3 components")
+        down-arrow-pict
+        ((if (< n 1) bghost values)
+         (txt (ss (example-lattice-n 3)) "8 Typed / Untyped points (2^N)"))
+        ((if (< n 1) bghost values)
+          down-arrow-pict)
+        ((if (< n 2) bghost values)
+          (txt (ss (example-lattice-3way)) "27 Deep / Shallow / Untyped points (3^N)"))
+        )))
 
 ;(define example-lattice-3 (example-lattice-n 3))
 ;(define example-lattice-3x (example-lattice-n 3 #:x #true))
@@ -2634,7 +2651,7 @@
                   (if (eq? #\> (string-ref ss 0))
                     (substring ss 1)
                     ss))))
-    (coderm #;(if (<= n 6) codeemrm (if (< n 100) coderm codeembf)) str))
+    ((if (< n 40) coderm codeemrm) str))
   (define (?bodyrmlo x)
     (if (pict? x) x (bodyrmlo x)))
   (define (title->pre-pict* rr)
@@ -2713,15 +2730,17 @@
     (if (pict? x) x (bodyrmlo x)))
   (define (title->pre-pict* rr)
     (list (bghost (bodyrmlo (first rr)))
+          (?bodyrmlo (fourth rr))
           (?bodyrmlo (second rr))
           (?bodyrmlo (third rr))
-          (?bodyrmlo (fourth rr))))
+          ))
   (define (row->pre-pict* rr)
-    (list (coderm (first rr))
+    (define the-name (first rr))
+    (list (tag-pict (coderm the-name) (string->symbol the-name))
+          (num->pict (fourth rr) #:vs (list (second rr) (third rr)))
           (num->pict (second rr))
           (num->pict (third rr))
-          (num->pict (fourth rr)
-                     #:vs (list (second rr) (third rr)))))
+          ))
   (define mask*
     (case n
       ((0 1)
@@ -2736,17 +2755,42 @@
     ht-append
     (w%->pixels 7/100)
     (for/list ((row (in-list (split/n overhead-data* 11))))
-      (table
-        4
-        (flatten
-          (map ff row)
+      (define pp** (map ff row)
           #;(cons
             (mask* (title->pre-pict* title*))
             (map ff row)))
-        (cons lc-superimpose rc-superimpose)
-        cc-superimpose
-        tiny-x-sep
-        tiny-y-sep))))
+      (bg-stripes
+        (reverse (for/list ((bg-color (in-list (if (= n 2)
+                                        (list shallow-brush-color deep-brush-color)
+                                        '())))
+                   (i (in-naturals 1)))
+          (define (ref x*)
+            (list-ref x* (- (length x*) i)))
+          (cons bg-color (apply max (map (compose1 pict-width ref) pp**)))))
+        (table
+          4
+          (flatten pp**)
+          (cons lc-superimpose rc-superimpose)
+          cc-superimpose
+          tiny-x-sep
+          tiny-y-sep)))))
+
+(define (bg-stripes c+w* pp)
+  (cond
+    [(null? c+w*)
+     pp]
+    [else
+      (define h (pict-height pp))
+      (rt-superimpose
+        (apply
+          ht-append
+          tiny-x-sep
+          (for/list ((c+w (in-list c+w*)))
+            (filled-rounded-rectangle
+              (cdr c+w) h 1/2
+              #:color (car c+w)
+              #:draw-border? #f)))
+        pp)]))
 
 (define path-data*
   (list
@@ -3448,8 +3492,6 @@
 ;    ;; state properties
 ;    ;; details in paper
 ;  )
-  (pslide
-  )
   (void))
 
 (define (sec:perf)
@@ -3469,40 +3511,23 @@
       #:w% 41/100
       #:url "docs.racket-lang.org/gtp-benchmarks")
       'gtp-perf)
-    #:go (coord 45/100 hi-text 'lt)
-    (vc-append
-      ;; TODO stage, function
-      small-y-sep
-      (path-node (make-list 3 'T))
-      down-arrow-pict
-      (example-lattice-n 3)
-      down-arrow-pict
-      (example-lattice-3way))
-    #:go (at-find-pict 'gtp-perf lb-find 'lt #:abs-y small-y-sep #:abs-x pico-x-sep)
-    (ll-append
-      ;; TODO table N 2^N 3^N
-      @bodyrmlo{For one program:}
-      @bodyrmlo{  3 modules}
-      @bodyrmlo{  => 8 Typed / Untyped points}
-      @bodyrmlo{  => 27 Deep / Shallow / Untyped points}
-      )
+    #:go (coord 45/100 8/100 'lt)
+    #:alt ( (whence-lattice 0) )
+    #:alt ( (whence-lattice 1) )
+    (whence-lattice 2)
   )
   (pslide
     #:go heading-coord-m
     @headrm{Better Performance}
-    (yblank small-y-sep)
-    (vc-append
-      pico-y-sep
-      (question-box
-        @bodyrmlo{Q. How many points run fastest with a Deep / Shallow mix?})
-      (path-node '(U D S)))
+    (yblank tiny-y-sep)
+    (question-box
+      @bodyrmlo{Q. How many points run fastest with a Deep / Shallow mix?})
     #:next
-    (yblank small-y-sep)
-    ;; TODO highlight some numbers
+    (yblank med-y-sep)
     (hc-append
       small-x-sep
       (mixed-best-table 2)
-      (scale (example-lattice-n 3) 8/10))
+      (scale (example-lattice-3way) 75/100))
   )
   (pslide
     #:go heading-coord-m
@@ -3510,8 +3535,14 @@
     (yblank small-y-sep)
     (vc-append
       pico-y-sep
-      (question-box
-        @bodyrmlo{Q. What is the worst-case overhead?})
+      (ppict-do
+        (question-box
+          @bodyrmlo{Q. What is the worst-case overhead?})
+        #:go (coord 1 1/2 'lc #:abs-x tiny-x-sep)
+          (hc-append
+            (deep-codeblock "Deep")
+            @bodyrmlo{ or }
+            (shallow-codeblock "Shallow")))
       #;(hc-append small-x-sep
                  (path-node '(U D D))
                  (let ((vv (vrule (pict-height (path-node '(U))))))
@@ -3521,7 +3552,20 @@
     (yblank pico-y-sep)
     ;; TODO colors, legend
     ;; TODO highlight zombie, gotta explain
+    #:alt ( (overhead-table 0) )
     (overhead-table 2)
+    #:next
+    #:go (at-find-pict 'zombie lc-find 'rc #:abs-x (- pico-x-sep))
+    (hc-append
+      pico-x-sep
+      (scale
+        (bbox
+          #:x-margin 8
+          (lc-append
+            @bodyrm{H.O. values and}
+            @bodyrm{many elim. forms}))
+        6/10)
+      right-arrow-pict)
   )
   (pslide
     ;; - general trend: D and S have pitfalls
@@ -3532,14 +3576,28 @@
     (yblank small-y-sep)
     @bodyrmlo{Overall: switching between Deep and Shallow}
     @bodyrmlo{ can avoid perf. bottlenecks}
-    (yblank med-y-sep)
+    #:next
+    (yblank small-y-sep)
+    (ht-append
+      med-x-sep
+      (bbox
+        (lc-append
+          (word-append
+            (deep-codeblock "Deep")
+            @bodyrmlo{ near the top,})
+          @bodyrmlo{to maximize the benefits of types}))
+      (bbox
+        (lc-append
+          (word-append
+            (shallow-codeblock "Shallow")
+            @bodyrmlo{ in the middle,})
+          @bodyrmlo{to minimize the cost of boundaries})))
+    (yblank small-y-sep)
     (scale (pathology-lattice 5) 5/10)
     (yblank med-y-sep)
-    @bodyrmlo{Shallow = low cost at type boundaries}
-    @bodyrmlo{Deep = no cost within typed blocks}
     #:next
-    (bbox
-      @bodyrmlo{Future: best practices for D+S world?})
+    (values #;bbox
+      @bodyrmlo{Future Work: fine-grained recommendations})
   )
 
   #;(pslide
@@ -3566,8 +3624,7 @@
     @bodyrmlo{Deep types may reject good programs}
     #:next
     (yblank med-y-sep)
-    ;; TODO add surprise logo
-    (email-panels (glob "img/email/*png"))
+    (email-panels (snoc (glob "img/email/*png") (caution-pict 100)))
   )
   #;(pslide
   ;; TODO enough time for this?!
@@ -3960,18 +4017,22 @@
   [current-page-number-font page-font]
   [current-page-number-color white]
   ;; --
-  (parameterize ((current-slide-assembler waters-bg))
+  #;(parameterize ((current-slide-assembler waters-bg))
     (sec:title)
     (void))
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
 
-    (sec:intro)
-    (sec:2way)
-    (sec:3way)
-    (sec:perf)
-    (sec:expr)
-    (sec:end)
+                (pslide
+
+                  )
+
+;    (sec:intro)
+;    (sec:2way)
+;    (sec:3way)
+;    (sec:perf)
+;    (sec:expr)
+;    (sec:end)
 
     (pslide)
     (sec:qa)
@@ -3997,5 +4058,8 @@
 
 
 
+    ;; TODO ssomethig like this D S DS
+;;    #:go (coord 90/100 10/100 'rt)
+;;    (dsu-icon)
 
   )))
