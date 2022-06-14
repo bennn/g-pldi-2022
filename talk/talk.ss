@@ -764,6 +764,16 @@
 (define (conslang x y)
   (if x (list* (tt x) (blank) y) y))
 
+(define (ds-codeblock* x*)
+  (LR-stack (deep-codeblock* x*) (shallow-codeblock* x*)))
+
+(define (LR-stack lhs rhs)
+  (define offset (* 1.4 pico-y-sep))
+  (ppict-do
+    rhs
+    #:go (coord 1/2 1/2 #:abs-x (- offset) #:abs-y offset)
+    lhs))
+
 (define (untyped-code str)
   (untyped-codeblock #:title #f #:lang #f str))
 
@@ -810,6 +820,14 @@
     ((T typed) typed-codeblock)
     ((#f) (lambda arg* (blank)))
     (else (raise-argument-error 'dyn-codeblock "(or/c D S U)" sym))))
+
+(define (deep-name)
+  (parameterize ((browncs-x-margin pico-x-sep))
+    (deep-codeblock "Deep")))
+
+(define (shallow-name)
+  (parameterize ((browncs-x-margin pico-x-sep))
+    (shallow-codeblock "Shallow")))
 
 (define (xblank n)
   (blank n 0))
@@ -952,7 +970,7 @@
 (define deep-swatch
   (deep-codeblock* #:dark? #t #:title #f (list swatch-blank)))
 
-(define big-swatch-blank (blank med-x-sep small-y-sep))
+(define big-swatch-blank (blank (w%->pixels 6/100) small-y-sep))
 
 (define (untyped-icon #:lbl [lbl "U"])
   (center-label
@@ -1298,9 +1316,15 @@
     tiny-x-sep
     (vc-append
       tiny-y-sep
-      (deep-icon #:lbl    "Deep")
-      (shallow-icon #:lbl "Shallow"))
-    (untyped-icon #:lbl "Untyped")))
+      (deep-icon)
+      (shallow-icon))
+    (untyped-icon)))
+
+(define (mixed-best-pict n)
+    (hc-append
+      small-x-sep
+      ((if (< n 1) bghost values) (mixed-best-table 2))
+      (scale (example-lattice-3way) 75/100)))
 
 (define (bridge-pict2 tt uu #:sep [sep #f])
   (let* ((pp (ht-append (or sep big-x-sep) (add-hubs tt 'TT) (add-hubs uu 'UU)))
@@ -1570,7 +1594,7 @@
   (make-lattice n b->p/3 #:x-margin x-sep #:y-margin lattice-y-sep))
 
 (define (whence-lattice n)
-    (let* ((ss (lambda (pp) (scale pp 78/100)))
+    (let* ((ss (lambda (pp) (scale pp 76/100)))
            (txt (lambda (pp str) (vc-append tiny-y-sep (bbox (bodyrmlo str)) pp))))
       (vc-append
         small-y-sep
@@ -2716,13 +2740,13 @@
               (let ((ss (substring str 0 (sub1 (string-length str)))))
                 ss)))
   (define (num->pict str #:vs [vs* #f])
-    (define n (s->n str))
-    (unless (real? n)
+    (define nnn (s->n str))
+    (unless (real? nnn)
       (printf "DEAD ~a~n" str))
     (cond
-      [(>= n 30)
+      [(>= nnn 30)
        (codeembf str)]
-      [(and vs* (andmap (lambda (ss) (< n (s->n ss))) vs*))
+      [(and vs* (< 1 n) (andmap (lambda (ss) (< nnn (s->n ss))) vs*))
        (codeemrm str)]
       [else
         (coderm str)]))
@@ -3462,6 +3486,7 @@
     #:go center-coord
     @headrm{wrap  wrap  scan/noop}
   )
+  ;; TODO n2 problem ... implementation challenges
   (pslide
     ;; TODO more exciting
     ;; ... a first step? more to explore in future?
@@ -3524,15 +3549,13 @@
       @bodyrmlo{Q. How many points run fastest with a Deep / Shallow mix?})
     #:next
     (yblank med-y-sep)
-    (hc-append
-      small-x-sep
-      (mixed-best-table 2)
-      (scale (example-lattice-3way) 75/100))
+    #:alt ( (mixed-best-pict 0) )
+    (mixed-best-pict 1)
   )
   (pslide
     #:go heading-coord-m
     @headrm{Better Performance}
-    (yblank small-y-sep)
+    (yblank tiny-y-sep)
     (vc-append
       pico-y-sep
       (ppict-do
@@ -3573,30 +3596,30 @@
     ;;   - S gets incrementally worse (not quite dead, but bad)
     #:go heading-coord-m
     @headrm{Better Performance}
+    #:next
     (yblank small-y-sep)
     @bodyrmlo{Overall: switching between Deep and Shallow}
     @bodyrmlo{ can avoid perf. bottlenecks}
-    #:next
     (yblank small-y-sep)
     (ht-append
       med-x-sep
       (bbox
         (lc-append
           (word-append
-            (deep-codeblock "Deep")
+            (deep-name)
             @bodyrmlo{ near the top,})
           @bodyrmlo{to maximize the benefits of types}))
       (bbox
         (lc-append
           (word-append
-            (shallow-codeblock "Shallow")
+            (shallow-name)
             @bodyrmlo{ in the middle,})
           @bodyrmlo{to minimize the cost of boundaries})))
     (yblank small-y-sep)
     (scale (pathology-lattice 5) 5/10)
     (yblank med-y-sep)
     #:next
-    (values #;bbox
+    (bbox
       @bodyrmlo{Future Work: fine-grained recommendations})
   )
 
@@ -3610,6 +3633,7 @@
   (void))
 
 (define (sec:expr)
+  ;; TODO venn diagram deep within shallow
   ;; - other big payoff, can express more gradual combinations
   ;;   because of TRANSIENT (gotta say transient)
   ;; - unclear from benchmarks, b/c started off with code that works fully typed
@@ -3631,13 +3655,15 @@
     #:go heading-coord-m
     @headrm{Expressiveness}
     (yblank small-y-sep)
-    @bodyrmlo{1. Deep wrappers are hard to implement,}
+    @bodyrmlo{Deep wrappers are hard to implement,}
     @bodyrmlo{and may not exist for certain types}
+    #:next
     (yblank small-y-sep)
-    (vc-append
-      small-y-sep
-      (typed-codeblock* (list
-@tcoderm{(: stx-unbox (-> (Syntaxof (Boxof Int)) Int))}
+    (ht-append
+      small-x-sep
+      (ds-codeblock* (list
+@tcoderm{(: stx-unbox (-> (Syntaxof (Boxof Int))}
+@tcoderm{                 Int))}
 @tcoderm{(define (stx-unbox s)}
 @tcoderm{  (unbox (syntax-e s)))}
 ))
@@ -3649,18 +3675,20 @@
       #:col-sep small-x-sep
       #:row-sep tiny-y-sep
       (list
-        @bodyembf{Deep} @coderm{Error: no contract for type}
-        @bodyembf{Shallow} @coderm{OK}))
+        (deep-name) @coderm{Error: no contract for type}
+        (shallow-name) @coderm{OK}))
   )
   (pslide
     #:go heading-coord-m
     @headrm{Expressiveness}
     (yblank small-y-sep)
-    @bodyrmlo{2. Deep must enforce the top type (Any) against higher-order clients}
+    @bodyrmlo{Deep must enforce the top type (Any) against higher-order clients}
+    ;; cite Findler + Blume?
+    #:next
     (yblank small-y-sep)
     (ht-append
       med-x-sep
-      (typed-codeblock* (list
+      (ds-codeblock* (list
 @tcoderm{(define b : (Boxof Integer)}
 @tcoderm{  (box 0))}
 @tcoderm{}
@@ -3673,35 +3701,39 @@
       #:col-sep small-x-sep
       #:row-sep tiny-y-sep
       (list
-        @bodyembf{Deep} @coderm{Error: cannot mutate an Any-wrapped value}
-        @bodyembf{Shallow} @coderm{OK}))
+        (deep-name) @coderm{Error: cannot mutate an Any-wrapped value}
+        (shallow-name) @coderm{OK}))
   )
   (pslide
     #:go heading-coord-m
     @headrm{Expressiveness}
     (yblank small-y-sep)
-    @bodyrmlo{3. Deep wrappers can change (!) behaviors}
+    @bodyrmlo{Deep wrappers may change behaviors}
+    #:next
     (yblank small-y-sep)
-    (vc-append
-      small-y-sep
-      (typed-codeblock* (list
+    (ht-append
+      small-x-sep
+      (ds-codeblock* (list
 @tcoderm{(require/typed racket/list}
 @tcoderm{  [index-of}
 @tcoderm{    (All (T)}
 @tcoderm{      (-> (Listof T) T}
-@tcoderm{          (U #false Natural)))])}
+@tcoderm{          (U Natural}
+@tcoderm{             #false)))])}
+@tcoderm{}
 @tcoderm{(index-of '(a b) 'a)}
 ))
       (untyped-codeblock* (list
 @tcoderm{(index-of '(a b) 'a)}
 )))
     (yblank small-y-sep)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep tiny-y-sep
+    (table
+      3
       (list
-        @bodyembf{Deep} @coderm{#false = not found}
-        @bodyembf{Shallow} @coderm{0 = found at position 0}))
+        (deep-name) @coderm{#false} @coderm{ = not found}
+        (shallow-name) @coderm{0} @coderm{ = found at position 0})
+      lc-superimpose cc-superimpose
+      (cons small-x-sep 0) tiny-y-sep)
   )
   (pslide
     ;; fundamental? perhaps not (2 3 probably are), but definitely a practical issue
@@ -3726,8 +3758,7 @@
       (question-box @headrm{Conclusion})
     ))
   (pslide
-    ;; TODO background stripes
-    #:go (coord 90/100 10/100 'rt)
+    #:go (coord 96/100 10/100 'rt)
     (dsu-icon)
     #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
     (table2
@@ -3739,39 +3770,45 @@
         @bodyrmhi{Context:} (ll-append
                               @bodyrmlo{Different GT strategies exist}
                               @bodyrmlo{ (for good reason!)})
-        @bodyrmhi{Question:} (ll-append
+        @bodyrmhi{Inquiry:} (ll-append
                                @bodyrmlo{Can two extreme strategies interoperate?}
                                (yblank pico-y-sep)
-                               (word-append @bodyrmhi{  Deep} @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
-                               (word-append @bodyrmhi{  Shallow} @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
+                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
+                               (yblank 0)
+                               (word-append (shallow-name) @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
         @bodyrmhi{Contribution:} (ll-append
                              @bodyrmlo{Yes! In a way that:}
                              (word-append @bodyrmlo{ - preserves their formal } @bodyrmhi{guarantees})
                              (word-append @bodyrmlo{ - leads to better overall } @bodyrmhi{performance})
                              (word-append @bodyrmlo{ - lets TR } @bodyrmhi{express} @bodyrmlo{ additional programs}))
         ))
-;    ;; TODO add flag
-;    #:alt
-;    (
-;      #:go (coord slide-text-left 62/100 'lt)
-;      @bodyrmlo{More to explore!}
-;    )
     #:next
     #:go (coord 1/2 95/100 'cb)
-    (bbbox ;;question-box
-      (hc-append
-        small-x-sep
-        @bodyrmlo{Coming soon to Racket v8.6} 
-        (symbol->lang-pict 'racket)))
+    (hc-append
+      small-x-sep
+      (bbox
+      (hb-append
+        pico-x-sep
+        (make-simple-flag
+          (blank 40 10)
+          #:flag-border-color deep-pen-color
+          #:flag-background-color shallow-pen-color)
+        (lc-append
+          @bodyrmlo{Opens a crucial new dimension}
+          @bodyrmlo{in gradual language design})))
+      (bbbox
+        (hc-append
+          tiny-x-sep
+          @bodyrmlo{Coming soon to Racket}
+          (symbol->lang-pict 'racket))))
   )
-  ;; TODO
   (pslide
     #:go heading-coord-m
     @headrm{Acknowledgments}
     #:next
     (yblank small-y-sep)
     @bodyrmlo{Current    &    Past}
-    #:go center-coord
+    (yblank small-y-sep)
     (let* ((s1 (lambda (pp) (scale-to-fit pp (w%->pixels 20/100) (h%->pixels 16/100))))
            (s2 (lambda (pp) (scale-to-fit pp (w%->pixels 24/100) (h%->pixels 16/100)))))
       (table2
@@ -3809,11 +3846,51 @@
   )
   (pslide
     #:go center-coord
-    @bodyrmhi{The End}
+    @bodyrmlo{The End}
   )
   (pslide
-    #:go hi-text-coord-m
-    @bodyrmlo{repeat 1st slide in section for q/a}
+    #:go (coord 96/100 10/100 'rt)
+    (dsu-icon)
+    #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep (* 2 tiny-y-sep)
+      #:col-align lt-superimpose
+      #:row-align lt-superimpose
+      (list
+        @bodyrmhi{Context:} (ll-append
+                              @bodyrmlo{Different GT strategies exist}
+                              @bodyrmlo{ (for good reason!)})
+        @bodyrmhi{Inquiry:} (ll-append
+                               @bodyrmlo{Can two extreme strategies interoperate?}
+                               (yblank pico-y-sep)
+                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
+                               (yblank 0)
+                               (word-append (shallow-name) @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
+        @bodyrmhi{Contribution:} (ll-append
+                             @bodyrmlo{Yes! In a way that:}
+                             (word-append @bodyrmlo{ - preserves their formal } @bodyrmhi{guarantees})
+                             (word-append @bodyrmlo{ - leads to better overall } @bodyrmhi{performance})
+                             (word-append @bodyrmlo{ - lets TR } @bodyrmhi{express} @bodyrmlo{ additional programs}))
+        ))
+    #:go (coord 1/2 95/100 'cb)
+    (hc-append
+      small-x-sep
+      (bbox
+      (hb-append
+        pico-x-sep
+        (make-simple-flag
+          (blank 40 10)
+          #:flag-border-color deep-pen-color
+          #:flag-background-color shallow-pen-color)
+        (lc-append
+          @bodyrmlo{Opens a crucial new dimension}
+          @bodyrmlo{in gradual language design})))
+      (bbbox
+        (hc-append
+          tiny-x-sep
+          @bodyrmlo{Coming soon to Racket}
+          (symbol->lang-pict 'racket))))
   )
 
   (void))
@@ -4023,16 +4100,12 @@
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 7))
 
-                (pslide
-
-                  )
-
-;    (sec:intro)
-;    (sec:2way)
-;    (sec:3way)
-;    (sec:perf)
-;    (sec:expr)
-;    (sec:end)
+    (sec:intro)
+    (sec:2way)
+    (sec:3way)
+    (sec:perf)
+    (sec:expr)
+    (sec:end)
 
     (pslide)
     (sec:qa)
@@ -4056,10 +4129,5 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-
-
-    ;; TODO ssomethig like this D S DS
-;;    #:go (coord 90/100 10/100 'rt)
-;;    (dsu-icon)
 
   )))
