@@ -214,6 +214,8 @@
 (define blame-color typed-color)
 (define shallow-bg-color (color%-update-alpha shallow-pen-color 0.2))
 (define deep-bg-color  (color%-update-alpha deep-pen-color 0.2))
+(define typed-bg-color deep-bg-color)
+(define untyped-bg-color (color%-update-alpha untyped-pen-color 0.2))
 
 (define (color-off c)
   (color%-update-alpha c 0.2))
@@ -1397,97 +1399,142 @@
   (symbol->lang-pict 'flow))
 
 (define (mypy-pict)
-  (symbol->lang-pict 'python))
+  (ppict-do
+    (symbol->lang-pict 'python)
+    #:go (coord 1/2 1 #:abs-y (- 4))
+    @coderm{mypy}))
 
 (define (typed-clojure-pict)
-  (symbol->lang-pict 'clojure))
+  (ppict-do
+    (symbol->lang-pict 'typed-clojure)
+    #:go (coord 65/100 1/2 'cc)
+    (symbol->lang-pict 'clojure)))
 
 (define (pyre-pict)
   (symbol->lang-pict 'pyre))
-
 
 (define (text->lang-pict str)
   (scale (headrm str) 80/100))
 
 (define (retic-pict)
-  (python-pict))
+  (ppict-do
+    (python-pict)
+    #:go (coord 1 1 'rb #:abs-x (- 4) #:abs-y (- 4))
+    (scale (bbox (indiana-pict) #:x-margin 4 #:y-margin 4) 45/100)))
 
 (define (actionscript-pict)
-  (tmp-lang))
+  (txt-lang "AS"))
 
 (define (cl-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'cl))
 
 (define (hack-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'hack))
 
 (define (pytype-pict)
-  (tmp-lang))
+  (ppict-do
+    (symbol->lang-pict 'python)
+    #:go (coord 1/2 1 #:abs-y (- 4))
+    @coderm{PyType}))
 
 (define (pyright-pict)
-  (tmp-lang))
+  (freeze (symbol->lang-pict 'Pyright)))
 
 (define (rdl-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'ruby)
+  #;(ppict-do
+    (symbol->lang-pict 'ruby)
+    #:go center-coord
+    @coderm{RDL}))
 
 (define (strongtalk-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'strongtalk))
 
 (define (typescript-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'typescript))
 
 (define (typed-lua-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'lua)
+  #;(ppict-do
+    (symbol->lang-pict 'lua)
+    #:go center-coord
+    @coderm{T. Lua}))
 
 (define (gradualtalk-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'smalltalk)
+  #;(ppict-do
+    (symbol->lang-pict 'smalltalk)
+    #:go center-coord
+    @coderm{Gradualtalk}))
 
 (define (grift-pict)
-  (tmp-lang))
+  (txt-lang "Grift"))
 
 (define (tpd-pict)
-  (tmp-lang))
+  (txt-lang "TPD"))
 
 (define (pyret-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'pyret))
 
 (define (grace-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'grace))
 
 (define (pallene-pict)
-  (tmp-lang))
+  (vc-append
+    4
+    @coderm{Pallene}
+    (scale (symbol->lang-pict 'lua) 9/10)))
 
 (define (sp-pict)
-  (tmp-lang))
+  (ppict-do
+    (symbol->lang-pict 'python)
+    #:go (coord 1/2 1 #:abs-y (- 4))
+    @coderm{StaticP}))
 
 (define (csharp-pict)
-  (tmp-lang))
-
+  (txt-lang "C#"))
 
 (define (dart2-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'dart))
 
 (define (nom-pict)
-  (tmp-lang))
+  (txt-lang "Nom"))
+
+(define (js-pict)
+  (symbol->lang-pict 'javascript))
 
 (define (safets-pict)
-  (tmp-lang))
+  (ppict-do
+    (js-pict)
+    #:go (coord 1/2 0 'ct)
+    @coderm{SafeTS}))
 
 (define (tsstar-pict)
-  (tmp-lang))
-
+  (ppict-do
+    (js-pict)
+    #:go (coord 1/2 0 'ct)
+    @coderm{TS*}))
 
 (define (sorbet-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'sorbet))
 
 (define (strongscript-pict)
-  (tmp-lang))
+  (ppict-do
+    (js-pict)
+    #:go (coord 1/2 0 'ct)
+    @coderm{StrS.}))
 
 (define (thorn-pict)
-  (tmp-lang))
+  (symbol->lang-pict 'thorn))
 
 (define (tmp-lang)
   (scale-lang-lo (filled-rectangle 200 200 #:color "gray" #:draw-border? #f)))
+
+(define (txt-lang str)
+  (ppict-do
+    (filled-rectangle 80 80 #:color "gray" #:draw-border? #f)
+    #:go center-coord
+    (coderm str)))
 
 (define (indiana-pict)
   (symbol->lang-pict 'indiana))
@@ -1549,7 +1596,7 @@
       (bodyrmem lbl-str))))
 
 (define (camp-lbl str)
-  (bbox (bodyrmlo str)))
+  (bbox (bodyrmhi str)))
 
 (define (more-lang-pict)
   (cc-superimpose
@@ -3075,9 +3122,11 @@
           (untyped-bubble uu)))
 
 (define (typed-bubble pp)
+  (typed-codeblock* (list pp)) #;
   (bubblebox pp #:color deep-brush-color))
 
 (define (untyped-bubble pp)
+  (untyped-codeblock* (list pp)) #;
   (bubblebox pp #:color untyped-brush-color))
 
 (define (bubblebox pp #:color [color white])
@@ -3132,73 +3181,88 @@
 
 (define (sec:intro)
   (pslide
-    ;; as title suggests, this paper is about gradual languages
-    ;; or gradually typed languages
-    ;; [[ as many of you know // the key thing to note ]]
-    ;; gradual languages arose from this longstanding dilemma between T and U
+    ;; waters => TU dilemma
     #:go title-coord-m
-    @bodyrmlo{Should your PL be typed or untyped?}
-    (yblank small-y-sep)
     (let ()
-      ;; TODO rounder bubble
-      ;; TODO larger bubble
-      ;; TODO softer colors
-      ;; TODO bold text?
-      ;; TODO background too, to match the "waters" pic?
-      ;; TODO more boxes for text?
       (define-values [tt uu] (tu-bubbles))
-      (hc-append med-x-sep tt (vrule (h%->pixels 1/10) #:thickness 2) uu))
+      (let* ((fg
+                (hc-append med-x-sep
+                           tt
+                           (let ((rr (vrule (h%->pixels 5/100) #:thickness 4)))
+                             (hc-append 4 rr rr))
+                           uu))
+             (hh (* 2 (pict-height fg)))
+             (ww (* 3/4 client-w))
+             (bg (cc-superimpose
+                   (filled-rectangle (* 2 ww) hh #:color white #:draw-border? #f)
+                   (hc-append
+                     (filled-rectangle ww hh #:color typed-bg-color #:draw-border? #f)
+                     (filled-rectangle ww hh #:color untyped-bg-color #:draw-border? #f)))))
+        (cc-superimpose bg fg)))
+    (yblank small-y-sep)
+    @bodyrmlo{Q. Should your PL be typed or untyped?}
+    #:next
     (yblank med-y-sep)
-    (word-append @bodyrmem{Gradual typing} @bodyrmlo{ says } @bodyrmem{yes} @bodyrmlo{ to both})
+    (word-append @bodyrmhi{Gradual typing} @bodyrmlo{ says } @bodyrmhi{yes to both})
     (yblank tiny-y-sep)
-    @bodyit{"best" of two worlds}
+    (word-append
+      @bodyrmlo{"} @bodyemrm{best} @bodyrmlo{"} @bodyrmem{ of two worlds})
   )
   (pslide
     ;; idea really took off, past 15 years
     ;; ... great ... inspiring ... terrific ... 
     #:go heading-coord-m
-    ;; TODO box around words
-    ;; TODO pplay fade in
     ;; TODO fill languages
     @headrm{Great Idea!}
     @bodyrmlo{Inspired MANY Languages Over 16+ Years}
     (yblank med-y-sep)
     #:next
-    (lang-grid (append (all-lang-pict*) (list (more-lang-pict))))
+    (lang-grid (all-lang-pict*))
     #:next
     #:go center-coord
     (question-box
       (word-append
         ;; caveat:
-        @bodyrmlo{No agreement on the } @bodyrmem{semantics} @bodyrmlo{ of gradual types}))
+        @bodyrmlo{No agreement on the } @bodyrmhi{semantics} @bodyrmlo{ of gradual types}))
   )
-  (pslide
+  (pplay
+    #:skip-first? #t
+    (let ((pict-a (lang-grid (all-lang-pict*)))
+          (pict-b (four-camps-pict 'C 'T 'E 'N)))
+    (lambda (pp step-n)
+      (ppict-do
+        pp
     #:go heading-coord-m
     (bghost @headrm{Great Idea!})
     (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
     ;; TODO fade out
     ;; TODO arrange 4b langs
-    #:alt [
-      (yblank med-y-sep)
-      (lang-grid (all-lang-pict*))
-    ]
-    #:alt (
-      (four-camps-pict 'C 'T 'E 'N)
-    )
+    (yblank med-y-sep)
+    (cellophane pict-a (max 0 (- 1 (* 2 step-n))))
+    #:go heading-coord-m
+    (bghost @headrm{Great Idea!})
+    (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
+    (cellophane pict-b (min 1 (max 0 (- (* 2 step-n) 1/2))))
+  ))))
+  (pslide
+    #:go heading-coord-m
+    (bghost @headrm{Great Idea!})
+    (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
     (cellophane (four-camps-pict 'C 'T 'E 'N) 1/2)
     #:go (at-find-pict 'C ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Concrete")
     #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
     #:go (at-find-pict 'E ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Erasure")
     #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
+    #:next
     #:alt (
       #:go (coord 1/2 58/100 'cb)
-      (bbox (word-append @bodyrmhi{4} @bodyrmlo{ leading semantics}))
       (yblank tiny-y-sep)
     ;; ... if you want to use GT to reason about behavior, gotta pay cost
     ;; ... costs can be prohibitive = high and unpredictable
       (bbox
         (lc-append
-          @bodyrmlo{because of a key tradeoff:}
+          (word-append @bodyrmhi{4} @bodyrmlo{ leading semantics})
+          @bodyrmlo{because of a tradeoff:}
           (blank)
           (word-append @bodyrmlo{type } @bodyemrm{guarantees} @bodyrmlo{ vs. } @bodyemrm{performance} @bodyrmlo{ costs})
           (word-append @bodyrmlo{vs. } @bodyrmem{expressiveness})))
@@ -4094,22 +4158,23 @@
   [current-page-number-font page-font]
   [current-page-number-color white]
   ;; --
-  #;(parameterize ((current-slide-assembler waters-bg))
+  (parameterize ((current-slide-assembler waters-bg))
     (sec:title)
     (void))
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
-                 (pplay-steps 7))
+                 (pplay-steps 30))
 
-    (sec:intro)
-    (sec:2way)
-    (sec:3way)
-    (sec:perf)
-    (sec:expr)
-    (sec:end)
+                (pslide )
 
-    (pslide)
-    (sec:qa)
-    (pslide)
+;    (sec:intro)
+;    (sec:2way)
+;    (sec:3way)
+;    (sec:perf)
+;    (sec:expr)
+;    (sec:end)
+;    (pslide)
+;    (sec:qa)
+;    (pslide)
 
     (void))
   (void))
@@ -4129,5 +4194,18 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
+    #:go heading-coord-m
+    ;; TODO fill languages
+    @headrm{Great Idea!}
+    @bodyrmlo{Inspired MANY Languages Over 16+ Years}
+    (yblank med-y-sep)
+    #:next
+    (lang-grid (all-lang-pict*))
+    ;#:next
+    ;#:go center-coord
+    ;(question-box
+    ;  (word-append
+    ;    ;; caveat:
+    ;    @bodyrmlo{No agreement on the } @bodyrmhi{semantics} @bodyrmlo{ of gradual types}))
 
   )))
