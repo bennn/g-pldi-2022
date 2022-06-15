@@ -15,17 +15,17 @@
 ;; - [X] conclusion ... should be easy no? from job slides
 ;; - [X] no wrappers = simpler top type
 ;; - [X] uu recruiting slide
-
-;; - [ ] firm slide outline (@ ground rules)
-;;   - [ ] firm text
+;; - [X] firm slide outline (@ ground rules)
+;;   - [X] firm text
 
 ;; TODO LATER
-;; - [ ] rethink how to draw the boundaries, interaction pict ... but first get the point across!
-;; - [ ] checkerboard ... waters ... style background, for some kind of mixing?
-;; - [ ] consistent font / style
+;; - [X] rethink how to draw the boundaries, interaction pict ... but first get the point across!
+;; - [X] checkerboard ... waters ... style background, for some kind of mixing?
+;; - [X] consistent font / style
 ;; - [X] utah fonts
-;; - [ ] fix up colors
+;; - [X] fix up colors
 ;; - [X] bg looks terrible black & white
+;; - [X] when to introduce CM + TS
 ;; - [ ] ....
 
 (require
@@ -202,7 +202,7 @@
 (define validate-brush-color (color%-update-alpha validate-pen-color code-brush-alpha))
 (define happy-cloud-color lite-blue)
 (define sad-cloud-color dark-blue)
-(define default-line-color bg-lite-blue)
+(define default-line-color dark-blue)
 (define browncs-frame-color dark-blue)
 (define hilite-frame-color dark-orange)
 (define triangle-blue (color%++ bg-lite-blue 30))
@@ -249,6 +249,7 @@
 (define page-font (make-font #:face code-font #:size tcode-size))
 
 (define titlerm (make-string->text #:font utah-web-headline-font #:size title-size #:color black))
+(define titlerm2 (make-string->text #:font utah-web-headline-font #:size (- title-size 8) #:color black))
 (define subtitlerm (make-string->text #:font title-font #;body-font-md #:size subtitle-size #:color black))
 (define subtitlermlo
   (let ((ff (make-string->text #:font title-font #:size subtitle-size #:color black)))
@@ -761,7 +762,7 @@
       (let ((block-pict (add-label-margin block-pict 2)))
         (ppict-do (if title-pict (lt-superimpose block-pict (ht-append 4 (blank) title-pict)) block-pict)
           #:go (coord 1/2 0 'ct) label))
-      (if title-pict (vl-append 0 (ht-append 4 (blank) title-pict) (add-label-margin block-pict)) block-pict))))
+      (if title-pict (vc-append 0 (ht-append 4 (blank) title-pict) (add-label-margin block-pict)) block-pict))))
 
 (define (conslang x y)
   (if x (list* (tt x) (blank) y) y))
@@ -851,7 +852,13 @@
   (bitmap (check-icon #:color apple-green #:height h #:material rubber-icon-material)))
 
 (define (caution-pict h)
-  (bitmap (close-icon #:color utah-sunrise #:height h #:material rubber-icon-material)))
+  (bitmap (close-icon #:color utah-sunrise #:height h #:material plastic-icon-material)))
+
+(define (stop-pict h)
+  (bitmap (stop-icon #:color utah-crimson #:height h #:material plastic-icon-material)))
+
+(define (record-pict h)
+  (bitmap (record-icon #:color green1-3k1 #:height h #:material plastic-icon-material)))
 
 (define (x-pict size)
   (define outer-color red1-3k1)
@@ -1299,19 +1306,14 @@
 (define (bridge-pict pp0 pp1)
   (bridge-append (untyped-codeblock pp0) (typed-codeblock pp1)))
 
-(define (title-block str)
-  (titlerm str))
-
 (define (tu-icon)
-  (hc-append
-    tiny-x-sep
-    (typed-icon #:lbl #f)
-    (untyped-icon #:lbl #f))
-  #;(scale
-    (bridge-pict2 #:sep small-x-sep
-                  (typed-icon #:lbl #f)
-                  (untyped-icon #:lbl #f))
-    75/100))
+  (hc-append tiny-x-sep (typed-icon #:lbl #f) (untyped-icon #:lbl #f)))
+
+(define (du-icon)
+  (hc-append tiny-x-sep (deep-icon #:lbl #f) (untyped-icon #:lbl #f)))
+
+(define (su-icon)
+  (hc-append tiny-x-sep (shallow-icon #:lbl #f) (untyped-icon #:lbl #f)))
 
 (define (dsu-icon)
   (hc-append
@@ -1570,30 +1572,51 @@
     (list (gradualtalk-pict) (grift-pict) (tpd-pict) (tr-pict)))
   (define t*
     (list (pyret-pict) (grace-pict) (pallene-pict) (retic-pict)))
+  (define-values [n+ t+]
+    (apply values (pict-bbox-sup (lang-grid t* #:num 4) (lang-grid n* #:num 4))))
   (ppict-do
     (bghost (lang-grid (all-lang-pict*)))
     #:go (coord 1/2 0 'cc)
     (tag-pict (values (lang-grid c* #:num 5)) north-tag)
     #:go (coord 1 1/2 'cc)
-    (tag-pict (values (lang-grid t* #:num 4)) east-tag)
+    (tag-pict (values t+) east-tag)
     #:go (coord 1/2 1 'cc)
     (tag-pict (values (lang-grid e*)) south-tag)
     #:go (coord 0 1/2 'cc)
-    (tag-pict (values (lang-grid n* #:num 4)) west-tag)
+    (tag-pict (values n+) west-tag)
     ))
 
 (define (not-today why-str)
-  ;; TODO icon for "later" / "delay"
-  ;;  yellow stop-icon
+  (define no-pict (stop-pict 35))
   (bbox
-    (bodyrmlo why-str)))
+    (ht-append tiny-x-sep no-pict (bodyrmlo why-str) (bghost no-pict))))
 
-(define (yes-today why-str lbl-str)
-  ;; TODO green record-icon
+(define (yes-today why-str lbl-pict)
+  (define y-pict (record-pict 38))
   (bbox
-    (lc-append
-      (bodyrmlo why-str)
-      (bodyrmem lbl-str))))
+    (ht-append
+      tiny-x-sep
+      y-pict
+      (lc-append
+        (bodyrmlo why-str)
+        (yblank 0)
+        lbl-pict)
+      (bghost y-pict))))
+
+(define (shallow-today-pict) (yes-today "fast, wrong types" (shallow-name)))
+(define (deep-today-pict) (yes-today "strong, slow types" (deep-name)))
+
+(define (shallow-today-pict2)
+  (vc-append
+    pico-y-sep
+    (shallow-today-pict)
+    (su-icon)))
+
+(define (deep-today-pict2)
+  (vc-append
+    pico-y-sep
+    (deep-today-pict)
+    (du-icon)))
 
 (define (camp-lbl str)
   (bbox (bodyrmhi str)))
@@ -1732,6 +1755,22 @@
     vl-append
     pico-y-sep
     (map (lambda (pp) (scale pp 8/10)) pp*)))
+
+(define (n2-problem nn)
+    (bbbox
+      (ll-append
+        (word-append @bodyrmhi{The } @bodyrmhi{N^2} @bodyrmhi{ problem})
+        (yblank pico-y-sep)
+        (lc-append
+          (word-append @bodyrmhi{Q.} @bodyrmlo{ Are the languages independent?})
+          ((if (< nn 1) bghost values)
+           (word-append @bodyrmhi{A.} @bodyrmlo{ No. Typed exports must anticipate all possible clients.})))
+        (yblank pico-y-sep))))
+
+(define (venue-pict title where #:box? [box? #t])
+  (lc-append
+    (bodyrmhi title)
+    ((if box? bbox values) (bodyrmlo where))))
 
 (define (venue->pict3 vv)
   (define pp0 (venue->pict2 "In Submission'22"))
@@ -3006,20 +3045,22 @@
      pp
      #;(above-all-lang (bbox pp)))))
 
+(define region-w (w%->pixels 26/100))
+(define region-h (h%->pixels 2/10))
+
 (define (region-pict name #:color color)
   (let* ((bg (filled-rounded-rectangle
-               (w%->pixels 26/100)
-               (h%->pixels 2/10)
+               region-w region-h
                1
                #:color color
                #:border-color black
                #:border-width 1))
-         (fg (bodyrm name))
+         (fg (coderm name))
          (pp (cc-superimpose bg fg))
          (sym (string->symbol name)))
     (add-hubs pp sym)))
 
-(define interaction-y-sep med-y-sep)
+(define interaction-y-sep big-y-sep)
 (define interaction-x-sep (w%->pixels 24/100))
 
 (define (du-interaction n)
@@ -3032,21 +3073,41 @@
                (add-code-arrow pp arr #:arrow-size large-arrow-size #:both #true))))
     pp))
 
+(define (type-boundary nn dir type before after)
+  (let* ((left? (eq? dir 'L))
+         (pp (xblank interaction-x-sep))
+         (pp
+           (hc-append
+             (add-hubs ((if (< nn (if left? 2 1)) bghost values) (if left? after before)) 'L)
+             pp
+             (add-hubs ((if (< nn (if left? 1 2)) bghost values) (if left? before after)) 'R)))
+         (pp
+           (add-code-arrow
+             pp
+             (if left?
+               (code-arrow '|R-W| lc-find '|L-E| rc-find (* 1/2 turn) (* 1/2 turn) 0 0 'solid)
+               (code-arrow '|L-E| rc-find '|R-W| lc-find (* 0 turn) (* 0 turn) 0 0 'solid))
+             #:arrow-size large-arrow-size))
+         (pp
+           (vc-append (- pico-y-sep) type pp))
+         )
+    pp))
+
 (define (su-interaction n)
   (let* ((t-pict
            (let* ((pp (region-pict "Shallow Typed" #:color shallow-brush-color))
                   (pp (if (< n 2) pp (add-spots pp untyped-brush-color))))
-             (if (< n 3)
+             (if (< n 4)
                pp
                (ppict-do
                  pp
-                 #:go (coord 9/10 1/10 'ct)
+                 #:go (coord 9/10 9/10 'cc)
                  (tiny-mag)
-                 #:go (coord 1/10 9/10 'cb)
+                 #:go (coord 1/10 1/10 'cc)
                  (tiny-mag)))))
          (u-pict
            (let ((pp (region-pict "Untyped" #:color untyped-brush-color)))
-             (if (< n 4)
+             (if (< n 3)
                pp
                (add-spots pp shallow-brush-color))))
          (pp (hc-append interaction-x-sep t-pict u-pict))
@@ -3058,23 +3119,24 @@
     pp))
 
 (define (tiny-mag)
-  (bitmap (magnifying-glass-icon #:height 30)))
+  (bitmap (magnifying-glass-icon #:height 60)))
 
 (define (add-spots pp color)
-  ;; TODO more space between spots
   (define y-spot (tiny-spot color))
   (define n-spot (bghost y-spot))
+  (define num-check 15)
   (ppict-do
     pp
-    #:go (coord 1/2 06/100 'ct)
-    (checkerboard 2 5 n-spot y-spot)
-    #:go (coord 1/2 94/100 'cb)
-    (checkerboard 2 7 y-spot n-spot)))
+    #:go (coord 1/2 10/100 'ct)
+    (checkerboard 2 num-check n-spot y-spot)
+    #:go (coord 1/2 90/100 'cb)
+    (checkerboard 2 num-check y-spot n-spot)))
 
 (define (checkerboard num-rows num-cols black-pict red-pict)
   (define (make-row n . pp*)
     (apply
       ht-append
+      4
       (for/list ((_i (in-range n))
                  (pp (in-cycle (in-list pp*))))
         pp)))
@@ -3087,7 +3149,20 @@
       pp)))
 
 (define (tiny-spot color)
-  (filled-rounded-rectangle 20 20 4 #:color color #:border-color black #:border-width 1))
+  (define ww 18)
+  (define hh ww)
+  (cc-superimpose
+    (tiny-rect ww hh white)
+    (tiny-rect ww hh color)))
+
+(define (tiny-rect ww hh color)
+  (filled-rounded-rectangle
+    ww hh 2
+    #:color color
+    ;;#:draw-border? #f
+    #:border-color browncs-frame-color
+    #:border-width 0.2
+    ))
 
 (define (dsu-interaction n #:su-blur [su-blur #f])
   (let* ((d-pict (region-pict "Deep Typed" #:color deep-brush-color))
@@ -3142,21 +3217,49 @@
 (define (snoc x* x)
   (append x* (list x)))
 
+(define (how-natural-pict)
+        (word-append
+          @bodyrmlo{ Q. How does } @bodyrmhi{Natural} @bodyrmlo{ enforce }
+          (deep-name) @bodyrmlo{ types?}))
+
+(define (how-transient-pict)
+        (word-append
+          @bodyrmlo{ Q. How does } @bodyrmhi{Transient} @bodyrmlo{ enforce }
+          (shallow-name) @bodyrmlo{ types?}))
+
+(define (how-transient-a)
+  (word-append @bodyrmlo{A. With } @bodyrmhi{no wrappers} @bodyrmlo{ but many tiny } @bodyrmem{shape checks}))
+
+(define (deep-prop-pict)
+    (deep-codeblock* (list (lc-append
+            @coderm{Type Soundness}
+            @coderm{Complete Monitoring}))))
+
+(define (at-du)
+  (at-find-pict '|Deep Typed| rc-find 'cc #:abs-x (* 3/4 interaction-x-sep)))
+
+(define (at-ds)
+  (at-find-pict '|Deep Typed| cb-find 'ct #:abs-y (* 35/100 interaction-y-sep)))
+
+(define (at-su)
+  (at-find-pict '|Shallow Typed| rc-find 'cc #:abs-x (* 3/4 interaction-x-sep)))
+
 ;; -----------------------------------------------------------------------------
 
 (define the-title-str "Deep and Shallow Types for Gradual Languages")
-;; TODO add linebreak, newline somewhere!
-;; TODO titlerm too dark, use brown blue ... or change headrm to not use blue!
 
 (define (sec:title)
   (pslide
     #:next
+    #:alt (
     #:go title-coord-m
     (let* ([title-pict
              (bbox
                #:y-margin small-y-sep
-               (let* ((top the-title-str))
-                 (title-block top)))]
+               (let* ((str* (string-split the-title-str " for ")))
+                 (vc-append
+                   (titlerm (car str*))
+                   (titlerm2 (string-append "for " (cadr str*))))))]
            [tu-pict
              (vc-append
                pico-y-sep
@@ -3176,6 +3279,7 @@
         tiny-y-sep
           (vc-append tiny-y-sep title-pict (bghost tu-pict))
         author-pict))
+    )
   )
   (void))
 
@@ -3212,7 +3316,6 @@
     ;; idea really took off, past 15 years
     ;; ... great ... inspiring ... terrific ... 
     #:go heading-coord-m
-    ;; TODO fill languages
     @headrm{Great Idea!}
     @bodyrmlo{Inspired MANY Languages Over 16+ Years}
     (yblank med-y-sep)
@@ -3235,8 +3338,6 @@
     #:go heading-coord-m
     (bghost @headrm{Great Idea!})
     (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
-    ;; TODO fade out
-    ;; TODO arrange 4b langs
     (yblank med-y-sep)
     (cellophane pict-a (max 0 (- 1 (* 2 step-n))))
     #:go heading-coord-m
@@ -3248,14 +3349,20 @@
     #:go heading-coord-m
     (bghost @headrm{Great Idea!})
     (bghost @bodyrmlo{Inspired MANY Languages Over 16+ Years})
+    #:alt (
+    (four-camps-pict 'C 'T 'E 'N)
+    #:go (at-find-pict 'C ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Concrete")
+    #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
+    #:go (at-find-pict 'E ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Erasure")
+    #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
+    )
     (cellophane (four-camps-pict 'C 'T 'E 'N) 1/2)
     #:go (at-find-pict 'C ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Concrete")
     #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
     #:go (at-find-pict 'E ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Erasure")
     #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
-    #:next
+    #:go (coord 1/2 58/100 'cb)
     #:alt (
-      #:go (coord 1/2 58/100 'cb)
       (yblank tiny-y-sep)
     ;; ... if you want to use GT to reason about behavior, gotta pay cost
     ;; ... costs can be prohibitive = high and unpredictable
@@ -3271,8 +3378,8 @@
     #:go (at-find-pict 'C cc-find 'ct #:abs-y (- small-y-sep)) (not-today "limited interop w/ untyped")
     #:go (at-find-pict 'E cc-find 'ct #:abs-y (- small-y-sep)) (not-today "unsound interop")
     #:next
-    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep)) (yes-today "fast, wrong types" "shallow")
-    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep)) (yes-today "strong, slow types" "deep")
+    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep)) (shallow-today-pict)
+    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep)) (deep-today-pict)
   )
   (pslide
     ;; without further ado, this is the main RQ
@@ -3282,41 +3389,32 @@
     (cellophane (four-camps-pict 'C 'T 'E 'N) 0)
     #:go (at-find-pict 'T ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Transient")
     #:go (at-find-pict 'N ct-find 'ct #:abs-y (- tiny-y-sep)) (camp-lbl "Natural")
-    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep))
-    (yes-today "fast, wrong types" "shallow")
-    (yblank tiny-y-sep) (tu-icon)
-    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep))
-    (yes-today "strong, slow types" "deep")
-    (yblank tiny-y-sep) (tu-icon)
+    #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep)) (shallow-today-pict2)
+    #:go (at-find-pict 'N cc-find 'ct #:abs-y (* 0 pico-y-sep)) (deep-today-pict2)
+    #:go heading-coord-m
+    @headrm{Starting Point}
     #:next
     #:go hi-text-coord-m
     (rq-text
       @bodyrmlo{Can Natural and Transient interoperate?})
+    (yblank med-y-sep)
+    (hc-append tiny-x-sep right-arrow-pict (dsu-icon) left-arrow-pict)
     #:next
     (yblank med-y-sep)
-    (hc-append
-      small-x-sep
-      right-arrow-pict
-      (dsu-icon)
-      left-arrow-pict)
-  )
-  (pslide
-    #:go hi-text-coord-m
-    ;; two extreme points
-    (rq-text
-      @bodyrmlo{Can Natural and Transient interoperate?})
-    #:next
-    (yblank med-y-sep) (dsu-icon)
-    #:next
-    (yblank small-y-sep)
+    (bbox
     (ll-append
       (word-append @bodyrmhi{Motivations} @bodyrmlo{:})
       (word-append @bodyrmlo{  - ease the } @bodyrmem{guarantees} @bodyrmlo{ vs. } @bodyrmem{performance} @bodyrmlo{ tradeoff})
-      (word-append @bodyrmlo{  - no loss of } @bodyrmem{expressiveness} @bodyrmlo{; same static types})
-      (word-append @bodyrmlo{  - orthogonal to basic improvements})
-      (word-append @bodyrmlo{      Pycket OOPSLA'17    Collapsible Contracts OOPSLA'18})
-      (word-append @bodyrmlo{      Set-Based Analysis DLS'18    Corpse Reviver POPL'21})
-      )
+      (word-append @bodyrmlo{  - no loss of } @bodyrmem{expressiveness} @bodyrmlo{; same static types})))
+    (yblank tiny-y-sep)
+    (hc-append
+      tiny-x-sep
+      @bodyrmlo{Orthogonal to basic improvements:} 
+      (blank)
+      (venue-pict "Pycket" "OOPSLA'17")
+      #;(venue-pict "Collapsible" "OOPSLA'18")
+      #;(venue-pict "Set-Based Analysis" "DLS'18")
+      (venue-pict "Corpse Reviver" "POPL'21"))
   )
   (pslide
     ;; now come to **the** technical question
@@ -3331,119 +3429,93 @@
     ;; want to preserve properties (what are they?)
     ;; care about base values, data structures, higher-order values
     #:go center-coord
+    #:alt ( (dsu-interaction 0) )
     (dsu-interaction 1)
-    #:go center-coord
-    @headrm{?  ?  ?}
-    #:go (coord slide-text-left 20/100 'lt)
-    (bbox
-      (ll-append
-        @bodyrmlo{Type Soundness}
-        @bodyrmlo{+ Complete Monitoring}))
-    #:go (coord slide-text-left 60/100 'lt)
-    (bbox @bodyrmlo{Type Soundness})
-    #:go (coord slide-text-right 46/100 'rt)
-    (bbox @bodyrmlo{Dyn Soundness})
+    #:go (at-du) (bbox @coderm{?})
+    #:go (at-ds) (bbox @coderm{?})
+    #:go (at-su) (bbox @coderm{?})
+    #:next
+    #:go (at-find-pict '|Deep Typed| ct-find 'cb #:abs-y (* 35/100 region-h))
+    (deep-prop-pict)
+    #:next
+    #:go (at-find-pict '|Shallow Typed| ct-find 'cb #:abs-y (* 35/100 region-h))
+    (shallow-codeblock* (list @coderm{Type Soundness}))
+    #:next
+    #:go (at-find-pict '|Untyped| ct-find 'cb #:abs-y (* 35/100 region-h))
+    (untyped-codeblock* (list @coderm{Dyn. Soundness}))
   )
   (void))
 
 (define (sec:2way)
   (pslide
-  ;; to study 2way gotta understand the 2way
-  ;; "Natural" because that's what the paper says for better or worse, aka guarded
-  ;; "Transient" is the one and only
+    #:go heading-coord-m
+    @headrm{Key Technical Question:}
+    @bodyrmlo{How to Enforce Types at Boundaries?}
+    #:next
     #:go center-coord
-    (dsu-interaction 1)
-    #:go center-coord
-    (bbox
+    (question-box
       (ll-append
         @bodyrmlo{First of all:}
-        @bodyrmlo{ - How does Natural enforce Deep types?}
-        @bodyrmlo{ - How does Transient enforce Shallow types?}))
+        (how-natural-pict)
+        (yblank 0)
+        (how-transient-pict)
+        ))
   )
-
   (parameterize ((current-slide-assembler deep-bg))
   (pslide
-    #:go heading-coord-l
-    (word-append
-      @bodyrmlo{Q. How does } @bodyrmem{Natural} @bodyrmlo{ enforce Deep types?})
+    #:go heading-coord-m (how-natural-pict)
+    #:go hi-text-coord-m (du-interaction 1)
+    #:next
     #:go slide-text-coord-m
-    (word-append
-      @bodyrmlo{A. Use } @bodyrmem{wrappers} @bodyrmlo{ to keep typed and untyped separate})
-    ;; Fully guard / check / enforce the boundary
-    ;; TODO logo for this ... mag glass ... brick wall ... 
-    ;;  1. traverse first-order data
-    ;;  2. wrap / proxy  higher-order data (telephone?)
-    ;; for short, "wrap"
-    #:go center-coord
-    (du-interaction 1)
-    ;; TODO how to draw these boundaries!?
+    (word-append @bodyrmlo{A. Use } @bodyrmem{wrappers} @bodyrmlo{ to guard boundaries})
     #:next
-    @bodyrmlo{Int -> Int vs \x.e = wrap}
+    #:go (coord 50/100 1/2 'ct #:sep tiny-y-sep)
+    #:alt ( (type-boundary 1 'L (deep-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (deep-codeblock* (list @codebf{[wrap]}))) )
+    (type-boundary 2 'L (deep-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (deep-codeblock* (list @codebf{[wrap]})))
     #:next
-    @bodyrmlo{Vectorof Int vs (vector 1 2 3) = wrap}
-    #:next
-    @bodyrmlo{Int vs 42 = check}
-    #:next
-    (yblank small-y-sep)
-    @bodyrmlo{Clearly type sound. Also satisfies CM.}
+    #:alt ( (type-boundary 1 'R (deep-code "Vectorof Int") (deep-codeblock* (list (word-append @codebf{vec} @coderm{ 1 2 3}))) (untyped-codeblock* (list @codebf{[wrap]}))) )
+    (type-boundary 2 'R (deep-code "Vectorof Int") (deep-codeblock* (list (word-append @codebf{vec} @coderm{ 1 2 3}))) (untyped-codeblock* (list @codebf{[wrap]})))
+    ;;#:next
+    ;;#:alt ( (type-boundary 1 'L (deep-code "Int") (untyped-codeblock* (list @coderm{42})) (deep-codeblock* (list @codebf{42}))) )
+    ;;(type-boundary 2 'L (deep-code "Int") (untyped-codeblock* (list @coderm{42})) (deep-codeblock* (list @codebf{42})))
   )
     (void))
   (parameterize ((current-slide-assembler shallow-bg))
   (pslide
     ;; forget about barrier, too costly: allocation indirection checking
-    #:go heading-coord-r
-    (word-append
-      @bodyrmlo{How does } @bodyrmem{Transient} @bodyrmlo{ enforce Shallow types?})
+    #:go heading-coord-m (how-transient-pict)
+    #:go hi-text-coord-m (su-interaction 1)
+    #:next
     #:go slide-text-coord-m
-    (word-append
-      @bodyrmlo{A. With lots of tiny } @bodyrmem{shape checks})
-    #:go center-coord
-    (su-interaction 1)
+    (how-transient-a)
     #:next
-    @bodyrmlo{Int -> Int vs \x.e = ok}
+    #:go (coord 50/100 1/2 'ct #:sep tiny-y-sep)
+    #:alt ( (type-boundary 1 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e})))) )
+    (type-boundary 2 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))))
     #:next
-    @bodyrmlo{Vectorof Int vs (vector 1 2 3) = ok}
+    #:alt ( (type-boundary 1 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (shallow-codeblock* (list (word-append @codebf{vec} @coderm{ A B C})))) )
+    (type-boundary 2 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (shallow-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))))
     #:next
-    @bodyrmlo{Vectorof Int vs (vector A B C) = ok}
+    #:alt ( (type-boundary 1 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'})))) )
+    (type-boundary 2 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))))
   )
   (pslide
-    #:go heading-coord-r
-    (word-append
-      @bodyrmlo{How does } @bodyrmem{Transient} @bodyrmlo{ enforce Shallow types?})
+    ;; forget about barrier, too costly: allocation indirection checking
+    #:go heading-coord-m (how-transient-pict)
     #:go slide-text-coord-m
-    (word-append
-      @bodyrmlo{A. With lots of tiny } @bodyrmem{shape checks})
-    #:go center-coord
-    (su-interaction 2)
-    @bodyrmlo{Int -> Int vs \x.e = ok}
-    @bodyrmlo{Vectorof Int vs (vector 1 2 3) = ok}
-    @bodyrmlo{Vectorof Int vs (vector A B C) = ok}
-  )
-  (pslide
-    #:go heading-coord-r
-    (word-append
-      @bodyrmlo{How does } @bodyrmem{Transient} @bodyrmlo{ enforce Shallow types?})
-    #:go slide-text-coord-m
-    (word-append
-      @bodyrmlo{A. With lots of tiny } @bodyrmem{shape checks})
-    #:go center-coord
-    (su-interaction 3)
-    @bodyrmlo{Int -> Int vs \x.e = ok}
-    @bodyrmlo{Vectorof Int vs (vector 1 2 3) = ok}
-    @bodyrmlo{Vectorof Int vs (vector A B C) = ok}
-    (yblank small-y-sep)
-    @bodyrmlo{PLUS checks throughout typed code}
-  )
-  (pslide
-    #:go heading-coord-r
-    (word-append
-      @bodyrmlo{How does } @bodyrmem{Transient} @bodyrmlo{ enforce Shallow types?})
-    #:go slide-text-coord-m
-    (word-append
-      @bodyrmlo{A. With lots of tiny } @bodyrmem{shape checks})
-    #:go center-coord
+    (how-transient-a)
+    #:go (coord 50/100 1/2 'ct #:sep tiny-y-sep)
+    (type-boundary 2 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))))
+    (type-boundary 2 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (shallow-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))))
+    (type-boundary 2 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))))
+    #:go hi-text-coord-m
+    #:alt ( (su-interaction 3) )
     (su-interaction 4)
-    ;; overal, extremely lax ... hard to imagine weaker yet sound strategy
+    #:go (at-find-pict '|Shallow Typed| lb-find 'ct #:abs-y pico-y-sep)
+    (bbox
+      (lc-append
+        @bodyrmlo{Check function calls,}
+        @bodyrmlo{vector refs, etc.}))
   )
     (void))
 
@@ -3452,55 +3524,57 @@
   (void))
 
 (define (sec:3way)
-  ;; TODO example program before this? we've yet to see ANY examples ... gotta
-  ;; work those in, no?
   (pslide
-    ;; deep first, because strictest
-    ;; - D U = wrap, obvious
-    ;; - D S = tough! 
-    #:go center-coord
-    (dsu-interaction 1)
-    #:go center-coord
-    #:alt ( @headrm{?  ?  ?})
-    #:alt ( @headrm{wrap  ?  ?} )
-    @headrm{wrap  ?  scan/noop}
-    #:go bottom-coord-m
-    @bodyrmlo{What about Deep <-> Shallow?}
-  )
-  (pslide
-    #:go center-coord
-    (dsu-interaction 1)
-    #:go bottom-coord-m
-    @bodyrmlo{What about Deep <-> Shallow?}
-    @bodyrmlo{Tempting to have no checks on the typed side}
-    #:go center-coord
-    (vrule (h%->pixels 4/10) #:thickness 6)
+    #:alt (
+      #:go center-coord (dsu-interaction 1)
+      #:alt (
+      #:go (at-du) (bbox @coderm{?})
+      #:go (at-ds) (bbox @coderm{?})
+      #:go (at-su) (bbox @coderm{?})
+      )
+      #:go (at-du) (bbox (word-append @coderm{1. } @codebf{wrap}))
+      #:go (at-ds) (bbox @coderm{?})
+      #:alt (
+        #:go (at-su) (bbox @coderm{?})
+      )
+      #:go (at-su) (bbox (word-append @coderm{2. } @codebf{scan} @coderm{ / } @codebf{no-op}))
+    )
+    #:go center-coord (dsu-interaction 1 #:su-blur #t)
+    #:go (at-du) (bbox (word-append @coderm{1. } @codebf{wrap}))
+    #:go (at-su) (bbox (word-append @coderm{2. } @codebf{scan} @coderm{ / } @codebf{no-op}))
+    #:go (at-ds) (tag-pict (bbox @coderm{?}) 'bb)
+    #:next
+    #:go (at-find-pict 'bb rc-find 'lc #:abs-x pico-x-sep)
+    (bbox
+      (lc-append
+        @bodyrmlo{Typed to Typed = no check?}
+        @bodyrmlo{No!}))
   )
   (pslide
     #:go hi-text-coord-l
     (ll-append
-      @bodyrmlo{Example 1: Deep code cannot}
-      @bodyrmlo{  trust Shallow types})
-    #:go (coord 58/100 1/2 'lc)
+      @bodyrmlo{Example 1:}
+      @bodyrmlo{  Deep code cannot trust Shallow types})
+    #:go (coord 48/100 1/2 'lc)
     (shallow-codeblock*
       #:title "Shallow makes a function,"
       (list
-    @bodyrmlo{define f0(n : Int)}
+    (word-append @bodyrmhi{def } @bodyrmlo{ f0(n : Int):})
     @bodyrmlo{  n + 2}))
     (yblank small-y-sep)
     #:next
     (untyped-codeblock*
       #:title "sends it to untyped code ..."
       (list
-    (xblank (pict-width @bodyrmlo{f2 : Str -> Str}))
-    @bodyrmlo{f1 = f0}))
+        (xblank (pict-width @bodyrmlo{f2 : Str -> Str}))
+        (word-append @bodyrmhi{def } @bodyrmlo{ f1 = f0})))
     (yblank small-y-sep)
     #:next
     (shallow-codeblock*
       #:title "and back, with a new type."
       (list
     @bodyrmlo{f2 : Str -> Str}
-    @bodyrmlo{f2 = f1}))
+    (word-append @bodyrmhi{def } @bodyrmlo{ f2 = f1})))
     ;;@bodyrmlo{u shim => no static error}
     (yblank small-y-sep)
     #:next
@@ -3508,83 +3582,102 @@
       #:title "Deep gets a 'bad' function"
       (list
     @bodyrmlo{f3 : Str -> Str}
-    @bodyrmlo{f3 = f2}))
+    (word-append @bodyrmhi{def } @bodyrmlo{ f3 = f2})))
   )
   (pslide
     #:go hi-text-coord-l
+    (bghost (ll-append
+      @bodyrmlo{Example 1:}
+      @bodyrmlo{  Deep code cannot trust Shallow types}))
     (ll-append
-      @bodyrmlo{Example 2: Shallow can}
-      @bodyrmlo{  misuse a Deep value})
-    #:go (coord 58/100 1/2 'lc)
+      @bodyrmlo{Example 2:}
+      @bodyrmlo{  Shallow can misuse a Deep value})
+    #:go (coord 48/100 1/2 'lc)
     (deep-codeblock*
       #:title "Deep makes a function,"
       (list
-    @bodyrmlo{define f0(g : Int -> Int)}
+    (word-append @bodyrmhi{def } @bodyrmlo{ f0(g : Int -> Int):})
     @bodyrmlo{  g(3)}))
     (yblank small-y-sep)
     #:next
     (shallow-codeblock*
       #:title "sends it to Shallow,"
       (list
-    @bodyrmlo{f1 : (Int -> Int) -> Int}
-    @bodyrmlo{f1 = f0}))
+        @bodyrmlo{f1 : (Int -> Int) -> Int}
+        (word-append @bodyrmhi{def } @bodyrmlo{ f1 = f0})))
     (yblank small-y-sep)
     #:next
     (untyped-codeblock*
       #:title "which sends it to untyped"
       (list
-    (xblank (pict-width @bodyrmlo{f2 : Str -> Str}))
-    @bodyrmlo{f2 = f1}
-    @bodyrmlo{f2("not a function")}))
+        (xblank (pict-width @bodyrmlo{f2 : Str -> Str}))
+        (word-append @bodyrmhi{def } @bodyrmlo{ f2 = f1})
+        @bodyrmlo{f2("not a function")}))
   )
   (pslide
-    ;; Takeaway from examples = can't no-op in general
-    ;;  and can't special-case without detailed knowledge
-    #:go center-coord
-    #:alt ( (dsu-interaction 1) )
-    (dsu-interaction 1 #:su-blur #t)
-    #:go bottom-coord-m
-    @bodyrmlo{Shallow and Untyped can mix together (b/c of the Transient strategy)}
-    @bodyrmlo{=> Deep cannot trust Shallow}
+    #:go center-coord (dsu-interaction 1 #:su-blur #t)
+    #:go (at-du) (bbox (word-append @coderm{1. } @codebf{wrap}))
+    #:go (at-su) (bbox (word-append @coderm{2. } @codebf{scan} @coderm{ / } @codebf{no-op}))
+    #:alt (
+      #:go (at-ds) (tag-pict (bbox @coderm{?}) 'bb)
+      #:go (at-find-pict 'bb rc-find 'lc #:abs-x pico-x-sep)
+      (bbox
+        (lc-append
+          @bodyrmlo{Typed to Typed = no check?}
+          @bodyrmlo{No!}))
+    )
+    #:go (at-ds) (bbox (word-append @coderm{3. } @codebf{wrap}))
     #:next
-    #:go center-coord
-    @headrm{wrap  wrap  scan/noop}
+    #:go heading-coord-m
+    (bbox
+      (hc-append
+        tiny-x-sep
+        (check-pict 60)
+        @bodyrmlo{In paper: model, type soundness, complete monitoring}))
   )
-  ;; TODO n2 problem ... implementation challenges
+  (void))
+
+(define (sec:impl)
+  ;; TODO
+  ;; 1. built in TR
+  ;; 2. subject for another talk, Transient TR at <P>
+  ;; 3. tying together brought own challenges
+  ;; 4. *** mention the N^2 problem ***
+  ;; 5. ideally, langs independent, so if we add a 4th, the others don't need to change
+  ;; 6. that's NOT what we have, every export gotta prepare for all 3 just in case
+  ;; 7. alt = force the programmer ... => not terrible to remind, but redundant code & checks
   (pslide
-    ;; TODO more exciting
-    ;; ... a first step? more to explore in future?
-    #:go center-coord
-    (dsu-interaction 1 #:su-blur #t)
-    #:go (coord 1/2 30/100 'lt)
-    (bbox
-      @bodyrmlo{In paper: model and proofs of TS + CM})
+    #:go heading-coord-m @headrm{Implementation}
+    (let ((pp (racket-pict)))
+      (hc-append tiny-x-sep (bghost pp) @bodyrmlo{Typed Racket} pp))
+    #:go center-coord (dsu-interaction 1 #:su-blur #f)
+    #:go center-coord 
     #:next
-    #:go (coord 1/2 70/100 'lt)
-    (bbox
-      ;; if we have tradeoff icon, bring it back
-      (ll-append
-        @bodyrmlo{Substantial benefits:}
-        @bodyrmlo{  - all 3 points G P E}
-        ;; - better perf
-        ;; - allows more T/U combos
-        @bodyrmlo{  G must be obv. unless we have an example to recall}
-        ))
+    #:alt (
+      #:go (at-find-pict '|Shallow Typed| cb-find 'ct #:abs-y (- small-y-sep))
+      (bbox
+        (venue-pict #:box? #f
+        "A Transient Semantics for Typed Racket"
+        "Programming'22"))
+    )
+    #:next
+    #:go center-coord
+    #:alt ( (n2-problem 0) )
+    (n2-problem 1)
   )
-
-
-;  (pslide
-;    #:go heading-coord-m
-;    @bodyrm{model?}
-;    ;; 3way syntax
-;    ;; "mod" to connect
-;    ;; state properties
-;    ;; details in paper
-;  )
+  (pslide
+    #:go title-coord-m
+    @headrm{Evaluation}
+    (word-append
+      @bodyrmem{Guarantees}
+      @bodyrmlo{ vs. }
+      @bodyrmem{Performance}
+      @bodyrmlo{ vs. }
+      @bodyrmem{Expressiveness})
+  )
   (void))
 
 (define (sec:perf)
-  ;; TODO credit to Typed Racket
   (pslide
     ;; TODO show library nodes
     #:go (coord slide-left slide-text-top 'lt)
@@ -3889,6 +3982,7 @@
     ;; recruiting
     ;; Q. replace transient for better T to T interaction
     ;; Q. D+S how to program in 3 world
+    ;; Q. address N^2 problem
     ;; q. optimizing transient
     ;; q. optimizing natural
     #:go center-coord
@@ -3960,20 +4054,20 @@
   (void))
 
 (define (sec:qa)
-  (pslide
-    #:go center-coord
-    @bodyrmlo{DSU alt 1}
-    ;; escape analysis (tough!)
-    ;; DS free to share unless value escapes or originally from untyped
-    ;; D can make all the wrappers
-  )
-  (pslide
-    #:go center-coord
-    @bodyrmlo{DSU alt 2}
-    ;; escape analysis again
-    ;; DS noop
-    ;; S conditionally wraps
-  )
+  ;(pslide
+  ;  #:go center-coord
+  ;  @bodyrmlo{DSU alt 1}
+  ;  ;; escape analysis (tough!)
+  ;  ;; DS free to share unless value escapes or originally from untyped
+  ;  ;; D can make all the wrappers
+  ;)
+  ;(pslide
+  ;  #:go center-coord
+  ;  @bodyrmlo{DSU alt 2}
+  ;  ;; escape analysis again
+  ;  ;; DS noop
+  ;  ;; S conditionally wraps
+  ;)
   ;; ---
   (pslide
     #:go heading-coord-m
@@ -4164,17 +4258,17 @@
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 30))
 
-                (pslide )
 
-;    (sec:intro)
-;    (sec:2way)
-;    (sec:3way)
-;    (sec:perf)
-;    (sec:expr)
-;    (sec:end)
-;    (pslide)
-;    (sec:qa)
-;    (pslide)
+    (sec:intro)
+    (sec:2way)
+    (sec:3way)
+    (sec:impl)
+    (sec:perf)
+    (sec:expr)
+    (sec:end)
+    (pslide)
+    (sec:qa)
+    (pslide)
 
     (void))
   (void))
@@ -4194,18 +4288,5 @@
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
 
-    #:go heading-coord-m
-    ;; TODO fill languages
-    @headrm{Great Idea!}
-    @bodyrmlo{Inspired MANY Languages Over 16+ Years}
-    (yblank med-y-sep)
-    #:next
-    (lang-grid (all-lang-pict*))
-    ;#:next
-    ;#:go center-coord
-    ;(question-box
-    ;  (word-append
-    ;    ;; caveat:
-    ;    @bodyrmlo{No agreement on the } @bodyrmhi{semantics} @bodyrmlo{ of gradual types}))
 
   )))
