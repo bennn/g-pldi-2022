@@ -3194,12 +3194,12 @@
 
 (define (how-natural-pict)
         (word-append
-          @bodyrmlo{ Q. How does } @bodyrmhi{Natural} @bodyrmlo{ enforce }
+          @bodyrmlo{ Q. How does  } @bodyrmhi{Natural} @bodyrmlo{  enforce }
           (deep-name) @bodyrmlo{ types?}))
 
 (define (how-transient-pict)
         (word-append
-          @bodyrmlo{ Q. How does } @bodyrmhi{Transient} @bodyrmlo{ enforce }
+          @bodyrmlo{ Q. How does  } @bodyrmhi{Transient} @bodyrmlo{  enforce }
           (shallow-name) @bodyrmlo{ types?}))
 
 (define (how-transient-a)
@@ -3218,6 +3218,51 @@
 
 (define (at-su)
   (at-find-pict '|Shallow Typed| rc-find 'cc #:abs-x (* 3/4 interaction-x-sep)))
+
+(define (conclusion-pict nn)
+    (table2
+      #:col-sep small-x-sep
+      #:row-sep (* 2 tiny-y-sep)
+      #:col-align lt-superimpose
+      #:row-align lt-superimpose
+      (take
+      (list
+        @bodyrmhi{Context:} (ll-append
+                              @bodyrmlo{Different GT strategies exist}
+                              @bodyrmlo{ (for good reason!)})
+        @bodyrmhi{Inquiry:} (ll-append
+                               @bodyrmlo{Can two extreme strategies interoperate?}
+                               (yblank pico-y-sep)
+                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
+                               (yblank 0)
+                               (word-append (shallow-name) @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
+        @bodyrmhi{Contribution:} (ll-append
+                             @bodyrmlo{Yes! In a way that:}
+                             (word-append @bodyrmlo{ - preserves their formal } @bodyrmem{guarantees})
+                             (word-append @bodyrmlo{ - leads to better overall } @bodyrmem{performance})
+                             (word-append @bodyrmlo{ - lets TR } @bodyrmem{express} @bodyrmlo{ additional programs}))
+        )
+      (* (+ 1 nn) 2))
+      ))
+
+(define (coming-soon-pict)
+    (hc-append
+      small-x-sep
+      (bbox
+      (hb-append
+        pico-x-sep
+        (make-simple-flag
+          (blank 40 10)
+          #:flag-border-color deep-pen-color
+          #:flag-background-color shallow-pen-color)
+        (lc-append
+          @bodyrmlo{Opens a new dimension in}
+          @bodyrmlo{gradual language design})))
+      (bbbox
+        (hc-append
+          tiny-x-sep
+          @bodyrmlo{Coming soon to Racket}
+          (symbol->lang-pict 'racket)))))
 
 ;; -----------------------------------------------------------------------------
 
@@ -3343,14 +3388,15 @@
     ;; ... costs can be prohibitive = high and unpredictable
       (bbox
         (lc-append
-          (word-append @bodyrmhi{4} @bodyrmlo{ leading semantics})
-          @bodyrmlo{because of a tradeoff:}
+          (word-append @bodyrmhi{4} @bodyrmlo{ leading})
+          @bodyrmlo{semantics because of a tradeoff:}
           (blank)
           (word-append @bodyrmlo{type } @bodyemrm{guarantees} @bodyrmlo{ vs. } @bodyemrm{performance} @bodyrmlo{ costs})
           (word-append @bodyrmlo{vs. } @bodyrmem{expressiveness})))
     )
     #:next
     #:go (at-find-pict 'C cc-find 'ct #:abs-y (- small-y-sep)) (not-today "limited interop w/ untyped")
+    #:next
     #:go (at-find-pict 'E cc-find 'ct #:abs-y (- small-y-sep)) (not-today "unsound interop")
     #:next
     #:go (at-find-pict 'T cc-find 'ct #:abs-y (* 0 pico-y-sep)) (shallow-today-pict)
@@ -3644,6 +3690,7 @@
   (pslide
     #:go title-coord-m
     @headrm{Evaluation}
+    (yblank small-y-sep)
     (word-append
       @bodyrmem{Guarantees}
       @bodyrmlo{ vs. }
@@ -3670,7 +3717,7 @@
       #:url "docs.racket-lang.org/gtp-benchmarks")
       'gtp-perf)
     #:next
-    #:go (coord 48/100 8/100 'lt)
+    #:go (coord 47/100 8/100 'lt)
     #:alt ( (whence-lattice 0) )
     #:alt ( (whence-lattice 1) )
     (whence-lattice 2)
@@ -3752,9 +3799,9 @@
     (yblank small-y-sep)
     (scale (pathology-lattice 5) 5/10)
     (yblank med-y-sep)
-    #:next
-    (bbox
-      @bodyrmlo{Future Work: fine-grained recommendations})
+    ;;#:next
+    ;;(bbox
+    ;;  @bodyrmlo{Future Work: fine-grained recommendations})
   )
 
   #;(pslide
@@ -3886,55 +3933,20 @@
   (void))
 
 (define (sec:end)
-  (parameterize ((current-slide-assembler waters-bg))
-    (pslide
-      #:go (coord 1/2 20/100 'cc)
-      (question-box @headrm{Conclusion})
-    ))
+  (pslide
+    #:go title-coord-m
+    @headrm{Conclusion}
+  )
   (pslide
     #:go (coord 96/100 10/100 'rt)
     (dsu-icon)
     #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep (* 2 tiny-y-sep)
-      #:col-align lt-superimpose
-      #:row-align lt-superimpose
-      (list
-        @bodyrmhi{Context:} (ll-append
-                              @bodyrmlo{Different GT strategies exist}
-                              @bodyrmlo{ (for good reason!)})
-        @bodyrmhi{Inquiry:} (ll-append
-                               @bodyrmlo{Can two extreme strategies interoperate?}
-                               (yblank pico-y-sep)
-                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
-                               (yblank 0)
-                               (word-append (shallow-name) @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
-        @bodyrmhi{Contribution:} (ll-append
-                             @bodyrmlo{Yes! In a way that:}
-                             (word-append @bodyrmlo{ - preserves their formal } @bodyrmhi{guarantees})
-                             (word-append @bodyrmlo{ - leads to better overall } @bodyrmhi{performance})
-                             (word-append @bodyrmlo{ - lets TR } @bodyrmhi{express} @bodyrmlo{ additional programs}))
-        ))
+    #:alt ( (conclusion-pict 0) )
+    #:alt ( (conclusion-pict 1) )
+    (conclusion-pict 2)
     #:next
     #:go (coord 1/2 95/100 'cb)
-    (hc-append
-      small-x-sep
-      (bbox
-      (hb-append
-        pico-x-sep
-        (make-simple-flag
-          (blank 40 10)
-          #:flag-border-color deep-pen-color
-          #:flag-background-color shallow-pen-color)
-        (lc-append
-          @bodyrmlo{Opens a new dimension in}
-          @bodyrmlo{gradual language design})))
-      (bbbox
-        (hc-append
-          tiny-x-sep
-          @bodyrmlo{Coming soon to Racket}
-          (symbol->lang-pict 'racket))))
+    (coming-soon-pict)
   )
   (pslide
     #:go heading-coord-m
@@ -3963,14 +3975,15 @@
     ;; q. optimizing transient
     ;; q. optimizing natural
     #:go center-coord
+    (tag-pict
     (add-rounded-border
       (scale-to-fit (bitmap "img/flux-bg.jpeg") (* 95/100 client-w) (* 98/100 client-h))
       #:x-margin 1
       #:y-margin 1
       #:radius 0.1
       #:frame-width 1
-      #:frame-color black)
-    #:go center-coord
+      #:frame-color black) 'uu)
+    #:go (at-find-pict 'uu ct-find 'cc)
     (add-rounded-border
       (bitmap "img/the-u.png")
       #:x-margin small-x-sep
@@ -3984,48 +3997,29 @@
     @bodyrmlo{The End}
   )
   (pslide
+    #:go heading-coord-m
+    @headrm{Artifact}
+    #:go (coord 98/100 2/100 'rt)
+    (bbox (bitmap "img/aec.png") #:x-margin 0 #:y-margin 0)
+    #:go center-coord
+    @bodyrmhi{Software Heritage}
+    (scale-to-fit
+      @coderm{http://archive.softwareheritage.org/swh:1:dir:2f1f76cafb72491d8526d18ae556499065ac6853}
+      (* 3/4 client-w) 200)
+    (yblank small-y-sep)
+    @bodyrmhi{Zenodo}
+    @coderm{https://doi.org/10.5281/zenodo.6498925}
+    (yblank small-y-sep)
+    @bodyrmhi{GitHub}
+    @coderm{https://github.com/bennn/g-pldi-2022}
+  )
+  (pslide
     #:go (coord 96/100 10/100 'rt)
     (dsu-icon)
     #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep (* 2 tiny-y-sep)
-      #:col-align lt-superimpose
-      #:row-align lt-superimpose
-      (list
-        @bodyrmhi{Context:} (ll-append
-                              @bodyrmlo{Different GT strategies exist}
-                              @bodyrmlo{ (for good reason!)})
-        @bodyrmhi{Inquiry:} (ll-append
-                               @bodyrmlo{Can two extreme strategies interoperate?}
-                               (yblank pico-y-sep)
-                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
-                               (yblank 0)
-                               (word-append (shallow-name) @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
-        @bodyrmhi{Contribution:} (ll-append
-                             @bodyrmlo{Yes! In a way that:}
-                             (word-append @bodyrmlo{ - preserves their formal } @bodyrmhi{guarantees})
-                             (word-append @bodyrmlo{ - leads to better overall } @bodyrmhi{performance})
-                             (word-append @bodyrmlo{ - lets TR } @bodyrmhi{express} @bodyrmlo{ additional programs}))
-        ))
+    (conclusion-pict 2)
     #:go (coord 1/2 95/100 'cb)
-    (hc-append
-      small-x-sep
-      (bbox
-      (hb-append
-        pico-x-sep
-        (make-simple-flag
-          (blank 40 10)
-          #:flag-border-color deep-pen-color
-          #:flag-background-color shallow-pen-color)
-        (lc-append
-          @bodyrmlo{Opens a crucial new dimension}
-          @bodyrmlo{in gradual language design})))
-      (bbbox
-        (hc-append
-          tiny-x-sep
-          @bodyrmlo{Coming soon to Racket}
-          (symbol->lang-pict 'racket))))
+    (coming-soon-pict)
   )
 
   (void))
@@ -4264,6 +4258,7 @@
   (ppict-do
     (make-bg client-w client-h)
     #;(make-titlebg client-w client-h)
+
 
 
   )))
