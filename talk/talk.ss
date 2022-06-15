@@ -1572,7 +1572,7 @@
     (list (gradualtalk-pict) (grift-pict) (tpd-pict) (tr-pict)))
   (define t*
     (list (pyret-pict) (grace-pict) (pallene-pict) (retic-pict)))
-  (define-values [n+ t+]
+  (define-values [t+ n+]
     (apply values (pict-bbox-sup (lang-grid t* #:num 4) (lang-grid n* #:num 4))))
   (ppict-do
     (bghost (lang-grid (all-lang-pict*)))
@@ -2641,31 +2641,6 @@
         )
     pp))
 
-(define (blame-how n)
-  (define lhs-text
-    (lc-append
-      (word-append
-        @bodyembf{Guarded} @bodyrmlo{ wrappers can attach precise})
-      (word-append
-        @bodyrmlo{blame info to values})))
-  (define rhs-text1
-    (lc-append
-      (word-append
-        @bodyembf{Transient} @bodyrmlo{ has no wrappers, but})
-      (word-append
-        @bodyrmlo{keeps a } @bodyrmhi{global map on the side})))
-  (define rhs-text2
-    (ll-append
-      rhs-text1
-      @bodyrmlo{ }
-      @bodyrmlo{... a large map gets expensive}))
-  (ht-append
-    small-x-sep
-    lhs-text
-    (vrule (max (pict-height lhs-text) (pict-height rhs-text2)))
-    ((if (< n 1) bghost values)
-     (if (< n 2) rhs-text1 rhs-text2))))
-
 (define all-blame-data
   (list
     (list "kcfa" "1x" "4x" ">540x")
@@ -3406,6 +3381,7 @@
       (word-append @bodyrmhi{Motivations} @bodyrmlo{:})
       (word-append @bodyrmlo{  - ease the } @bodyrmem{guarantees} @bodyrmlo{ vs. } @bodyrmem{performance} @bodyrmlo{ tradeoff})
       (word-append @bodyrmlo{  - no loss of } @bodyrmem{expressiveness} @bodyrmlo{; same static types})))
+    #:next
     (yblank tiny-y-sep)
     (hc-append
       tiny-x-sep
@@ -3490,14 +3466,14 @@
     (how-transient-a)
     #:next
     #:go (coord 50/100 1/2 'ct #:sep tiny-y-sep)
-    #:alt ( (type-boundary 1 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e})))) )
-    (type-boundary 2 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))))
+    #:alt ( (type-boundary 1 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e})))) )
+    (type-boundary 2 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))))
     #:next
-    #:alt ( (type-boundary 1 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (shallow-codeblock* (list (word-append @codebf{vec} @coderm{ A B C})))) )
-    (type-boundary 2 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (shallow-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))))
+    #:alt ( (type-boundary 1 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C})))) )
+    (type-boundary 2 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))))
     #:next
-    #:alt ( (type-boundary 1 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'})))) )
-    (type-boundary 2 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))))
+    #:alt ( (type-boundary 1 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'})))) )
+    (type-boundary 2 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))))
   )
   (pslide
     ;; forget about barrier, too costly: allocation indirection checking
@@ -3505,9 +3481,9 @@
     #:go slide-text-coord-m
     (how-transient-a)
     #:go (coord 50/100 1/2 'ct #:sep tiny-y-sep)
-    (type-boundary 2 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))))
-    (type-boundary 2 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (shallow-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))))
-    (type-boundary 2 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))))
+    (type-boundary 2 'L (shallow-code "Int -> Int") (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))) (untyped-codeblock* (list (word-append @codebf{fun} @coderm{ x . e}))))
+    (type-boundary 2 'L (shallow-code "Vectorof Int") (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))) (untyped-codeblock* (list (word-append @codebf{vec} @coderm{ A B C}))))
+    (type-boundary 2 'R (shallow-code "Int -> Int") (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))) (shallow-codeblock* (list (word-append @codebf{fun} @coderm{ x . e'}))))
     #:go hi-text-coord-m
     #:alt ( (su-interaction 3) )
     (su-interaction 4)
@@ -3693,7 +3669,8 @@
       #:w% 41/100
       #:url "docs.racket-lang.org/gtp-benchmarks")
       'gtp-perf)
-    #:go (coord 45/100 8/100 'lt)
+    #:next
+    #:go (coord 48/100 8/100 'lt)
     #:alt ( (whence-lattice 0) )
     #:alt ( (whence-lattice 1) )
     (whence-lattice 2)
@@ -3951,8 +3928,8 @@
           #:flag-border-color deep-pen-color
           #:flag-background-color shallow-pen-color)
         (lc-append
-          @bodyrmlo{Opens a crucial new dimension}
-          @bodyrmlo{in gradual language design})))
+          @bodyrmlo{Opens a new dimension in}
+          @bodyrmlo{gradual language design})))
       (bbbox
         (hc-append
           tiny-x-sep
