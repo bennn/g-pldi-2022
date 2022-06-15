@@ -3703,7 +3703,7 @@
     @headrm{Better Performance}
     (yblank tiny-y-sep)
     (question-box
-      @bodyrmlo{Q. How many points run fastest with a Deep / Shallow mix?})
+      @bodyrmlo{Q. How many points run fastest with a Deep + Shallow mix?})
     #:next
     (yblank med-y-sep)
     #:alt ( (mixed-best-pict 0) )
