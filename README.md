@@ -8,8 +8,8 @@ Types for Gradual Languages_
 @inproceedings{g-pldi-2022,
   author={Greenman, Ben},
   title={Deep and Shallow Types for Gradual Languages},
-  booktitle={{TBD}},
-  pages={TBD},
+  booktitle={{PLDI}},
+  pages={580--593},
   year={2022}
 }
 ```
