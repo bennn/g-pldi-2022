@@ -832,6 +832,10 @@
   (parameterize ((browncs-x-margin pico-x-sep))
     (shallow-codeblock "Shallow")))
 
+(define (untyped-name)
+  (parameterize ((browncs-x-margin pico-x-sep))
+    (untyped-codeblock "Untyped")))
+
 (define (xblank n)
   (blank n 0))
 
@@ -1077,11 +1081,23 @@
     (for/list ((b (in-list b*)))
       (if b 'T 'U))))
 
+(define (bits->ds b*)
+  (path-node
+    (for/list ((b (in-list b*)))
+      (if b 'S 'D))))
+
 (define (what-to-measure-lattice n #:x [x #f])
   (define x-sep
     (if (< n 5) lattice-x-sep pico-x-sep))
   (define lattice-pict
     (make-lattice n (if x bits->yes/no bits->path-node) #:x-margin x-sep #:y-margin lattice-y-sep))
+  lattice-pict)
+
+(define (ds-lattice n)
+  (define x-sep
+    (if (< n 5) lattice-x-sep pico-x-sep))
+  (define lattice-pict
+    (make-lattice n bits->ds #:x-margin x-sep #:y-margin lattice-y-sep))
   lattice-pict)
 
 (define (bits->dspath b*)
@@ -1324,11 +1340,26 @@
       (shallow-icon))
     (untyped-icon)))
 
+(define (on-stick pp)
+  (ppict-do
+    pp
+    #:go (coord 1/2 93/100 'ct)
+    (vrule (h%->pixels 2/100) #:thickness 3)))
+
+(define (dsu-icon2)
+  (hc-append
+    (w%->pixels 5/100)
+    (vr-append
+      tiny-y-sep
+      (deep-codeblock* (list @coderm{Deep}))
+      (shallow-codeblock* (list @coderm{Shallow})))
+    (untyped-codeblock* (list @coderm{Untyped}))))
+
 (define (mixed-best-pict n)
     (hc-append
       small-x-sep
       ((if (< n 1) bghost values) (mixed-best-table 2))
-      (scale (example-lattice-3way) 75/100)))
+      (scale (example-lattice-3way #:top #t) 75/100)))
 
 (define (bridge-pict2 tt uu #:sep [sep #f])
   (let* ((pp (ht-append (or sep big-x-sep) (add-hubs tt 'TT) (add-hubs uu 'UU)))
@@ -1636,7 +1667,7 @@
 (define (example-lattice-n n #:x [x #f])
   (what-to-measure-lattice n #:x x))
 
-(define (example-lattice-3way)
+(define (example-lattice-3way #:top [top #f])
   (define n 3)
   (define x-sep
     (if (< n 5) lattice-x-sep pico-x-sep))
@@ -1659,6 +1690,12 @@
              (hc-append x-sep (path-node '(U D S)) (path-node '(U S D)))
              (path-node '(U D D)))
            40/100))]
+      [(and top (equal? b* '(#t #t #t)))
+       (atop
+         base
+         (scale
+           (ds-lattice 3)
+           30/100))]
       [else
         base]))
   (make-lattice n b->p/3 #:x-margin x-sep #:y-margin lattice-y-sep))
@@ -1677,29 +1714,6 @@
         ((if (< n 2) bghost values)
           (txt (ss (example-lattice-3way)) "27 Deep / Shallow / Untyped points (3^N)"))
         )))
-
-;(define example-lattice-3 (example-lattice-n 3))
-;(define example-lattice-3x (example-lattice-n 3 #:x #true))
-;
-;(define (lattice-to-y/n-pict)
-;  (ppict-do
-;    (hc-append
-;      tiny-x-sep
-;      (scale-to-width% example-lattice-3 35/100)
-;      (blank)
-;      (scale-to-width% example-lattice-3x 35/100))
-;    #:go (coord 53/100 1/2 'cc) right-arrow-pict))
-;
-;(define (explain-oplot n)
-;  (hc-append
-;    small-x-sep
-;    (vc-append
-;      small-y-sep
-;      @bodyrmlo{N components => 2^N configurations}
-;      (scale-to-width% (if (< n 2) example-lattice-3 example-lattice-3x) 45/100))
-;    ((if (< n 1) bghost values)
-;     (overhead-grid (list (car ds-benchmark*))
-;                    (if (< n 2) render3 render4)))))
 
 (define (pict-w-sup . pp*)
   (pict-w-sup* pp*))
@@ -1770,7 +1784,10 @@
 (define (venue-pict title where #:box? [box? #t])
   (lc-append
     (bodyrmhi title)
-    ((if box? bbox values) (bodyrmlo where))))
+    (vv-pict where #:box? box?)))
+
+(define (vv-pict where #:box? [box? #t])
+    ((if box? bbox values) (bodyrmlo where)))
 
 (define (venue->pict3 vv)
   (define pp0 (venue->pict2 "In Submission'22"))
@@ -3225,7 +3242,7 @@
       #:row-sep (* 2 tiny-y-sep)
       #:col-align lt-superimpose
       #:row-align lt-superimpose
-      (take
+      (take/hide (* (+ 1 nn) 2)
       (list
         @bodyrmhi{Context:} (ll-append
                               @bodyrmlo{Different GT strategies exist}
@@ -3233,7 +3250,7 @@
         @bodyrmhi{Inquiry:} (ll-append
                                @bodyrmlo{Can two extreme strategies interoperate?}
                                (yblank pico-y-sep)
-                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Guarded} @bodyrmlo{ (wrappers)})
+                               (word-append (deep-name) @bodyrmlo{ types via } @bodyrmhi{Natural} @bodyrmlo{ (wrappers)})
                                (yblank 0)
                                (word-append (shallow-name) @bodyrmlo{ types via } @bodyrmhi{Transient} @bodyrmlo{ (no wrappers)}))
         @bodyrmhi{Contribution:} (ll-append
@@ -3242,7 +3259,7 @@
                              (word-append @bodyrmlo{ - leads to better overall } @bodyrmem{performance})
                              (word-append @bodyrmlo{ - lets TR } @bodyrmem{express} @bodyrmlo{ additional programs}))
         )
-      (* (+ 1 nn) 2))
+      )
       ))
 
 (define (coming-soon-pict)
@@ -3263,6 +3280,31 @@
           tiny-x-sep
           @bodyrmlo{Coming soon to Racket}
           (symbol->lang-pict 'racket)))))
+
+(define (take/hide nn x*)
+  (for/list ((x (in-list x*))
+             (i (in-naturals)))
+    (if (< i nn)
+      x
+      (bghost x))))
+
+(define (types-and-checks nn)
+    (ppict-do
+      (shallow-codeblock*
+        #:title "and back, with a new type."
+        (list
+      @coderm{f2 : Str -> Str}
+      (word-append @codebf{def } @coderm{ f2 = f1})))
+      #:go (coord 0 55/100 'rc #:abs-x (+ 0))
+      ((if (< nn 1) bghost values)
+      (hc-append
+        tiny-x-sep
+        (bbox
+          (ll-append
+            (word-append @bodyemrm{Types say  } @coderm{f2 : Str -> Str})
+            (word-append @bodyemrm{Checks say  } @coderm{f2} @bodyrmlo{ is a function})))
+        right-arrow-pict))))
+
 
 ;; -----------------------------------------------------------------------------
 
@@ -3293,7 +3335,12 @@
                        (yblank 12)
                        @subtitlerm{2022-06-16})]
            [brown-pict
-                 (scale-to-width% (bitmap "img/browncs-logo.png") 14/100)]
+             #;(scale-to-width% (bitmap "img/browncs-logo.png") 14/100)
+             (vl-append
+               tiny-y-sep
+               @coderm{Northeastern}
+               @coderm{-> Brown*}
+               @coderm{-> Utah})]
            [author-pict (bbox (hc-append small-x-sep ben-pict brown-pict))])
       (vc-append
         tiny-y-sep
@@ -3456,6 +3503,14 @@
     #:go (at-du) (bbox @coderm{?})
     #:go (at-ds) (bbox @coderm{?})
     #:go (at-su) (bbox @coderm{?})
+    #:go (coord 1/2 slide-text-bottom 'ct #:abs-y tiny-y-sep)
+    (vc-append
+      tiny-y-sep
+      @bodyrmlo{While preserving their formal properties}
+      (ht-append
+        tiny-x-sep
+        (vv-pict "OOPSLA'19")
+        (vv-pict "ICFP'18")))
     #:next
     #:go (at-find-pict '|Deep Typed| ct-find 'cb #:abs-y (* 35/100 region-h))
     (deep-prop-pict)
@@ -3559,11 +3614,11 @@
       #:alt (
         #:go (at-su) (bbox @coderm{?})
       )
-      #:go (at-su) (bbox (word-append @coderm{2. } @codebf{scan} @coderm{ / } @codebf{no-op}))
+      #:go (at-su) (bbox (word-append @coderm{2. } @codebf{shape} @coderm{ } @codebf{check}))
     )
     #:go center-coord (dsu-interaction 1 #:su-blur #t)
     #:go (at-du) (bbox (word-append @coderm{1. } @codebf{wrap}))
-    #:go (at-su) (bbox (word-append @coderm{2. } @codebf{scan} @coderm{ / } @codebf{no-op}))
+    #:go (at-su) (bbox (word-append @coderm{2. } @codebf{shape} @coderm{ } @codebf{check}))
     #:go (at-ds) (tag-pict (bbox @coderm{?}) 'bb)
     #:next
     #:go (at-find-pict 'bb rc-find 'lc #:abs-x pico-x-sep)
@@ -3573,73 +3628,77 @@
         @bodyrmlo{No!}))
   )
   (pslide
+    #:go heading-coord-m
+    @headrm{What If: No Checks Between Deep and Shallow}
     #:go hi-text-coord-l
     (ll-append
       @bodyrmlo{Example 1:}
-      @bodyrmlo{  Deep code cannot trust Shallow types})
-    #:go (coord 48/100 1/2 'lc)
+      @bodyrmlo{  Deep code cannot trust Shallow types because}
+      @bodyrmlo{  they are lazily enforced})
+    #:go (coord 55/100 14/100 'lt)
     (shallow-codeblock*
       #:title "Shallow makes a function,"
       (list
-    (word-append @bodyrmhi{def } @bodyrmlo{ f0(n : Int):})
-    @bodyrmlo{  n + 2}))
+    (word-append @codebf{def } @coderm{ f0(n : Int):})
+    @coderm{  n + 2}))
     (yblank small-y-sep)
     #:next
     (untyped-codeblock*
       #:title "sends it to untyped code ..."
       (list
-        (xblank (pict-width @bodyrmlo{f2 : Str -> Str}))
-        (word-append @bodyrmhi{def } @bodyrmlo{ f1 = f0})))
+        (xblank (pict-width @coderm{f2 : Str -> Str}))
+        (word-append @codebf{def } @coderm{ f1 = f0})))
     (yblank small-y-sep)
     #:next
-    (shallow-codeblock*
-      #:title "and back, with a new type."
-      (list
-    @bodyrmlo{f2 : Str -> Str}
-    (word-append @bodyrmhi{def } @bodyrmlo{ f2 = f1})))
+    #:alt ( (types-and-checks 0) )
+    (types-and-checks 1)
     ;;@bodyrmlo{u shim => no static error}
     (yblank small-y-sep)
     #:next
     (deep-codeblock*
       #:title "Deep gets a 'bad' function"
       (list
-    @bodyrmlo{f3 : Str -> Str}
-    (word-append @bodyrmhi{def } @bodyrmlo{ f3 = f2})))
+    @coderm{f3 : Str -> Str}
+    (word-append @codebf{def } @coderm{ f3 = f2})))
   )
   (pslide
+    #:go heading-coord-m
+    @headrm{What If: No Checks Between Deep and Shallow}
     #:go hi-text-coord-l
     (bghost (ll-append
       @bodyrmlo{Example 1:}
-      @bodyrmlo{  Deep code cannot trust Shallow types}))
+      @bodyrmlo{  Deep code cannot trust Shallow types because}
+      @bodyrmlo{  they are lazily enforced}))
     (ll-append
       @bodyrmlo{Example 2:}
-      @bodyrmlo{  Shallow can misuse a Deep value})
-    #:go (coord 48/100 1/2 'lc)
+      @bodyrmlo{  Shallow can send a Deep value to}
+      @bodyrmlo{  Untyped code})
+    #:go (coord 55/100 1/2 'lc)
     (deep-codeblock*
       #:title "Deep makes a function,"
       (list
-    (word-append @bodyrmhi{def } @bodyrmlo{ f0(g : Int -> Int):})
-    @bodyrmlo{  g(3)}))
+    (word-append @codebf{def } @coderm{ g0(h : Int -> Int):})
+    @coderm{  h(3)}))
     (yblank small-y-sep)
     #:next
     (shallow-codeblock*
       #:title "sends it to Shallow,"
       (list
-        @bodyrmlo{f1 : (Int -> Int) -> Int}
-        (word-append @bodyrmhi{def } @bodyrmlo{ f1 = f0})))
+        @coderm{g1 : (Int -> Int) -> Int}
+        (word-append @codebf{def } @coderm{ g1 = g0})))
     (yblank small-y-sep)
     #:next
     (untyped-codeblock*
       #:title "which sends it to untyped"
       (list
-        (xblank (pict-width @bodyrmlo{f2 : Str -> Str}))
-        (word-append @bodyrmhi{def } @bodyrmlo{ f2 = f1})
-        @bodyrmlo{f2("not a function")}))
+        (xblank (pict-width @coderm{g2 : Str -> Str}))
+        (word-append @codebf{def } @coderm{ g2 = g1})
+        @coderm{g2("not a function")}))
   )
   (pslide
     #:go center-coord (dsu-interaction 1 #:su-blur #t)
     #:go (at-du) (bbox (word-append @coderm{1. } @codebf{wrap}))
-    #:go (at-su) (bbox (word-append @coderm{2. } @codebf{scan} @coderm{ / } @codebf{no-op}))
+    #:go (at-su) (bbox (word-append @coderm{2. } @codebf{shape} @coderm{ } @codebf{check}))
     #:alt (
       #:go (at-ds) (tag-pict (bbox @coderm{?}) 'bb)
       #:go (at-find-pict 'bb rc-find 'lc #:abs-x pico-x-sep)
@@ -3670,8 +3729,10 @@
   ;; 7. alt = force the programmer ... => not terrible to remind, but redundant code & checks
   (pslide
     #:go heading-coord-m @headrm{Implementation}
+    (tag-pict
     (let ((pp (racket-pict)))
       (hc-append tiny-x-sep (bghost pp) @bodyrmlo{Typed Racket} pp))
+    'impl)
     #:go center-coord (dsu-interaction 1 #:su-blur #f)
     #:go center-coord 
     #:next
@@ -3683,9 +3744,8 @@
         "Programming'22"))
     )
     #:next
-    #:go center-coord
-    #:alt ( (n2-problem 0) )
-    (n2-problem 1)
+    #:go (at-find-pict 'impl cc-find 'cc)
+    (bbox (word-append @bodyrmlo{In paper: general lessons   (} @bodyrmhi{no macros} @bodyrmlo{)}))
   )
   (pslide
     #:go title-coord-m
@@ -3694,9 +3754,14 @@
     (word-append
       @bodyrmem{Guarantees}
       @bodyrmlo{ vs. }
-      @bodyrmem{Performance}
+      (tag-pict @bodyrmem{Performance} 'perf)
       @bodyrmlo{ vs. }
       @bodyrmem{Expressiveness})
+    #:next
+    #:go (at-find-pict 'perf cc-find 'cc)
+    (bbox @bodyrmem{Performance} #:x-margin 6)
+    #:go (at-find-pict 'perf cb-find 'ct #:abs-y tiny-y-sep)
+    up-arrow-pict
   )
   (void))
 
@@ -3944,82 +4009,70 @@
     #:alt ( (conclusion-pict 0) )
     #:alt ( (conclusion-pict 1) )
     (conclusion-pict 2)
-    #:next
-    #:go (coord 1/2 95/100 'cb)
-    (coming-soon-pict)
+    ;; #:next
+    ;; #:go (coord 1/2 95/100 'cb)
+    ;; (coming-soon-pict)
   )
   (pslide
     #:go heading-coord-m
-    @headrm{Acknowledgments}
+    @headrm{A New Dimension for Gradual Typing}
+    #:go hi-text-coord-m
+    (yblank small-y-sep)
+    (let* ((pp
+            (hc-append
+              big-x-sep
+              (add-hubs
+                (deep-codeblock*
+                  (list (hc-append @coderm{Deep} (xblank small-x-sep))))
+                'deep)
+              (add-hubs
+                (shallow-codeblock*
+                  (list (hc-append (xblank med-x-sep) @coderm{Shallow} (xblank med-x-sep))))
+                'shallow)
+              (add-hubs (untyped-name) 'untyped)))
+           (pp
+             (add-code-line*
+               pp
+               (list
+                 (code-arrow 'deep-E rc-find 'shallow-W lc-find 0 0 0 0 'solid)
+                 (code-arrow 'shallow-E rc-find 'untyped-W lc-find 0 0 0 0 'solid))))
+           )
+      pp)
     #:next
+    #:go (at-find-pict 'deep ct-find 'cb #:abs-y (- tiny-y-sep) #:abs-x tiny-x-sep)
+    (on-stick (values #;bbox @bodyrmhi{Natural}))
+    #:go (at-find-pict 'shallow ct-find 'cb #:abs-y (- tiny-y-sep) #:abs-x (+ small-x-sep))
+    (on-stick (values #;bbox @bodyrmhi{Transient}))
+    #:next
+    #:go (coord 1/2 1/2 'ct #:sep small-y-sep)
+    (ht-append (bbox @bodyrmlo{Q. More regions along the spectrum?}) (xblank med-x-sep))
+    #:next
+    (ht-append (xblank big-x-sep) (bbox @bodyrmlo{Q. Better cooperation b/w Deep and Shallow?}))
+    #:next
+    (ht-append (bbox @bodyrmlo{Q. Solve the N^2 interop problem?}) (xblank (- med-x-sep tiny-x-sep)))
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{The End}
+    #:go center-coord
+    (ppict-do
+      (dsu-icon2)
+      #:go center-coord
+      (racket-pict))
     (yblank small-y-sep)
-    @bodyrmlo{Current    &    Past}
-    (yblank small-y-sep)
-    (let* ((s1 (lambda (pp) (scale-to-fit pp (w%->pixels 20/100) (h%->pixels 16/100))))
-           (s2 (lambda (pp) (scale-to-fit pp (w%->pixels 24/100) (h%->pixels 16/100)))))
+    @bodyrmlo{Coming soon to Racket}
+    (yblank pico-y-sep)
+    @coderm{https://racket-lang.org}
+    (yblank big-y-sep)
+    (scale
       (table2
-        #:col-sep (w%->pixels 10/100)
-        #:row-sep (h%->pixels 5/100)
-        #:col-align cc-superimpose
+        #:row-sep small-y-sep
         (list
-          (s1 (bitmap "img/browncs-logo.png"))
-          (bbox (s2 (bitmap "img/neu-logo.png")))
-          (bbox (s2 (bitmap "img/cra-logo.png")) #:x-margin 2 #:y-margin 2)
-          (s1 (bitmap "img/nsf-logo.png")))))
-  )
-  (pslide
-    ;; recruiting
-    ;; Q. replace transient for better T to T interaction
-    ;; Q. D+S how to program in 3 world
-    ;; Q. address N^2 problem
-    ;; q. optimizing transient
-    ;; q. optimizing natural
-    #:go center-coord
-    (tag-pict
-    (add-rounded-border
-      (scale-to-fit (bitmap "img/flux-bg.jpeg") (* 95/100 client-w) (* 98/100 client-h))
-      #:x-margin 1
-      #:y-margin 1
-      #:radius 0.1
-      #:frame-width 1
-      #:frame-color black) 'uu)
-    #:go (at-find-pict 'uu ct-find 'cc)
-    (add-rounded-border
-      (bitmap "img/the-u.png")
-      #:x-margin small-x-sep
-      #:y-margin tiny-y-sep
-      #:radius 0.1
-      #:frame-width 1
-      #:frame-color black)
-  )
-  (pslide
-    #:go center-coord
-    @bodyrmlo{The End}
-  )
-  (pslide
-    #:go heading-coord-m
-    @headrm{Artifact}
-    #:go (coord 98/100 2/100 'rt)
-    (bbox (bitmap "img/aec.png") #:x-margin 0 #:y-margin 0)
-    #:go center-coord
-    @bodyrmhi{Software Heritage}
-    (scale-to-fit
-      @coderm{http://archive.softwareheritage.org/swh:1:dir:2f1f76cafb72491d8526d18ae556499065ac6853}
-      (* 3/4 client-w) 200)
-    (yblank small-y-sep)
-    @bodyrmhi{Zenodo}
-    @coderm{https://doi.org/10.5281/zenodo.6498925}
-    (yblank small-y-sep)
-    @bodyrmhi{GitHub}
-    @coderm{https://github.com/bennn/g-pldi-2022}
-  )
-  (pslide
-    #:go (coord 96/100 10/100 'rt)
-    (dsu-icon)
-    #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
-    (conclusion-pict 2)
-    #:go (coord 1/2 95/100 'cb)
-    (coming-soon-pict)
+        @bodyrmlo{Pull Request}
+        @coderm{https://github.com/racket/typed-racket/pull/948})
+        @bodyrmlo{Research Repo}
+        @coderm{https://github.com/bennn/g-pldi-2022})
+      9/10)
   )
 
   (void))
@@ -4205,6 +4258,75 @@
       (word-append
         @bodyrmhi{Transient blame is } @bodyrmhi{very expensive}))
   )
+  (pslide
+    #:go heading-coord-m
+    @headrm{Acknowledgments}
+    #:next
+    (yblank small-y-sep)
+    @bodyrmlo{Current    &    Past}
+    (yblank small-y-sep)
+    (let* ((s1 (lambda (pp) (scale-to-fit pp (w%->pixels 20/100) (h%->pixels 16/100))))
+           (s2 (lambda (pp) (scale-to-fit pp (w%->pixels 24/100) (h%->pixels 16/100)))))
+      (table2
+        #:col-sep (w%->pixels 10/100)
+        #:row-sep (h%->pixels 5/100)
+        #:col-align cc-superimpose
+        (list
+          (s1 (bitmap "img/browncs-logo.png"))
+          (bbox (s2 (bitmap "img/neu-logo.png")))
+          (bbox (s2 (bitmap "img/cra-logo.png")) #:x-margin 2 #:y-margin 2)
+          (s1 (bitmap "img/nsf-logo.png")))))
+  )
+  (pslide
+    ;; recruiting
+    ;; Q. replace transient for better T to T interaction
+    ;; Q. D+S how to program in 3 world
+    ;; Q. address N^2 problem
+    ;; q. optimizing transient
+    ;; q. optimizing natural
+    #:go center-coord
+    (tag-pict
+    (add-rounded-border
+      (scale-to-fit (bitmap "img/flux-bg.jpeg") (* 95/100 client-w) (* 98/100 client-h))
+      #:x-margin 1
+      #:y-margin 1
+      #:radius 0.1
+      #:frame-width 1
+      #:frame-color black) 'uu)
+    #:go (at-find-pict 'uu ct-find 'cc)
+    (add-rounded-border
+      (bitmap "img/the-u.png")
+      #:x-margin small-x-sep
+      #:y-margin tiny-y-sep
+      #:radius 0.1
+      #:frame-width 1
+      #:frame-color black)
+  )
+  (pslide
+    #:go heading-coord-m
+    @headrm{Artifact}
+    #:go (coord 98/100 2/100 'rt)
+    (bbox (bitmap "img/aec.png") #:x-margin 0 #:y-margin 0)
+    #:go center-coord
+    @bodyrmhi{Software Heritage}
+    (scale-to-fit
+      @coderm{http://archive.softwareheritage.org/swh:1:dir:2f1f76cafb72491d8526d18ae556499065ac6853}
+      (* 3/4 client-w) 200)
+    (yblank small-y-sep)
+    @bodyrmhi{Zenodo}
+    @coderm{https://doi.org/10.5281/zenodo.6498925}
+    (yblank small-y-sep)
+    @bodyrmhi{GitHub}
+    @coderm{https://github.com/bennn/g-pldi-2022}
+  )
+  (pslide
+    #:go (coord 96/100 10/100 'rt)
+    (dsu-icon)
+    #:go (coord (* 5/2 slide-text-left) slide-text-top 'lt)
+    (conclusion-pict 2)
+    #:go (coord 1/2 95/100 'cb)
+    (coming-soon-pict)
+  )
 
   (void))
 
@@ -4218,26 +4340,25 @@
 (define shallow-bg (slide-assembler/background bg-orig make-shallowbg))
 
 (define (do-show)
-  (set-page-numbers-visible! #true)
+  ;; (set-page-numbers-visible! #true)
   (set-spotlight-style! #:size 60 #:color (color%-update-alpha highlight-brush-color 0.6))
-  [current-page-number-font page-font]
-  [current-page-number-color white]
+  ;; [current-page-number-font page-font]
+  ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler waters-bg))
     (sec:title)
     (void))
   (parameterize ((current-slide-assembler bg-cs.brown.edu)
                  (pplay-steps 30))
-
-
     (sec:intro)
     (sec:2way)
     (sec:3way)
     (sec:impl)
     (sec:perf)
-    (sec:expr)
     (sec:end)
+
     (pslide)
+    (sec:expr)
     (sec:qa)
     (pslide)
 
