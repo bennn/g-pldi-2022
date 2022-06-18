@@ -26,7 +26,6 @@
 ;; - [X] fix up colors
 ;; - [X] bg looks terrible black & white
 ;; - [X] when to introduce CM + TS
-;; - [ ] ....
 
 (require
   images/icons/misc
@@ -37,7 +36,6 @@
   (only-in pict/face face)
   (only-in math/statistics mean)
   (only-in racket/random random-sample)
-  ;; "../img.rkt" ... copied from TransientExperience
   file/glob
   racket/class
   racket/draw
@@ -154,7 +152,6 @@
 
 
 (define black (hex-triplet->color% #x222222))
-(define onux-black (hex-triplet->color% #x121214))
 (define gray (string->color% "light gray"))
 (define white (string->color% "white"))
 (define lite-grey (hex-triplet->color% #xeeeeee)) ; "gainsboro"
@@ -205,12 +202,6 @@
 (define default-line-color dark-blue)
 (define browncs-frame-color dark-blue)
 (define hilite-frame-color dark-orange)
-(define triangle-blue (color%++ bg-lite-blue 30))
-(define wong-red (hex-triplet->color% #xd55e00))
-(define wong-green (hex-triplet->color% #x009e73))
-(define traffic-green-hi (string->color% "light green"))
-(define traffic-yellow-hi (string->color% "yellow"))
-(define traffic-red-hi (string->color% "firebrick"))
 (define blame-color typed-color)
 (define shallow-bg-color (color%-update-alpha shallow-pen-color 0.2))
 (define deep-bg-color  (color%-update-alpha deep-pen-color 0.2))
@@ -295,16 +286,6 @@
 (define transient-rkt-version "7.8.0.5")
 (define SAMPLE-RATE 10)
 (define NUM-SAMPLE-TRIALS 10)
-
-(define (performance-info->sample-info pi #:replacement? [replace? #f])
-  (define num-in-sample
-    (* SAMPLE-RATE (performance-info->num-units pi)))
-  (define rand-gen
-    (vector->pseudo-random-generator '#(2022 01 26 19 09 00)))
-  (define sample*
-    (for/list ((_i (in-range NUM-SAMPLE-TRIALS)))
-      (random-sample (in-configurations pi) num-in-sample rand-gen #:replacement? replace?)))
-  (make-sample-info pi sample*))
 
 (define-runtime-path here ".")
 (define data-dir (build-path here ".." "data"))
@@ -427,21 +408,8 @@
     #:frame-width bbox-frame-width
     #:frame-color (or frame-color bbox-frame-color)))
 
-(define (hilite-box pp #:color [color white] #:x-margin [x-margin #f] #:y-margin [y-margin #f] #:frame-color [frame-color #f])
-  (add-rounded-border
-    pp
-    #:x-margin (or x-margin (browncs-x-margin))
-    #:y-margin (or y-margin tiny-y-sep)
-    #:radius 2
-    #:background-color color
-    #:frame-width 4
-    #:frame-color (or frame-color hilite-frame-color)))
-
 (define (browncs-frame pp)
   (bbox pp #:x-margin 0 #:y-margin 0))
-
-(define (cite-box pp)
-  (bbox #:color white pp))
 
 (struct code-arrow (src-tag src-find tgt-tag tgt-find start-angle end-angle start-pull end-pull style) #:transparent)
 
@@ -513,25 +481,6 @@
 
 (define (hrule w #:thickness [thickness #f] #:color [color #f])
   (ben-rule w (or thickness 1) #:color color))
-
-(define (double-down-arrow h)
-  (define vr (vrule h #:color black))
-  (ppict-do
-    (ht-append 3 vr vr)
-    #:go (coord 1/2 1 'cc)
-    (arrowhead-pict (* 3/4 turn) #:size default-arrow-size )))
-
-(define (thick-right-arrow w)
-  (ppict-do
-    (filled-rectangle w 8 #:color black #:draw-border? #f)
-    #:go (coord 1 1/2 'cc)
-    (arrowhead (* 2 default-arrow-size) 0)))
-
-(define (thick-down-arrow h)
-  (ppict-do
-    (vrule h #:thickness 8 #:color black)
-    #:go (coord 1/2 1 'cc)
-    (arrowhead (* 2 default-arrow-size) (* 3/4 turn))))
 
 (define (scale-to-pict pp bg)
   (scale-to-fit pp (pict-width bg) (pict-height bg)))
@@ -699,32 +648,8 @@
 (define (symbol->lang-pict sym #:ext [ext #f])
   (lang-lo (add-img (add-lang (format "~a.~a" sym (or ext 'png))))))
 
-(define (symbol->lang-pict2 sym)
-  (label-below
-    (add-hubs (symbol->lang-pict sym) sym)
-    (bodyrmlo
-      (if (eq? sym 'php) "PHP" (string-titlecase (symbol->string sym))))))
-
 (define (lang-hi str)
   (scale-lang-hi (bitmap str)))
-
-(define (frame-team title-pict . name*)
-  (frame-team* title-pict name*))
-
-(define (frame-team* title-pict name*)
-  (define pp* (for/list ((n (in-list name*))) (frame-person #f n 9/100)))
-  (define sep 2)
-  (define author-grid
-    (let loop ((pp* pp*))
-      (cond
-        [(null? pp*)
-         (blank)]
-        [(null? (cdr pp*))
-         (car pp*)]
-        [else
-         (vc-append sep (ht-append sep (car pp*) (cadr pp*)) (loop (cddr pp*)))])))
-  #;(vc-append pico-y-sep title-pict author-grid)
-  author-grid)
 
 (define (split/2 lang-img*)
   (split-at lang-img* (quotient (length lang-img*) 2)))
@@ -735,13 +660,6 @@
       (list pp*)
       (let-values (((a b) (split-at pp* n)))
         (cons a (loop b))))))
-
-(define (v-split-append lang-img* #:x [xsep #f])
-  (define-values [a* b*] (split/2 lang-img*))
-  (hc-append
-    (or xsep tiny-x-sep)
-    (apply vc-append tiny-y-sep a*)
-    (apply vc-append tiny-y-sep b*)))
 
 (define (X-codeblock pp* #:dark? [dark? #f] #:title [title #f] #:label [label #f] #:frame-color [frame-color #f] #:background-color [background-color #f])
   (define title-pict (if (pict? title) title (if (string? title) (bodyrmlo title) #f)))
@@ -863,76 +781,6 @@
 
 (define (record-pict h)
   (bitmap (record-icon #:color green1-3k1 #:height h #:material plastic-icon-material)))
-
-(define (x-pict size)
-  (define outer-color red1-3k1)
-  (define inner-color red0-3k1)
-  (define line-width% 6)
-  ;;
-  (define size/2 (/ size 2))
-  (define line-width (/ size line-width%))
-  (define line-width/2 (/ line-width 2))
-  ;;
-  (define (draw-x dc% dx dy)
-    (define old-brush (send dc% get-brush))
-    (define old-pen (send dc% get-pen))
-    ;;
-    (send dc% set-brush (new brush% [color inner-color]))
-    (send dc% set-pen (new pen% [width 1] [color outer-color]))
-    ;; draw X from top-left, counterclockwise
-    (define path% (new dc-path%))
-    (send path% move-to 0 0)
-    (send path% line-to (- size/2 line-width/2) size/2)
-    (send path% line-to 0 size)
-    (send path% line-to line-width size)
-    (send path% line-to size/2 (+ size/2 line-width/2))
-    (send path% line-to (- size line-width) size)
-    (send path% line-to size size)
-    (send path% line-to (+ size/2 line-width/2) size/2)
-    (send path% line-to size 0)
-    (send path% line-to (- size line-width) 0)
-    (send path% line-to size/2 (- size/2 line-width/2))
-    (send path% line-to line-width 0)
-    (send path% close)
-    (send dc% draw-path path% dx dy)
-    ;;
-    (send dc% set-brush old-brush)
-    (send dc% set-pen old-pen)
-    (void))
-  (dc draw-x size size))
-
-(define pass-pict
-  (check-pict 40))
-
-(define fail-pict
-  (x-pict 40))
-
-(define y-str pass-pict)
-(define n-str fail-pict)
-
-(define design-pre-bg-table*
-  (list
-    (list "" natural-str transient-str erasure-str)
-    (list "type soundness" y-str y-str n-str)
-    ;; Not static, because the model doesn't actually satisfy static
-    ;;  and it's irrelevant for semantics
-    (list "dyn. gradual guarantee" y-str y-str y-str)
-    (list "blame theorem" y-str y-str y-str)))
-
-(define design-m11-bg-table*
-  (list
-    (list "" natural-str transient-str)
-    (list "type soundness" y-str y-str)
-    (list "dyn. gradual guarantee" y-str y-str)
-    (list "blame theorem" y-str y-str)))
-
-(define design-m22-bg-table*
-  (list
-    (list ""                natural-str transient-str)
-    (list "complete monitoring"   y-str n-str)
-    (list "blame soundness"       y-str n-str)
-    (list "blame completeness"    y-str n-str)
-  ))
 
 (define (bghost pp)
   (blank (pict-width pp) (pict-height pp)))
@@ -1064,11 +912,6 @@
 (define (path-node sym*)
   (apply hc-append pico-x-sep (map dyn-swatch sym*)))
 
-(define (bits->yes/no b*)
-  (define node (bits->path-node b*))
-  (define mark (if (eq?* b*) y-str n-str))
-  (cc-superimpose (bghost node) (scale-to-height mark (pict-height node))))
-
 (define (eq?* x*)
   (let loop ((xx x*))
     (if (or (null? xx) (null? (cdr xx)))
@@ -1090,7 +933,7 @@
   (define x-sep
     (if (< n 5) lattice-x-sep pico-x-sep))
   (define lattice-pict
-    (make-lattice n (if x bits->yes/no bits->path-node) #:x-margin x-sep #:y-margin lattice-y-sep))
+    (make-lattice n bits->path-node #:x-margin x-sep #:y-margin lattice-y-sep))
   lattice-pict)
 
 (define (ds-lattice n)
@@ -1114,34 +957,6 @@
 (define (scale-small-lattice pp)
   (scale-to-fit pp (w%->pixels 55/100) (h%->pixels 45/100)))
 
-(define (d-deliv-icon w)
-  (ppict-do
-    (blank w w)
-    #:go (coord 44/100 5/100 'lt) (dd-pict 5)
-    #:go (coord 90/100 1/2 'rt) (clock-pict (* 40/100 w))
-    #:go (coord 0 1/2 'lc) (face-pict (* 55/100 w))))
-
-(define (clock-pict w)
-  (bitmap (clock-icon #:height w)))
-
-(define (lock-pict w [open? #f])
-  (bitmap (lock-icon open? #:height w)))
-
-(define (face-pict w)
-  (scale-to-fit (face 'happy) w w))
-
-(define (dd-pict d-num)
-  (cloud-background2
-    (word-append (bodybf (format "~a" d-num)) @bodyrmhi{x})))
-
-(define (cloud-background2 pp)
-  (cc-superimpose
-    (cloud (* 2 (pict-width pp))
-           (* 1.4 (pict-height pp))
-           gray
-           #:style '(square))
-    pp))
-
 (define (migration-append #:arr [arr #f] . pp*)
   (migration-append* #:arr arr pp*))
 
@@ -1153,12 +968,6 @@
 
 (define (dmigration-append* #:arr [arr #f] pp*)
   (apply vc-append lattice-y-sep (add-between pp* (or arr down-arrow-pict))))
-
-(define (hmigration-append #:arr [arr #f] . pp*)
-  (hmigration-append* #:arr arr pp*))
-
-(define (hmigration-append* #:arr [arr #f] pp*)
-  (apply hc-append pico-x-sep (add-between pp* (or arr right-arrow-pict))))
 
 (define (email-panels pth*)
   (define w 280)
@@ -1175,152 +984,6 @@
       (- med-x-sep)
       (if up? (vc-append img yshim) (vc-append yshim img))
       acc)))
-
-(define-syntax-rule (with-plot-params w h base-color exp)
-  (parameterize ([*OVERHEAD-MAX* MAX-OVERHEAD]
-                 [*OVERHEAD-LEGEND?* #false]
-                 [*OVERHEAD-PLOT-WIDTH* w]
-                 [*OVERHEAD-PLOT-HEIGHT* h]
-                 [*OVERHEAD-LINE-WIDTH* 3]
-                 #;[*OVERHEAD-LINE-COLOR* base-color]
-                 [*PEN-COLOR-CONVERTER* pen-color-converter]
-                 [*BRUSH-COLOR-CONVERTER* brush-color-converter]
-                 [*INTERVAL-ALPHA* code-brush-alpha]
-                 [*MULTI-INTERVAL-ALPHA* code-brush-alpha]
-                 ;[x-axis-ticks? #f]
-                 ;[y-axis-ticks? #f]
-                 )
-    exp))
-
-(define ((deco->pi bm-name) d)
-  (case d
-    ((D)
-     (benchmark-name->performance-info bm-name transient-rkt-version))
-    ((D2)
-     (list
-       (benchmark-name->performance-info bm-name olde-rkt-version)
-       (benchmark-name->performance-info bm-name transient-rkt-version)))
-    ((best)
-     (define pi-deep (benchmark-name->performance-info bm-name transient-rkt-version))
-     (define pi-shallow (benchmark-name->performance-info bm-name stransient))
-     (make-typed-racket-info
-       (for/vector ((deep-cfg (in-configurations pi-deep))
-                    (shallow-cfg (in-configurations pi-shallow)))
-         (define deep-t* (configuration-info->runtime* deep-cfg))
-         (define shallow-t* (configuration-info->runtime* shallow-cfg))
-         (if (< (mean deep-t*) (mean shallow-t*))
-           deep-t*
-           shallow-t*))))
-    (else (raise-argument-error 'big-overhead-plot "(or/c 'D 'S 'best)" d))))
-
-(define (overhead-pict pre-pi* ds
-                          #:wh [wh #f])
-  (define-values [w h]
-    (if wh
-      (values (car wh) (cdr wh))
-      (values (w%->pixels 32/100) (h%->pixels 15/100))))
-  (define pi* (map (lambda (x) ((deco->pi x) ds)) pre-pi*))
-  (define base-color
-    (if (and (not (null? pi*))
-             (null? (cdr pi*))
-             (reticulated-info? (car pi*)))
-      1
-      0))
-  (define pp
-    (with-plot-params w h base-color
-      (overhead-plot pi*)))
-  pp)
-
-(define big-plot-ysep 4)
-
-(define (double-frame pp)
-  (frame pp))
-
-(define (add-yticks pp)
-  (ppict-do
-    pp
-    #:go (coord 1 0 'lc #:abs-x 2) @bodyrmlo{100%}))
-
-(define (add-xticks pp)
-  (ppict-do
-    pp
-    ;;#:go (coord 0 1 'lt) @bodyrmlo{1x}
-    #:go (coord 1/4 1 'rt) @bodyrmlo{2x}
-    ;;#:go (coord 3/4 1 'ct) @bodyrmlo{10x}
-    #:go (coord 1 1 'rt) @bodyrmlo{20x}))
-
-(define (big-overhead-pict pre-pi* ds
-                           #:wh [wh #f]
-                           #:legend [legend? #f])
-  (define pp (overhead-pict pre-pi* ds #:wh wh))
-  (if legend?
-    (add-yticks (add-xticks (double-frame pp)))
-    (double-frame pp)))
-
-(define (deco->sampling-pi bm-name d)
-  (case d
-    ((D)
-     (performance-info->sample-info ((deco->pi bm-name) d)))
-    (else (raise-argument-error 'deco->sampling-pi "(or/c 'D)" d))))
-
-(define (ss-validate-plot pi w h)
-  ;; TODO broken for RP data??!
-  (define sample-pi (performance-info->sample-info pi #:replacement? #f))
-  (define pp
-    (with-plot-params w h base-color
-      (validate-samples-plot pi sample-pi)))
-  pp)
-
-(define (big-sampling-plot bm-name deco #:wh [wh #f] #:legend? [legend? #t])
-  (define pi ((deco->pi bm-name) deco))
-  (define num-samples 10)
-  (define sample-rate 10)
-  (define num-units (performance-info->num-units pi))
-  (define-values [w h]
-    (if wh
-      (values (car wh) (cdr wh))
-      (values (w%->pixels 38/100) (h%->pixels 16/100))))
-  (define pp (double-frame (ss-validate-plot pi w h)))
-  (if legend?
-    (add-xticks pp)
-    pp))
-
-(define DEEP-TAG 'deep-tag)
-(define SHALLOW-TAG 'deep-tag)
-
-(define (quote-para CLAIM-W . str*)
-  (apply para #:width CLAIM-W
-              #:align 'left
-              #:fill? #true
-              str*))
-
-(define (make-gt-claim venue
-                       year
-                       author*
-                       #:strategy dsu
-                       #:url url
-                       #:page page-num
-                       body)
-  (define pp (bbox body))
-  (cloud-background pp))
-
-(define (string*->text str*)
-  (left-line-append*
-    (map bodyrmlo str*)))
-
-(define (cloud-background pp)
-  (cc-superimpose
-    (cloud (* 1.2 (pict-width pp))
-           (* 1.2 (pict-height pp))
-           happy-cloud-color
-           #:style '(wide square))
-    pp))
-
-(define (bridge-append p0 p1)
-  (ht-append med-y-sep p0 p1))
-
-(define (bridge-pict pp0 pp1)
-  (bridge-append (untyped-codeblock pp0) (typed-codeblock pp1)))
 
 (define (tu-icon)
   (hc-append tiny-x-sep (typed-icon #:lbl #f) (untyped-icon #:lbl #f)))
@@ -1360,38 +1023,6 @@
       small-x-sep
       ((if (< n 1) bghost values) (mixed-best-table 2))
       (scale (example-lattice-3way #:top #t) 75/100)))
-
-(define (bridge-pict2 tt uu #:sep [sep #f])
-  (let* ((pp (ht-append (or sep big-x-sep) (add-hubs tt 'TT) (add-hubs uu 'UU)))
-         (pp (add-code-arrow
-               pp
-               (code-arrow 'TT-E rc-find 'UU-W lc-find 0 0 0 0 'solid)
-               #:both #true)))
-    pp))
-
-(define (answer-pict pp)
-  (answer-box
-    (answer-text pp)))
-
-(define (challenge-pict pp)
-  (question-box
-    (challenge-text pp)))
-
-(define (question-pict pp)
-  (question-box
-    (question-text pp)))
-
-(define (answer-text pp)
-  (word-append
-    @bodyembf{A} @bodyrm{.  } pp))
-
-(define (challenge-text pp)
-  (word-append
-    @bodyembf{Challenge} @bodyrmlo{: } pp))
-
-(define (question-text pp)
-  (word-append
-    @bodyrmhi{Q.  } pp))
 
 (define (rq-text pp)
   (word-append
@@ -1561,11 +1192,11 @@
   (symbol->lang-pict 'thorn))
 
 (define (tmp-lang)
-  (scale-lang-lo (filled-rectangle 200 200 #:color "gray" #:draw-border? #f)))
+  (scale-lang-lo (filled-rectangle 200 200 #:color gray #:draw-border? #f)))
 
 (define (txt-lang str)
   (ppict-do
-    (filled-rectangle 80 80 #:color "gray" #:draw-border? #f)
+    (filled-rectangle 80 80 #:color gray #:draw-border? #f)
     #:go center-coord
     (coderm str)))
 
@@ -1664,8 +1295,8 @@
 (define (python-pict)
   (symbol->lang-pict 'python))
 
-(define (example-lattice-n n #:x [x #f])
-  (what-to-measure-lattice n #:x x))
+(define (example-lattice-n n)
+  (what-to-measure-lattice n))
 
 (define (example-lattice-3way #:top [top #f])
   (define n 3)
@@ -1723,14 +1354,6 @@
   (for/list ((pp (in-list pp*)))
     (ct-superimpose (xblank w) pp)))
 
-(define (gold-star)
-  (make-simple-flag
-    (blank tiny-x-sep pico-y-sep)
-    #:flag-border-color dark-orange
-    #:flag-border-width 4
-    ;; #:flag-brush-style 'solid
-    #:flag-background-color lite-orange))
-
 (define (arrow-bullet pp)
   (hc-append
     tiny-x-sep
@@ -1742,45 +1365,6 @@
 (define (minus-bullet pp)
   (word-append @bodyrmhi{- } pp))
 
-(define (label-below base . pp*)
-  (vc-append 0 base (apply vc-append 2 pp*)))
-
-(define (label-right base . pp*)
-  (hc-append tiny-x-sep base (apply vc-append 2 pp*)))
-
-(define (label-left base . pp*)
-  (hc-append tiny-x-sep (apply vc-append 2 pp*) base))
-
-(define (label-above base . pp*)
-  (vc-append 0 (apply vc-append 2 pp*) base))
-
-(define (X2-analysis-stack . sym*)
-  (apply
-    vr-append
-    pico-x-sep
-    (map (lambda (sym)
-           (ht-append pico-x-sep
-                      (coderm (symbol->string sym))
-                      (scale (big-overhead-pict (list sym) 'D2 #:legend #f) 8/10)))
-         sym*)))
-
-(define (X-analysis-stack . pp*)
-  (apply
-    vl-append
-    pico-y-sep
-    (map (lambda (pp) (scale pp 8/10)) pp*)))
-
-(define (n2-problem nn)
-    (bbbox
-      (ll-append
-        (word-append @bodyrmhi{The } @bodyrmhi{N^2} @bodyrmhi{ problem})
-        (yblank pico-y-sep)
-        (lc-append
-          (word-append @bodyrmhi{Q.} @bodyrmlo{ Are the languages independent?})
-          ((if (< nn 1) bghost values)
-           (word-append @bodyrmhi{A.} @bodyrmlo{ No. Typed exports must anticipate all possible clients.})))
-        (yblank pico-y-sep))))
-
 (define (venue-pict title where #:box? [box? #t])
   (lc-append
     (bodyrmhi title)
@@ -1789,53 +1373,7 @@
 (define (vv-pict where #:box? [box? #t])
     ((if box? bbox values) (bodyrmlo where)))
 
-(define (venue->pict3 vv)
-  (define pp0 (venue->pict2 "In Submission'22"))
-  (define pp1 (venue->pict2 vv))
-  (rc-superimpose (xblank (pict-width pp0)) pp1))
-
-(define (venue->pict2 vv)
-  (if (pict? vv)
-    vv
-    (scale (bbox (coderm vv)) 8/10)))
-
-(define (venue->pict vv)
-  (memory-bg (coderm vv)))
-
-(define (venue*->pict descr title)
-  (hc-append
-    tiny-x-sep
-    (bodyrmlo descr)
-    (if title
-      (coderm (string-append "[" title "]"))
-      (blank))))
-
-(define (se-arrow-pict)
-  (scale (thick-right-arrow small-x-sep) 4/10))
-
-(define (tight-grid . pp*)
-  (tight-grid* pp*))
-
-(define (tight-grid* pp*)
-  (cond
-    [(null? pp*)
-     (blank)]
-    [(null? (cdr pp*))
-     (car pp*)]
-    [else
-      (vc-append pico-y-sep (hc-append pico-x-sep (car pp*) (cadr pp*)) (tight-grid* (cddr pp*)))]))
-
-
-(define (benchmark-pict img #:w% [w% #f] #:lbl [lbl-above? #t] #:url [url #f])
-  (define pp (bbox #:x-margin pico-y-sep #:y-margin pico-y-sep
-                          (scale-to-square (bitmap img) (w%->pixels (or w% 30/100)))))
-  (if url ((if lbl-above? label-above label-below) pp (coderm url) (yblank 4)) pp))
-
-(define (benchmark-pict2 img #:url [url #f])
-  (add-lite-bg
-    (benchmark-pict img #:w% 28/100 #:lbl #f #:url url)))
-
-(define (benchmark-pict3 img #:w% [w% #f] #:url [url #f])
+(define (benchmark-pict img #:w% [w% #f] #:url [url #f])
   (add-lite-bg
     #:x tiny-y-sep
     #:y tiny-y-sep
@@ -1848,58 +1386,11 @@
       (yblank pico-y-sep)
       (coderm url))))
 
+(define (label-below base . pp*)
+  (vc-append 0 base (apply vc-append 2 pp*)))
+
 (define (add-lite-bg pp #:x [x #f] #:y [y #f])
   (bbox pp #:color lite-grey #:x-margin x #:y-margin y))
-
-(define memory-bg add-lite-bg)
-
-(define (sunny-bg pp #:x [x #f] #:y [y #f])
-  (bbox pp #:color shallow-brush-color #:x-margin x #:y-margin y))
-
-(define (the-perf-problem)
-  (bad-news
-    (vc-append
-      tiny-y-sep
-      (word-append
-        @bodyrmlo{Guarded}
-        @bodyrmlo{ gradual types are too slow})
-      @bodyembf{What to do?})))
-
-(define (perf-what-to-do n #:only [only-show #f])
-  (let* ((bb (bbox (blank (w%->pixels 40/100) (h%->pixels 16/100))))
-         (task* '("Improve the compiler" "Remove checks statically" "Build a new compiler" "Use weaker types"))
-         ;;(venue** '(("OOPSLA'18") ("POPL'18" "POPL'21") ("OOPSLA'17") ("Today!")))
-         (venue** '(("Collapsible Contracts" "OOPSLA'18")
-                    ("Corpse Reviver" "POPL'21")
-                    ("Pycket" "OOPSLA'17")
-                    ("Today!" #f)))
-         )
-    (table2
-      #:col-sep small-x-sep
-      #:row-sep small-y-sep
-      (for/list ((task (in-list task*))
-                 (venue* (in-list venue**))
-                 (i (in-naturals)))
-        (define n-pict (word-append (bodyrmhi (number->string (+ i 1))) @bodyrmlo{. }))
-        (define t-pict (bodyembf task))
-        (define v-pict (apply venue*->pict venue*))
-        ((if (if only-show
-               (= only-show i)
-               (< i n))
-           values bghost)
-         (ppict-do
-           bb
-           #:go (coord 0 0 'lt #:abs-x tiny-x-sep #:abs-y tiny-y-sep)
-           (vl-append pico-y-sep
-             (word-append n-pict t-pict)
-             (word-append (bghost n-pict) v-pict))))))))
-
-(define (tu-bg pp #:x-margin [x-margin small-x-sep] #:y-margin [y-margin small-y-sep])
-  pp)
-
-(define (codebase-example n)
-  ;; 0 = untyped, 1 = typed
-  (scale (boundary-node (list 'U 'U (if (< 0 n) 'T 'U) 'U 'U) #:arrow #t) 6/10))
 
 (define (pplay #:steps [N (pplay-steps)]
                #:delay [secs 0.05]
@@ -1920,457 +1411,6 @@
                 #:set (mid ppict-do-state n)))))
 
 (define ds-benchmark* '(synth take5 quadU jpeg suffixtree dungeon #;fsmoo))
-
-(define (overhead-grid bm* mk-pict)
-  (define ww (* 34/100 client-w))
-  (define hh (* 12/100 client-h))
-  (define-values [ll* rr*] (split/2 bm*))
-  (define (vapp pp*) (vl-append pico-y-sep (blank) (apply vl-append small-y-sep pp*) (blank)))
-  (define mk-title
-    (let* ((max-w (apply max (map (compose1 string-length symbol->string) bm*)))
-           (base-pp (bghost (coderm (make-string max-w #\X)))))
-      (lambda (left? sym)
-        ((if left? rt-superimpose lt-superimpose) base-pp (coderm (symbol->string sym))))))
-  (define (mk* left? bm*)
-    (for/list ((bm (in-list bm*)))
-      (define title (mk-title left? bm))
-      (define pp (mk-pict bm ww hh))
-      (apply ht-append pico-x-sep (if left? (list title pp) (list pp title)))))
-  (ht-append
-    small-x-sep
-    (vapp (mk* #t ll*))
-    (vapp (mk* #f rr*))))
-
-(define (render1 bm ww hh)
-  (render-overhead (list bm transient-rkt-version) ww hh))
-
-(define (render2 bm ww hh)
-  (render-overhead (list bm transient-rkt-version stransient) ww hh))
-
-(define (render-overhead bm-name+v* ww hh)
-  ;; TODO
-  (blank)
-
-  #;
-  (parameterize ([*OVERHEAD-MAX* 20]
-                 [*OVERHEAD-LEGEND?* #false]
-                 [*OVERHEAD-PLOT-WIDTH* ww]
-                 [*OVERHEAD-PLOT-HEIGHT* hh]
-                 [*OVERHEAD-LINE-WIDTH* 3]
-                 (*OVERHEAD-SHOW-RATIO* #f)
-                 (*AUTO-POINT-ALPHA?* #f)
-                 (*MULTI-INTERVAL-ALPHA* overhead-alpha)
-                 [*INTERVAL-ALPHA* overhead-alpha]
-                 #;[*OVERHEAD-LINE-COLOR* base-color]
-                 [*PEN-COLOR-CONVERTER* pen-color-converter]
-                 [*BRUSH-COLOR-CONVERTER* brush-color-converter]
-                 ;[x-axis-ticks? #f]
-                 ;[y-axis-ticks? #f]
-                 )
-    (define bm-name (car bm-name+v*))
-    (define bm-v* (cdr bm-name+v*))
-    (define pi* (for/list ((v (in-list bm-v*)))
-                  (benchmark-name->performance-info bm-name v #:full-name? #t)))
-    (add-xticks2
-      (bbox
-        #:x-margin 2
-        #:y-margin 2
-        (overhead-plot pi*)))))
-
-(define (add-xticks2 pp)
-  (define (mkc x y)
-    (coord x y 'ct #:abs-y 2))
-  (define base
-    (ppict-do
-      pp
-      #:go (mkc 0 1) @tcoderm{1x}
-      #:go (mkc 1 1) @tcoderm{20x}))
-  (define maxw (+ 3 1/4))
-  (define hh (pict-height pp))
-  (for/fold ((acc base))
-            ((ww (in-list '(3/4 3/2 5/2)))
-             (nn (in-list '(  2   4  10))))
-    (ppict-do
-      acc
-      #:go (coord (/ ww maxw) 1 'cb) (vrule hh #:thickness 1 #:color browncs-frame-color)
-      #:go (mkc (/ ww maxw) 1) (tcoderm (format "~ax" nn)))))
-
-(define (render3 . arg*)
-  (define pp (apply render1 arg*))
-  (ppict-do
-    pp
-    #:go (coord 0 0 'rc #:abs-x -2) @tcoderm{100%}))
-
-(define (render4 . arg*)
-  (define pp (apply render3 arg*))
-  (define hh (pict-height pp))
-  (ppict-do
-    pp
-    #:go (coord (/ 5/2 13/4)  1 'cb)
-    (vrule hh #:thickness 4 #:color lite-orange)))
-
-(define (deep-perf-pict)
-  (overhead-grid ds-benchmark* render1))
-
-(define (ds-perf-pict)
-  (overhead-grid ds-benchmark* render2))
-
-(define (cache-pict fn)
-  (define filename (build-path "img" "cache" (format "~a.png" (object-name fn))))
-  (unless (file-exists? filename)
-    (save-pict filename (fn)))
-  (bitmap filename))
-
-(define (basic-example lhs rhs #:lbl? [lbl? #f] #:arrow? [arrow? #false] #:text? [text? #true])
-  (let* ((pp
-          (add-hubs
-            ((dyn-codeblock lhs)
-             #:title "Typed Function"
-             "function add1(n : Num)"
-             "  n + 1")
-            'BT))
-         (rhs-pict
-               (add-hubs
-                ((dyn-codeblock 'U)
-                 #:title "Untyped Caller"
-                 "add1(\"hola\")")
-                'BB))
-         (pp
-           (vc-append tiny-y-sep
-                              pp (if rhs rhs-pict (bghost rhs-pict))))
-         (arr
-           (code-arrow 'BR-S cb-find 'BL-W lc-find (* 3/4 turn) (* 15/100 turn) 90/100 5/100 'solid))
-         (pp (if arrow? (add-code-arrow pp arr) pp))
-         (lbl
-             (table2
-               #:row-sep tiny-y-sep
-               #:col-sep tiny-x-sep
-               (list
-                 (ppict-do
-                   ((if (symbol? lbl?) bghost values) y-str)
-                   #:go (coord 0 1/2 'rc)
-                   (if (eq? lbl? 'gte)
-                     (word-append
-                       (bodyembf natural-str)
-                       @bodyrmlo{ and }
-                       (bodyembf transient-str))
-                     (blank)))
-                 (answer-box @coderm{Error: expected Num})
-                 (ppict-do
-                   ((if (symbol? lbl?) bghost values) n-str)
-                   #:go (coord 0 1/2 'rc)
-                   (if (eq? lbl? 'gte)
-                     (word-append
-                       (bodyembf erasure-str))
-                     (blank)))
-                 (answer-box @coderm{"hola" + 1}))))
-         (pp
-           (ppict-do
-             pp
-             #:go (coord 0 1 'lt #:abs-y small-y-sep)
-             (if lbl? lbl (bghost lbl))))
-         )
-    pp))
-
-(define (bad-array-example #:lbl? [lbl? #f] #:cost? [cost? #f] #:retic? [retic? #f])
-  (let* ((pp
-          (vc-append
-            tiny-y-sep
-            ((dyn-codeblock 'U)
-             #:title "Untyped Array"
-             "arr = [\"A\", 3]")
-            ((dyn-codeblock 'T)
-             #:title "Typed Client"
-             "nums : Array(Num) = arr"
-             "nums[0]")))
-         (lbl
-             (table2
-               #:row-sep tiny-y-sep
-               #:col-sep tiny-x-sep
-               (list
-                 (ppict-do
-                   ((if (symbol? lbl?) bghost values) y-str)
-                   #:go (coord 0 1/2 'rc)
-                   (if (eq? lbl? 'gte)
-                     (word-append
-                       (bodyembf natural-str)
-                       @bodyrmlo{ and }
-                       (bodyembf transient-str))
-                     (blank)))
-                 (answer-box @coderm{Error: expected Array(Num)})
-                 (ppict-do
-                   ((if (symbol? lbl?) bghost values) n-str)
-                   #:go (coord 0 1/2 'rc)
-                   (if (eq? lbl? 'gte)
-                     (word-append
-                       (bodyembf erasure-str))
-                     (blank)))
-                 (answer-box @coderm{"A"}))))
-         (pp
-           (ppict-do
-             pp
-             #:go (coord 0 1 'lt #:abs-y small-y-sep)
-             (if lbl? lbl (bghost lbl))))
-         (cost-pict
-             (ll-append
-               @headrm{How to Detect an Error?}
-               (apply
-                 vl-append
-                 4
-                 (filter
-                   values
-                   (list
-                     (word-append
-                       @bodyrmlo{    1. } ((if retic? bodyrmlo bodyrmhi) "Traverse") @bodyrmlo{ array at the boundary})
-                     (word-append
-                       @bodyrmlo{    2. } ((if retic? bodyrmlo bodyrmhi) "Wrap") @bodyrmlo{ array, check at reads})
-                     (and
-                       retic?
-                       (word-append
-                         @bodyemrm{    3. Check reads in typed code})))))
-               (yblank tiny-y-sep)
-               (if retic?
-                 (blank)
-                 (word-append
-                   @bodyrmlo{Either way, } @bodyrmhi{costs} @bodyrmlo{ can add up!}))))
-         (pp
-           (if cost?
-             (ht-append
-               med-x-sep
-               pp
-               ((if (eq? 'ghost cost?) bghost values) cost-pict))
-             pp))
-         )
-    pp))
-
-(define (bad-array-example2 #:lbl? [lbl? #f] #:cost? [cost? #f] #:retic? [retic? #f])
-  (let* ((pp
-          (vc-append
-            tiny-y-sep
-            ((dyn-codeblock 'U)
-             #:title "Untyped Array"
-             "arr = [\"A\", 3]")
-            ((dyn-codeblock 'T)
-             #:title "Typed Interface"
-             "nums : Array(Num) = arr")
-            ((dyn-codeblock 'U)
-             #:title "Unyped Client"
-             "nums[0]")
-            ))
-         (lbl
-             (table2
-               #:row-sep tiny-y-sep
-               #:col-sep tiny-x-sep
-               (list
-                 (ppict-do
-                   ((if (symbol? lbl?) bghost values) y-str)
-                   #:go (coord 0 1/2 'rc)
-                   (if (eq? lbl? 'gte)
-                     (bodyembf natural-str)
-                     (blank)))
-                 (answer-box @coderm{Error: expected Array(Num)})
-                 (ppict-do
-                   ((if (symbol? lbl?) bghost values) n-str)
-                   #:go (coord 0 1/2 'rc)
-                   (if (eq? lbl? 'gte)
-                     (word-append
-                       (bodyembf transient-str)
-                       @bodyrmlo{ and }
-                       (bodyembf erasure-str))
-                     (blank)))
-                 (answer-box @coderm{"A"}))))
-         (pp
-           (ppict-do
-             pp
-             #:go (coord 0 1 'lt #:abs-y small-y-sep)
-             (if lbl? lbl (bghost lbl))))
-         (cost-pict
-             (ll-append
-               @headrm{How to Detect an Error?}
-               (apply
-                 vl-append
-                 4
-                 (filter
-                   values
-                   (list
-                     (word-append
-                       @bodyrmlo{    1. } ((if retic? bodyrmlo bodyrmhi) "Traverse") @bodyrmlo{ array at the boundary})
-                     (word-append
-                       @bodyrmlo{    2. } ((if retic? bodyrmlo bodyrmhi) "Wrap") @bodyrmlo{ array, check at reads})
-                     (and
-                       retic?
-                       (word-append
-                         @bodyemrm{    3. Check reads in typed code})))))
-               (yblank tiny-y-sep)
-               (if retic?
-                 (blank)
-                 (word-append
-                   @bodyrmlo{Either way, } @bodyrmhi{costs} @bodyrmlo{ can add up!}))))
-         (pp
-           (if cost?
-             (ht-append
-               med-x-sep
-               pp
-               ((if (eq? 'ghost cost?) bghost values) cost-pict))
-             pp))
-         )
-    pp))
-
-(define (retic-perf n)
-  (ppict-do
-    (bbox
-      (freeze
-        (scale-to-width
-          (bitmap "img/retic-perf.png")
-          (w%->pixels 6/10))))
-    #:go (coord 0 0 'lt #:abs-x tiny-y-sep #:abs-y tiny-y-sep)
-    (bad-news
-      (ll-append
-        (word-append @bodyrmlo{<} @bodyrmhi{6} @bodyrmlo{x overhead for Transient})
-        (word-append @bodyrmlo{<} @bodyrmhi{18} @bodyrmlo{x overhead for Transient with blame})))))
-
-(define (tr-app-head)
-  (hc-append tiny-x-sep (tr-pict) @bodyrmhi{Typed Racket}))
-
-(define (tr-app-body [n 0])
-  (xindent
-    (vl-append
-      2
-      (arrow-bullet
-        (word-append @bodyrmhi{Strong types} @bodyrmlo{: Type soundness}))
-      (xindent
-        @bodyrmlo{+ Complete monitoring})
-      (yblank tiny-y-sep)
-      (arrow-bullet
-        (word-append
-          @bodyrmhi{High overheads} @bodyrmlo{ are common}))
-      (xindent
-        @bodyrmlo{on the GTP Benchmarks})
-      (yblank tiny-y-sep)
-      (arrow-bullet
-        (word-append
-          @bodyrmhi{Worst cases} @bodyrmlo{: }
-          @bodyembf3{25x} @bodyrmlo{, } @bodyembf3{1400x}))
-      (yblank tiny-y-sep)
-      )))
-
-(define (retic-head)
-  (let* ((txt-pict
-          (ll-append
-            @headrm{The Inspiration:}
-            @headrm{   Reticulated Python}))
-         (logo-pict
-           (big-retic-logo))
-         )
-    (hc-append small-x-sep txt-pict logo-pict)))
-
-(define (big-retic-logo)
-           ;; vss-pict ?
-          (ppict-do
-            (let ((pp (indiana-pict)))
-              (rt-superimpose
-                (blank (* 1.6 (pict-width pp))
-                       (* 1.8 (pict-height pp)))
-                pp))
-            #:go (coord 33/100 60/100 'cc)
-            (retic-pict)))
-
-(define (retic-tr-logos)
-  (let* ((lp (big-retic-logo))
-         (rp (cc-superimpose (bghost lp) (tr-pict)))
-        )
-    (values lp rp)))
-
-(define (retic-vs-tr-pict w%)
-  (define-values [lp rp] (retic-tr-logos))
-  (hc-append
-    lp
-    (thick-right-arrow (w%->pixels w%))
-    (xblank tiny-x-sep)
-    rp))
-
-(define (retic-vs-tr-types n)
-  (define-values [lp rp] (retic-tr-logos))
-  (define text->pict coderm)
-  (define text->pict2 codeemrm2)
-  (define text*->pict (lambda (str*) (map text->pict str*)))
-  (define text*->pict2 (lambda (str*) (map text->pict2 str*)))
-  (define text*->pict3 (lambda (str*) (map (compose1 bghost text->pict) str*)))
-  (define rp* (text*->pict '("Dynamic" "Int" "Ref T" "T -> T" "Class { T ... }" ".... a few more")))
-  (define pre-tr* '(("Any (the top type)")
-                    ("Integer" "Natural")
-                    ("(Vectorof T)" "(Vector T ...)")
-                    ("(-> T ... (Values T ...))")
-                    ("(Class T ...)")
-                    ("(All X T)"
-                     "(Union T ...)"
-                     "(Rec X T)")
-                    (".... many more")))
-  (define n++ (- n 2))
-  (define tr*
-    (let loop ((str** pre-tr*)
-               (curr-i 0))
-      (cond
-        [(null? str**)
-         '()]
-        [else
-          (define f
-            (cond
-              [(< curr-i n++) text*->pict]
-              [(= curr-i n++) text*->pict2]
-              [else text*->pict3]))
-          (append (f (car str**)) (loop (cdr str**) (+ curr-i 1)))])))
-  (define add-bg
-    (lambda (pp)
-      (bbox pp)))
-  (define (pict*->column tag pp*)
-    ;; igrone tag
-    (apply
-      vl-append
-      pico-y-sep
-      (ppict-do (car pp*) #:go (coord 0 1 'rb) @coderm{T := })
-      (cdr pp*)))
-  (define lcol (vc-append lp ((if (<= 0 n) values bghost) (pict*->column 'A rp*))))
-  (define rcol (vc-append rp ((if (< 0 n) values ghost) (pict*->column 'B tr*))))
-  (ht-append
-    big-x-sep
-    (ct-superimpose
-      (bghost (bbox @coderm{Typecheck + Elaborate}))
-      lcol)
-    rcol))
-
-(define (retic-vs-tr-table n)
-  (define-values [lp rp] (retic-tr-logos))
-  (define text->pict coderm)
-  (define rp* (map text->pict '("Typecheck + Elaborate" "Python")))
-  (define tr* (map text->pict '("Expand" "Typecheck" "Guard Boundaries" "Optimize" "Racket")))
-  (define add-bg
-    (let* ((mx (apply max (append (map pict-width rp*) (map pict-width tr*))))
-           (bg (xblank mx)))
-      (lambda (pp) (cc-superimpose bg pp))))
-  (define (pict*->column tag pp*)
-        (dmigration-append*
-          (for/list ((pp (in-list pp*))
-                     (i (in-naturals)))
-            (tag-pict (bbox (add-bg pp)) (tag-append tag i)))))
-  (define lcol (vc-append lp ((if (< 0 n) values bghost) (pict*->column 'A rp*))))
-  (define rcol (vc-append rp ((if (< 1 n) values ghost) (pict*->column 'B tr*))))
-  (ppict-do
-    (ht-append
-      big-x-sep
-      lcol
-      rcol)
-    #:go (at-find-pict 'B-2 #:abs-x (- tiny-x-sep) #:abs-y (* 2 tiny-y-sep))
-    (if (< 2 n)
-      (ppict-do
-        (hilite-box (add-bg (text->pict "Insert Transient Checks")))
-        #:go (coord 0 0 'rc #:abs-x (- small-x-sep) #:abs-y tiny-y-sep)
-        (lc-append
-          (word-append
-            @bodyrmlo{(replace only the guard pass)})
-          #;(word-append @bodyrmlo{with a traversal over typed code})
-        ))
-      (blank))))
 
 (define (arrow-bullet* . pp*)
   (apply vl-append 2 (map arrow-bullet pp*)))
@@ -2394,336 +1434,6 @@
           (-margin (- margin)))
       (inset (make-rect (+ +margin client-w) (+ +margin client-h)) -margin)))
   (cc-superimpose background-pict foreground-pict))
-
-(define (huge-program-example n)
-  (case n
-    ((0)
-      (vc-append
-        pico-y-sep
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        ))
-    ((1)
-      (vc-append
-        pico-y-sep
-        (boundary-node '(U B U B U B U B U B T B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B T B U B T B U B U B U B U B U B U))
-        (boundary-node '(B U B U B T B T B T B U B U B U B U B))
-        (boundary-node '(U B T B U B T B T B U B U B U B U B U))
-        (boundary-node '(B U B U B U B T B U B T B U B U B U B))
-        (boundary-node '(U B U B U B T B U B U B U B T B T B T))
-        (boundary-node '(B U B T B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        )
-    )
-    ((2)
-      (vc-append
-        pico-y-sep
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B K B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        )
-      )
-    ((3)
-     (ppict-do
-      (vc-append
-        pico-y-sep
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B T B U B U B U B U B U B U B))
-        (boundary-node '(U B U B K B T B U B U B U B U B U B U))
-        (boundary-node '(B U B T B T B U B U B U B U B U B U B))
-        (boundary-node '(U B U B T B U B U B U B U B U B U B U))
-        (boundary-node '(B U B T B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        (boundary-node '(B U B U B U B U B U B U B U B U B U B))
-        (boundary-node '(U B U B U B U B U B U B U B U B U B U))
-        )
-       #:go (coord 34/100 32/100 'lt)
-       (bbox
-         (lc-append
-           (word-append
-             @bodyrmlo{When something goes wrong,})
-           (word-append
-             @bodyrmlo{ use } @bodyrmhibb{sound types}
-             @bodyrmlo{ to } @bodyrmhi{pinpoint} @bodyrmlo{ the issue}))))
-    )
-    ))
-
-(define (the-problem n)
-  (define idea-pict
-    (word-append
-      @bodyrmlo{That's the idea ... but there's a } @bodyrmhi{major problem} @bodyrmlo{ ...}))
-  (define prob-pict
-    (word-append
-      @bodyrmlo{Sound types are } @bodyrmhi{expensive!}))
-  (lc-append
-    idea-pict
-    (yblank small-y-sep)
-    (if (< n 1)
-      (bghost prob-pict)
-      (ppict-do
-        prob-pict
-        #:go (coord 1 0 'lt #:abs-x pico-x-sep)
-        (clock-pict 100))
-      )))
-
-(define (roadblock-pict pp)
-  (define stop
-    (bitmap (stop-icon #:color halt-icon-color #:height 64 #:material plastic-icon-material)))
-    (question-box
-  (vc-append
-    tiny-y-sep
-    @headrm{Roadblock}
-      (hc-append
-        small-x-sep
-        stop
-        pp
-        stop))))
-
-(define (compiler-challenge-pict dd img what how)
-  ((if (< dd 2) bbbox bbox)
-    (vc-append
-      pico-y-sep
-      (if (pict? what) what (bodyrmlo what))
-      img
-      ((if (< dd 1) bghost values)
-       (word-append
-         @bodyrmlo{+ }
-         (if (pict? how) how (bodyrmlo how))
-         @bodyrmlo{ +}
-         )))))
-
-(define default-icon-height 64)
-
-(define (type-challenge-pict n)
-  (compiler-challenge-pict n
-    (tr-types-pict)
-    (word-append
-      @bodyrmlo{Enforcing types})
-    (word-append
-      @bodyrmlo{Generalize tag checks to } @bodyrmhi{shape checks})))
-
-(define (tr-types-pict)
-  (define add-bg memory-bg)
-  (hc-append
-    tiny-x-sep
-    (vc-append
-      tiny-y-sep
-      (add-bg @coderm{All})
-      (add-bg @coderm{Rec}))
-    (add-bg @coderm{Union})))
-
-(define (opt-challenge-pict n)
-  (compiler-challenge-pict n
-    (opt-challenge-icon)
-    "Optimizing typed code"
-    "Trust only shapes"))
-
-(define (opt-challenge-icon [hh default-icon-height])
-  (bitmap (stopwatch-icon #:height hh)))
-
-(define (expand-challenge-pict n)
-  (compiler-challenge-pict n
-    (expand-challenge-icon)
-    "Navigating expanded code"
-    (word-append
-      @bodyrmlo{Typechecker must leave }
-      @bodyrmhi{evidence})))
-
-(define (expand-challenge-icon [hh default-icon-height])
-  (bitmap (left-magnifying-glass-icon #:height hh)))
-
-(define (cast-challenge-pict n)
-  (compiler-challenge-pict n
-    (cast-challenge-icon )
-    "Recording downcasts"))
-
-(define (cast-challenge-icon [hh default-icon-height])
-    (bitmap (floppy-disk-icon #:height hh #:color "gold" #:material glass-icon-material)))
-
-(define (cost-challenge-pict n)
-  (compiler-challenge-pict n
-    (cost-challenge-icon)
-    "Minimizing costs"
-    "E.g. reduce codegen"))
-
-(define (cost-challenge-icon [hh default-icon-height])
-  (bitmap (record-icon #:color "forestgreen" #:height hh #:material glass-icon-material)))
-
-(define (expand-example-before)
-  (typed-codeblock* (list
-    @tcoderm{(for/sum ([byte (open-input-file "my.txt")])}
-    @tcoderm{  byte)}
-)))
-
-(define (expand-example-after)
-  (typed-codeblock* (list
-@tcoderm{(define seq (make-seq (open-input-file "my.txt")))}
-@tcoderm{(define (for-loop result pos)}
-@tcoderm{  (if (not (seq.use-pos? pos))}
-@tcoderm{    result}
-@tcoderm{    (let ([byte (seq.get-val pos)])}
-@tcoderm{      (for-loop (if (or (not seq.use-val?)}
-@tcoderm{                        (seq.use-val? byte))}
-@tcoderm{                  (+ result byte)}
-@tcoderm{                  result)}
-@tcoderm{                (seq.next-pos pos)))))}
-@tcoderm{(for-loop 0 seq.init)}
-)))
-
-(define (expand-example n)
-  (case n
-    ((0)
-     (expand-example-before))
-    ((1)
-     (vl-append
-       tiny-y-sep
-       (expand-example-before)
-       (hc-append (xblank tiny-x-sep) down-arrow-pict)
-       (expand-example-after)))
-    (else
-      (error 'die))))
-
-(define (challenge-pict*)
-  (define the-bar
-    (hc-append
-      (* 2 tiny-x-sep)
-      (tr-types-pict)
-      (vc-append
-        (- tiny-y-sep)
-        (cast-challenge-icon)
-        (ht-append
-          pico-x-sep
-          (opt-challenge-icon)
-          (expand-challenge-icon)))))
-  (freeze (scale the-bar 8/10)))
-
-(define (blame-illustration n)
-  (let* ((u0 @coderm{λx. "B"})
-         (t0 @coderm{f : Num -> Num})
-         (g0 (blank (pict-width t0) (pict-height u0)))
-         (add-bg (lambda (pp) (cc-superimpose g0 pp)))
-         (x0 (bghost (untyped-codeblock* (list (add-bg g0)))))
-         (t1 @coderm{f(2)})
-         (c0 (add-hubs
-               (untyped-codeblock* (list (add-bg (if (< n 1) g0 u0))))
-               'C0))
-         (c1 (add-hubs
-               (typed-codeblock* (list (add-bg ((if (< n 1) bghost values) t0))))
-               'C1))
-         (c2 (add-hubs
-               (untyped-codeblock* (list (add-bg g0)))
-               'C2))
-         (c3 (add-hubs
-               (typed-codeblock* (list (add-bg ((if (< n 1) bghost values) t1))))
-               'C3))
-         (pp (vl-append
-               small-y-sep
-               (hc-append pico-x-sep c0 x0 c2 x0)
-               (hc-append pico-x-sep (tag-pict x0 'arr-anchor) c1 x0 c3)))
-         (pp (add-code-arrows
-               pp
-               #:color black
-               (code-arrow 'C0-S cb-find 'C1-W lc-find (* 3/4 turn) 0 2/4 2/4 'solid)
-               (code-arrow 'C1-N ct-find 'C2-W lc-find (* 1/4 turn) 0 1/4 1/4 'solid)
-               (code-arrow 'C2-E rc-find 'C3-W lc-find 0 0 1 1 'solid)))
-         (pp (if (< n 2)
-               pp
-               (ppict-do
-                 pp
-                 #:go (at-find-pict 'C3 rc-find)
-                 (bitmap (x-icon #:height default-icon-height)))))
-         (pp (if (< n 3)
-               pp
-               (add-code-arrow
-                 pp
-                 (code-arrow 'C3-E rc-find 'arr-anchor ct-find (* 95/100 turn) (* 10/100 turn) 3/10 1/10 'solid)
-                 #:arrow-size (+ 4 default-arrow-size)
-                 #:line-width (+ 2 default-line-width)
-                 #:color blame-color)))
-        )
-    pp))
-
-(define all-blame-data
-  (list
-    (list "kcfa" "1x" "4x" ">540x")
-    (list "morsecode" "3x" "2x" ">250x")
-    (list "sieve" "4x" "15x" ">220x")
-    (list "snake" "8x" "12x" ">1000x")
-    (list "suffixtree" "6x" "31x" ">190x")
-    (list "tetris" "10x" "12x" ">720x")
-    (list "acquire" "1x" "4x" "34x")
-    (list "dungeon" "5x" "15000x" "75x")
-    (list "forth" "6x" "5800x" "48x")
-    (list "fsm" "2x" "2x" "230x")
-    (list "fsmoo" "4x" "420x" "100x")
-    (list "gregor" "2x" "2x" "23x")
-    (list "jpeg" "2x" "23x" "38x")
-    (list "lnm" "1x" "1x" "29x")
-    (list "mbta" "2x" "2x" "37x")
-    (list "quadT" "7x" "25x" "34x")
-    (list "quadU" "8x" "55x" "320x")
-    (list "synth" "4x" "47x" "220x")
-    (list "take5" "3x" "44x" "33x")
-    (list "zombie" "31x" "46x" "560x")
-    (list "zordoz" "3x" "3x" "220x")))
-
-(define (blame-table n)
-  (define title* (list "Benchmark" @bodyembf{Transient} "Guarded"
-                       (word-append @bodyembf{T} @bodyrmlo{+Blame})))
-  (define (num->pict str)
-    (define n (string->number
-                (let ((ss (substring str 0 (sub1 (string-length str)))))
-                  (if (eq? #\> (string-ref ss 0))
-                    (substring ss 1)
-                    ss))))
-    (unless (real? n)
-      (printf "DEAD ~a~n" str))
-    ((if (<= n 6) codeemrm (if (< n 100) coderm codeembf)) str))
-  (define (?bodyrmlo x)
-    (if (pict? x) x (bodyrmlo x)))
-  (define (title->pre-pict* rr)
-    (list (bghost (bodyrmlo (first rr))) (?bodyrmlo (second rr)) (?bodyrmlo (fourth rr)) (?bodyrmlo (third rr))))
-  (define (row->pre-pict* rr)
-    (list (coderm (first rr)) (num->pict (second rr)) (num->pict (fourth rr)) (num->pict (third rr))))
-  (define mask*
-    (case n
-      ((0 1)
-       (lambda (pp*)
-         (define-values [ll rr] (split-at pp* (- (length pp*) (- 2 n))))
-         (append ll (map bghost rr))))
-      (else
-       (lambda (pp*)
-         pp*))))
-  (define ff (compose1 mask* row->pre-pict*))
-  (apply
-    ht-append
-    (w%->pixels 7/100)
-    (for/list ((row (in-list (split/n all-blame-data 11))))
-      (table
-        4
-        (flatten
-          (cons
-            (mask* (title->pre-pict* title*))
-            (map ff row)))
-        (cons lc-superimpose rc-superimpose)
-        cc-superimpose
-        tiny-x-sep
-        tiny-y-sep))))
 
 (define mixed-best-data*
   (list
@@ -2912,130 +1622,6 @@
     (list "snake" "0%" "0%" "0%")
     (list "take5" "0%" "100%" "100%")
     ))
-
-(define (overhead-legend)
-    (ht-append
-      med-x-sep
-      (word-append
-        @bodyrmhi{x} @bodyrmlo{ axis = [1x, 20x]  (sets a limit for "fast enough")})
-      (word-append
-        @bodyrmhi{y} @bodyrmlo{ axis = % of all gradually-typed points})))
-
-(define (transient-works n)
-  ;; TODO tie back to RQ1 RQ2
-  (define main-rq
-    (ll-append
-      (word-append
-        @bodyrmhi{RQ} @bodyrmlo{. Can } @bodyembf{transient types} @bodyrmlo{:})
-      @bodyrmlo{        - scale to a rich type system}
-      @bodyrmlo{        - in the context of an existing compiler?}))
-  (define y-pict @bodyembf{  Yes! })
-  (define main-ans
-      (word-append
-        y-pict @bodyrmlo{... without blame}))
-  (define caveats-1
-    ;; TYPES?!
-    (ll-append
-      (word-append (bghost y-pict) @bodyrmlo{... and with some tailoring})
-      #;(word-append (bghost y-pict) @bodyrmlo{    of the IR for new types})
-      ))
-  (table2
-    #:col-align lc-superimpose
-    #:row-align cc-superimpose ;; TODO
-    #:col-sep small-x-sep
-    #:row-sep tiny-y-sep
-    (list
-      main-rq (freeze (scale (retic-vs-tr-pict 1/10) 8/10))
-      (blank) (blank)
-      ((if (< n 1) bghost values) main-ans) (blank)
-      ((if (< n 2) bghost values) caveats-1) ((if (< n 2) bghost values) (challenge-pict*)))))
-
-(define (perf-bottom-line)
-    (hc-append
-      tiny-x-sep
-      y-str
-      (word-append
-        @bodyrmlo{Overall performance is } @bodyrmhi{much improved})))
-
-(define (optional-langs-pict)
-    (hc-append
-      tiny-x-sep
-      (ts-pict)
-      (flow-pict)
-      (mypy-pict)
-      (typed-clojure-pict)
-      (pyre-pict)))
-
-(define (transient-gateway n)
-  (define spectrum-pict
-    (bbox
-      (hc-append
-        tiny-x-sep
-        (bodyembf natural-str)
-        @headrm{>}
-        (bodyembf transient-str)
-        @headrm{<}
-        (bodyembf erasure-str))))
-  (define (lang-label img pp)
-    (hc-append small-x-sep img pp))
-  (define today-pict
-    (values ;;lang-label
-      ;; (tr-pict)
-      (word-append
-        @bodyrmlo{Reminder: }
-        @bodyembf{Transient}
-        @bodyrmlo{ is a promising way to }
-        @bodyrmhi{strengthen}
-        @bodyrmlo{ unsound }
-        @bodyembf{Optional}
-        @bodyrmlo{ types})))
-  (define tomorrow-pict
-    (lang-label
-      (ts-pict)
-      (word-append
-        @bodyrmhi{Strenghtening} @bodyrmlo{ is possible too})))
-  (vc-append
-    small-y-sep
-    today-pict
-    spectrum-pict
-    (blank)
-    (vc-append
-      4
-      @bodyrmlo{Lots of potential clients!}
-      (bbbox (optional-langs-pict)))
-    )
-
-  #;(hc-append
-    med-x-sep
-    spectrum-pict
-    (vl-append
-      small-y-sep
-      today-pict
-      tomorrow-pict)
-    ))
-
-(define (three-alt-pict [n 0])
-  (define name* (list natural-str transient-str erasure-str))
-  (define desc* '(("Types enforce" "behaviors")
-                  ("Types enforce" "top-level shapes")
-                  ("Types enforce" "nothing")))
-  (define pp*
-    (for/list ([nm (in-list name*)]
-               [ds (in-list desc*)])
-      (vc-append
-        pico-x-sep
-        (tag-pict (bodyembf nm) (string->symbol nm))
-        (apply vc-append 2 (map bodyrmlo ds)))))
-  (define pp (apply ht-append med-x-sep (map bbox pp*)))
-  (case n
-    ((0)
-     pp)
-    ((1)
-     (ppict-do pp
-       #:go (at-find-pict 'Guarded   lt-find 'rc #:abs-x (- pico-y-sep) #:abs-y pico-y-sep) (tr-pict)))
-    ((2)
-     pp
-     #;(above-all-lang (bbox pp)))))
 
 (define region-w (w%->pixels 26/100))
 (define region-h (h%->pixels 2/10))
@@ -3312,7 +1898,7 @@
 
 (define (sec:title)
   (pslide
-    #:next
+    ;;#:next
     #:alt (
     #:go title-coord-m
     (let* ([title-pict
@@ -3776,7 +2362,7 @@
                  @bodyrmlo{21 programs}))
     (yblank small-y-sep)
     (tag-pict
-      (benchmark-pict3
+      (benchmark-pict
       "img/gtp-bench.png"
       #:w% 41/100
       #:url "docs.racket-lang.org/gtp-benchmarks")
@@ -4078,6 +2664,9 @@
   (void))
 
 (define (sec:qa)
+  (void))
+
+(define (sec:unused)
   ;(pslide
   ;  #:go center-coord
   ;  @bodyrmlo{DSU alt 1}
@@ -4187,77 +2776,6 @@
 @tcoderm{(string-length fake-str)}
 ))
   )
-  (void))
-
-(define (sec:unused)
-  (pslide
-    #:go heading-coord-l
-    @headrm{Example}
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    #:alt ( (basic-example 'T 'U))
-    (basic-example 'T 'U #:lbl? 'gte)
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Example 2}
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    #:alt ( (bad-array-example) )
-    (bad-array-example #:lbl? 'gte)
-    #:go slide-text-coord-m
-    (word-append
-      (bodyembf natural-str)
-      @bodyrmlo{ and }
-      (bodyembf transient-str)
-      @bodyrmlo{ agree, but for different reasons ...})
-  )
-  (pslide
-    #:go heading-coord-r
-    @headrm{Example 2+}
-    #:go slide-text-coord-m
-    (word-append
-      (bodyembf natural-str)
-      @bodyrmlo{ and }
-      (bodyembf transient-str)
-      @bodyrmlo{ agree, but for different reasons ...})
-    (yblank tiny-y-sep)
-    (word-append
-      @bodyrmlo{ ... and they disagree for an untyped client})
-    #:next
-    #:go hi-text-coord-m
-    (yblank med-y-sep)
-    #:alt ( (bad-array-example2) )
-    (bad-array-example2 #:lbl? 'gte)
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Example: Run-Time Costs}
-    #:go hi-text-coord-m
-    #:alt ( (bad-array-example #:lbl? #t #:cost? 'ghost) )
-    (bad-array-example #:lbl? #t #:cost? #t)
-  )
-  (pslide
-    #:go heading-coord-l
-    @headrm{Costs Really Add Up!}
-    #:go hi-text-coord-l
-    (memory-bg (vl-append tiny-y-sep (tr-app-head) (tr-app-body)))
-    #:next
-    #:go (coord 42/100 36/100 'lt)
-    (bad-news @headrm{Q.   Is Sound Gradual Typing Dead?})
-  )
-  (pslide
-    #:go heading-coord-m
-    (ppict-do
-      @headrm{Challenges}
-      #:go (coord 1/2 8/100 'ct)
-      (scale (retic-vs-tr-pict 90/100) 8/10))
-    #:next
-    #:go center-coord
-    (roadblock-pict
-      (word-append
-        @bodyrmhi{Transient blame is } @bodyrmhi{very expensive}))
-  )
   (pslide
     #:go heading-coord-m
     @headrm{Acknowledgments}
@@ -4358,9 +2876,9 @@
     (sec:end)
 
     (pslide)
-    (sec:expr)
-    (sec:qa)
-    (pslide)
+    ;(sec:expr)
+    ;(sec:qa)
+    ;(pslide)
 
     (void))
   (void))
@@ -4373,8 +2891,8 @@
 ;; =============================================================================
 
 (module+ raco-pict (provide raco-pict)
-         ;;(define client-w 984) (define client-h 728)
-         (define client-w 1320) (define client-h 726)
+         ;;(define client-w 984) (define client-h 728) ;; 4:3
+         (define client-w 1320) (define client-h 726) ;; 16:9 sort of, too thin
          (define raco-pict
   (ppict-do
     (make-bg client-w client-h)
