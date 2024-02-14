@@ -2848,6 +2848,95 @@
 
   (void))
 
+
+(define (sneha-demo)
+  (pslide
+    #:go (coord 1 9/100 'rt #:abs-x (- 8))
+    (scale (bbox @bodyrmlo{Ben Greenman}) 8/10)
+    #:go heading-coord-m
+    (bbox
+      (vc-append
+        @headrm{Deep and Shallow Types for Untyped Code}
+        (yblank tiny-y-sep)
+        (scale @headrm{Balance guarantees vs. performance} 7/10)))
+    #:go hi-text-coord-m
+    (yblank small-y-sep)
+    (let* ((pp
+            (hc-append
+              big-x-sep
+              (add-hubs
+                (deep-codeblock*
+                  (list (hc-append @coderm{Deep} (xblank small-x-sep))))
+                'deep)
+              (add-hubs
+                (shallow-codeblock*
+                  (list (hc-append (xblank med-x-sep) @coderm{Shallow} (xblank med-x-sep))))
+                'shallow)
+              (add-hubs (untyped-name) 'untyped)))
+           (pp
+             (add-code-line*
+               pp
+               (list
+                 (code-arrow 'deep-E rc-find 'shallow-W lc-find 0 0 0 0 'solid)
+                 (code-arrow 'shallow-E rc-find 'untyped-W lc-find 0 0 0 0 'solid))))
+           )
+      pp)
+    #:go (at-find-pict 'deep ct-find 'cb #:abs-y (- tiny-y-sep) #:abs-x tiny-x-sep)
+    (on-stick (values #;bbox @bodyrmhi{Natural}))
+    #:go (at-find-pict 'shallow ct-find 'cb #:abs-y (- tiny-y-sep) #:abs-x (+ small-x-sep))
+    (on-stick (values #;bbox @bodyrmhi{Transient}))
+    #:go (coord 1/2 1/2 'ct #:sep small-y-sep)
+    (ht-append (bbox @bodyrmlo{Q. More regions along the spectrum?}) (xblank med-x-sep))
+    (ht-append (xblank big-x-sep) (bbox @bodyrmlo{Q. Better cooperation b/w Deep and Shallow?}))
+    (ht-append (bbox @bodyrmlo{Q. Reduce N^2 interop to O(N)?}) (xblank (- med-x-sep tiny-x-sep)))
+    )
+  (pslide
+    #:go (coord 1 9/100 'rt #:abs-x (- 8))
+    (scale (bbox @bodyrmlo{Ben Greenman}) 8/10)
+    #:go (coord 75/100 20/100 'ct)
+      (vc-append
+        tiny-y-sep
+        (bbox @bodyrmlo{Modeling})
+        (bbox @bodyrmlo{Testing})
+        (bbox @bodyrmlo{Visualization}))
+    #:go heading-coord-m
+    (bbox @headrm{Forge: Teaching Formal Methods})
+    (yblank small-y-sep)
+    (hc-append small-x-sep
+      (vc-append
+        tiny-y-sep
+        (freeze (clip (scale-to-square (bitmap "img/logo-big.png") 300)))
+        (bbox @coderm{https://forge-fm.org})
+        #;(untyped-codeblock* (list
+@coderm|{(run reflect_resp_pov}|
+@coderm|{  #:preds [}|
+@coderm|{    exec_reflect_init exec_reflect_resp}|
+@coderm|{    constrain_skeleton_reflect_2}|
+@coderm|{    temporary wellformed}|
+@coderm|{    (! (= (join reflect_resp agent)}|
+@coderm|{          (join reflect_init agent)))}|
+@coderm|{    (! (= (join reflect_resp reflect_resp_a)}|
+@coderm|{            (getInv (join reflect_resp reflect_resp_b))))}|
+@coderm|{    (! (= (join reflect_resp reflect_resp_a)}|
+@coderm|{            (join reflect_resp reflect_resp_b)))])}|
+
+))
+    (hc-append
+      tiny-x-sep
+      (label-below
+      (bbox (cellophane (freeze (clip (scale-to-square (bitmap "img/reflect-0-generic-projected.png") 240)))
+                        8/10))
+      @coderm{before})
+      right-arrow-pict
+      (label-below
+      (bbox (freeze (clip (scale-to-square (bitmap "img/reflect-0-custom.png") 300))))
+      @coderm{after})
+      )))
+  )
+
+
+  (void))
+
 ;; --- 
 
 (define bg-orig (current-slide-assembler))
@@ -2858,11 +2947,15 @@
 (define shallow-bg (slide-assembler/background bg-orig make-shallowbg))
 
 (define (do-show)
-  ;; (set-page-numbers-visible! #true)
+  (set-page-numbers-visible! #false)
   (set-spotlight-style! #:size 60 #:color (color%-update-alpha highlight-brush-color 0.6))
   ;; [current-page-number-font page-font]
   ;; [current-page-number-color white]
   ;; --
+;  (parameterize ((current-slide-assembler bg-cs.brown.edu)
+;                 (pplay-steps 30))
+;    (sneha-demo)
+;    (void))
   (parameterize ((current-slide-assembler waters-bg))
     (sec:title)
     (void))
